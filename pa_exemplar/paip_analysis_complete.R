@@ -38,7 +38,7 @@ library(metafor)
 # user
 # logindata_all
 
-source("pa_exemplar_creds.R")
+source("creds/pa_exemplar_creds.R")
 
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
