@@ -1,2 +1,5 @@
 # Any creds files
 creds/
+
+# Any keys
+*.pem
