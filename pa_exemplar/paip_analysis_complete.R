@@ -43,7 +43,6 @@ source("creds/pa_exemplar_creds.R")
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
 
-
 ###############################################################################
 ########################### SET UP DATA  ######################################
 ###############################################################################
@@ -218,6 +217,10 @@ summary_ob <- summary_ob[,c(6,7,8)]
 rm(summary_ob_temp)
 
 #ethnicity
+# Note that for ethnicity REPRO ROLO SWS will not return correct results due to the fact that
+# That these final studies do not fully follow the scheme (white, other, black)
+# Study indicated them as binary, or in ROLO's case there are not enought people for a particular
+# class hence datashield hides the result (which is a good thing)
 summary_eth_temp <- ds.summary('E4$ETHNICITY')
 for (i in 1:length(summary_eth_temp)){
   if (class(summary_eth_temp[[i]]) == 'character'){
