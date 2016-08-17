@@ -14,6 +14,7 @@
 ## REPRO
 ##  
 ## Author: Tom Bishop
+##         Paul Scherer
 ## Date: 29/07/2016
 
 ###############################################################################
@@ -80,8 +81,8 @@ num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
-my_exp_all = c('MOD_VIG', 'LTPA_DUR')
-my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
@@ -333,8 +334,8 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #------------------FIRST MODEL BEGINS HERE----------------------------
 #######################################################
 # new model_1 code incremental addition of covariates etc.
-my_exp_1 = c('MOD_VIG', 'LTPA_DUR')
-my_outcome_1 = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_exp_1 = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_outcome_1 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
 
 model_1_ind = data.frame()
