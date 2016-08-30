@@ -335,7 +335,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #######################################################
 # new model_1 code incremental addition of covariates etc.
 my_exp_1 = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_1 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome_1 = c('BIRTH_WEIGHT_LGA')
 my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
 
 model_1_ind = data.frame()
@@ -412,7 +412,7 @@ for (o in 1:length(opals)){
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c( 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
 REM_results = list()
@@ -491,7 +491,7 @@ model_1_REM <- REM_results
 ######### MODEL 2 starts here #######
 # new model_2 code incremental addition of covariates etc.
 my_exp_2 = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome_2 = c('BIRTH_WEIGHT_LGA')
 my_cov_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -580,7 +580,7 @@ for (o in 1:length(opals)){
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
 #my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 #my_outcome = c('MACROSOMIA')
-my_outcome = c('BIRTH_WEIGHT', 'BIRTH_WEIGHT_LGA')
+my_outcome = c( 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
