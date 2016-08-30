@@ -109,9 +109,12 @@ row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 ###############################################################################
 ########################### RUN SUMMARIES  ####################################
 ###############################################################################
+#data summary - only need to run if you want participant summary
+
 
 #---------------------------------------------------------
-#data summary - only need to run if you want participant summary
+# Summaries for covariates and confounders
+
 summary_sex_temp <- ds.summary('E4$SEX')
 summary_sex <- data.frame(matrix(unlist(summary_sex_temp), nrow = num_studies, ncol=6, byrow=TRUE))
 rownames(summary_sex) <- study_names
@@ -159,22 +162,6 @@ rownames(summary_age) <- study_names
 colnames(summary_age) <- c("mean", "sd")
 rm(mean_age, var_age)
 
-#LTPA
-summary_ltpa_temp <- ds.summary('E4$LTPA_DUR')
-summary_ltpa <- data.frame(matrix(unlist(summary_ltpa_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_ltpa) <- study_names
-colnames(summary_ltpa) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_ltpa <- summary_ltpa[,c(2,6,5,7)]
-rm(summary_ltpa_temp)
-
-#mod vig
-summary_mod_temp <- ds.summary('E4$MOD_VIG')
-summary_mod <- data.frame(matrix(unlist(summary_mod_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_mod) <- study_names
-colnames(summary_mod) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_mod <- summary_mod[,c(2,6,5,7)]
-rm(summary_mod_temp)
-
 #parity
 without <- opals
 without[which(names(without) %in% c("GECKO","REPRO"))] <- NULL
@@ -195,6 +182,7 @@ summary_parity_REPRO <- ds.table1D(x = 'E4$PARITY',datasources = opals["REPRO"])
 summary_parity_GECKO <- ds.table1D(x = 'E4$PARITY',datasources = opals["GECKO"])
 
 remove(without)
+
 
 # binaries
 binary_var <- c('SMOKING', 'GDM')
@@ -268,6 +256,32 @@ summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO']
 summary_alc['ROLO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ROLO'])
 #SWS
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
+
+
+#---------------------------------------------------------
+# Summaries for exposures
+
+#LTPA
+summary_ltpa_temp <- ds.summary('E4$LTPA_DUR')
+summary_ltpa <- data.frame(matrix(unlist(summary_ltpa_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_ltpa) <- study_names
+colnames(summary_ltpa) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_ltpa <- summary_ltpa[,c(2,6,5,7)]
+rm(summary_ltpa_temp)
+
+# MOD_VIG
+summary_mod_temp <- ds.summary('E4$MOD_VIG')
+summary_mod <- data.frame(matrix(unlist(summary_mod_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_mod) <- study_names
+colnames(summary_mod) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_mod <- summary_mod[,c(2,6,5,7)]
+rm(summary_mod_temp)
+
+# LTPA_EE
+
+#---------------------------------------------------------
+# Summaries for outcomes
+
 
 
 ###############################################################################
