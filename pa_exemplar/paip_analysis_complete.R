@@ -283,9 +283,21 @@ rownames(summary_bw) <- study_names
 colnames(summary_bw) <- c("mean_male", "sd_male", "mean_female", "sd_female")
 rm(summary_bw_temp)
 
-# Macrosomia by sex
+# Macrosomia
+summary_mac_temp <- ds.summary('E4$MACROSOMIA')
+summary_mac <- data.frame(matrix(unlist(summary_mac_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+rownames(summary_mac) <- study_names
+summary_mac <- summary_mac[,c(1,2,5,6)]
+colnames(summary_mac) <- c("class", "length", "No", "Yes")
+rm(summary_mac_temp)
 
-# Birthweight_lga by sex
+# BIRTHWEIGHT_LGA
+summary_lga_temp <- ds.summary('E4$BIRTH_WEIGHT_LGA')
+summary_lga <- data.frame(matrix(unlist(summary_lga_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+rownames(summary_lga) <- study_names
+summary_lga <- summary_lga[,c(1,2,5,6)]
+colnames(summary_mac) <- c("class", "length", "No", "Yes")
+rm(summary_mac_temp)
 
 
 ###############################################################################
