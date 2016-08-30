@@ -121,17 +121,6 @@ rownames(summary_sex) <- study_names
 colnames(summary_sex) <- c("type", "N", "male", "female", "count0", "count1")
 rm(summary_sex_temp)
 
-#birthweight by sex
-summary_bw_temp <- ds.meanByClass(x='E4$BIRTH_WEIGHT~E4$SEX', type = 'split')
-summary_bw <- matrix(unlist(summary_bw_temp))
-summary_bw <- substr(summary_bw, 1, nchar(summary_bw)-1)
-summary_bw <- summary_bw[seq(2, nrow(summary_bw), by = 2),]
-summary_bw <- do.call('rbind', strsplit(as.character(summary_bw),'(',fixed=TRUE))
-summary_bw <- cbind(summary_bw[seq(1, nrow(summary_bw), by = 2),],summary_bw[seq(2, nrow(summary_bw), by = 2),])
-summary_bw <- data.frame(t(apply(summary_bw, 1, as.numeric)))
-rownames(summary_bw) <- study_names
-colnames(summary_bw) <- c("mean_male", "sd_male", "mean_female", "sd_female")
-rm(summary_bw_temp)
 
 # gestational age by sex - most of the code is to sort out formatting
 summary_ga_temp <- ds.meanByClass(x='E4$GESTATIONAL_AGE~E4$SEX', type = 'split')
@@ -282,6 +271,21 @@ rm(summary_mod_temp)
 #---------------------------------------------------------
 # Summaries for outcomes
 
+# Birthweight by sex
+summary_bw_temp <- ds.meanByClass(x='E4$BIRTH_WEIGHT~E4$SEX', type = 'split')
+summary_bw <- matrix(unlist(summary_bw_temp))
+summary_bw <- substr(summary_bw, 1, nchar(summary_bw)-1)
+summary_bw <- summary_bw[seq(2, nrow(summary_bw), by = 2),]
+summary_bw <- do.call('rbind', strsplit(as.character(summary_bw),'(',fixed=TRUE))
+summary_bw <- cbind(summary_bw[seq(1, nrow(summary_bw), by = 2),],summary_bw[seq(2, nrow(summary_bw), by = 2),])
+summary_bw <- data.frame(t(apply(summary_bw, 1, as.numeric)))
+rownames(summary_bw) <- study_names
+colnames(summary_bw) <- c("mean_male", "sd_male", "mean_female", "sd_female")
+rm(summary_bw_temp)
+
+# Macrosomia by sex
+
+# Birthweight_lga by sex
 
 
 ###############################################################################
