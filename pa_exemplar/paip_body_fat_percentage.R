@@ -60,11 +60,6 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('temp','D2'), newobj='D2a')
 
-#for GECKO only dummy variable for LTPA_DUR since this does not exist
-work1 <- no_preecl$GECKO
-work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR', quote(rep(1,",work1,")))")
-eval(parse(text=work2))
-ds.cbind(x=c('temp','D2','LTPA_DUR'), newobj='D2a', datasource=opals["GECKO"])
 
 #-----------------------------------
 # code for filtering out missings
@@ -74,7 +69,7 @@ study_names <- names(temp)
 rm(temp)
 
 my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_all = c('NEO_PER_BEAT')
+my_outcome_all = c('NEO_PER_BFAT')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
@@ -156,7 +151,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #######################################################
 # new model_1 code incremental addition of covariates etc.
 my_exp_1 = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_1 = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
+my_outcome_1 = c('NEO_PER_BFAT')
 my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
 
 model_1_ind = data.frame()
@@ -233,7 +228,7 @@ for (o in 1:length(opals)){
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c( 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
 REM_results = list()
@@ -312,7 +307,7 @@ model_1_REM <- REM_results
 ######### MODEL 2 starts here #######
 # new model_2 code incremental addition of covariates etc.
 my_exp_2 = c('MOD_VIG', 'LTPA_DUR')
-my_outcome_2 = c('BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome_2 = c('NEO_PER_BFAT')
 my_cov_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -401,7 +396,7 @@ for (o in 1:length(opals)){
 my_exposure = c('MOD_VIG', 'LTPA_DUR','LTPA_EE')
 #my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 #my_outcome = c('MACROSOMIA')
-my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -506,7 +501,7 @@ model_2_REM <- REM_results
 # Slightly confusing as the mediator is now the outcome in the model
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = 'MATERNAL_BMI'
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -583,7 +578,7 @@ model_3_2_REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = 'MATERNAL_BMI'
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -659,7 +654,7 @@ model_3_3_REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
 
@@ -764,7 +759,7 @@ model_3_4_REM <- REM_results
 ### Note that depending on model 3, the mediator may need to be added in!
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = 'GDM'
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
 
@@ -916,7 +911,7 @@ model_4_3_REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
 
@@ -1007,7 +1002,7 @@ model_4_4_REM <- REM_results
 
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 my_interaction = 'SEX'
@@ -1101,7 +1096,7 @@ model_5_REM <- REM_results
 ### then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 my_interaction = 'MATERNAL_OB'
@@ -1194,7 +1189,7 @@ model_6_REM <- REM_results
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU')
 my_interaction = 'ETHNICITY'
@@ -1285,7 +1280,7 @@ model_7_REM <- REM_results
 ### that stratifies the dataset by GDM and then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 my_interaction = 'GDM'
