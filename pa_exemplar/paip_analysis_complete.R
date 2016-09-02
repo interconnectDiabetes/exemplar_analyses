@@ -268,6 +268,12 @@ summary_mod <- summary_mod[,c(2,6,5,7)]
 rm(summary_mod_temp)
 
 # LTPA_EE
+summary_ee_temp <- ds.summary(x='E4$LTPA_EE')
+summary_ee <- data.frame(matrix(unlist(summary_ee_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_ee) <- study_names
+colnames(summary_ee) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_ee <- summary_ee[,c(2,6,5,7)]
+rm(summary_ee_temp)
 
 #---------------------------------------------------------
 # Summaries for outcomes
