@@ -446,7 +446,6 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #   }
 # }
 
-Sys.sleep(380)
 
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
@@ -517,7 +516,7 @@ for (k in 1:length(my_outcome)){
 model_1_all <- study_regs
 model_1_REM <- REM_results
 
-Sys.sleep(380)
+
 
 #  /'\_/`\            /\ \        /\_ \        /'___`\
 # /\      \    ___    \_\ \     __\//\ \      /\_\ /\ \
@@ -692,7 +691,7 @@ for (k in 1:length(my_outcome)){
 model_2_all <- study_regs
 model_2_REM <- REM_results
 
-Sys.sleep(380)
+
 
 #
 # #  /'\_/`\            /\ \        /\_ \       /'__`\
@@ -1299,7 +1298,7 @@ for (k in 1:length(my_outcome)){
 model_5_all <- study_regs
 model_5_REM <- REM_results
 
-Sys.sleep(380)
+
 
 #  /'\_/`\            /\ \        /\_ \       /'___\
 # /\      \    ___    \_\ \     __\//\ \     /\ \__/
@@ -1392,7 +1391,7 @@ for (k in 1:length(my_outcome)){
 model_6_all <- study_regs
 model_6_REM <- REM_results
 
-Sys.sleep(380)
+
 
 #                      __          ___          ________
 #  /'\_/`\            /\ \        /\_ \        /\_____  \
@@ -1485,7 +1484,7 @@ for (k in 1:length(my_outcome)){
 model_7_all <- study_regs
 model_7_REM <- REM_results
 
-Sys.sleep(380)
+
 
 
 #  /'\_/`\            /\ \        /\_ \       /'_ `\
