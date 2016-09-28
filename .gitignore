@@ -3,3 +3,9 @@ creds/
 
 # Any keys
 *.pem
+.Rproj.user
+
+# Miscellaneous
+dataShieldTestScript.R
+.Rhistory
+exemplar_analyses.Rproj
