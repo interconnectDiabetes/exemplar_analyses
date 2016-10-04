@@ -8,6 +8,7 @@
 ## Datasets:
 ## ABCD
 ## ALSPAC
+## DNBC
 ## GECKO
 ## HSS
 ## ROLO
@@ -343,12 +344,12 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
     text(usr[1], usr[3], variable, adj = c( 0, 0 ))
   }
   else if (out_family == 'binomial'){
-    forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+    forest(res,  digits = 3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
                                   .(round(res$QEp,3)),')')), 
-           xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
+           xlab=bquote(paste('Test of H'[0]*': true odds ratio = 1, p = ',
                              .(round(res$pval,3)))), cex = 1.5, atransf = exp)
     usr <- par("usr")
-    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 8), cex=1.5)
+    text(usr[2], usr[4], "Odds Ratio [95% CI]", adj = c(1, 8), cex=1.5)
     #text(usr[1], usr[4], gsub(paste0(ref_table,"\\$"),"", Reduce(paste, deparse(fmla))), adj = c( 0, 8 ))
     text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ))
     text(usr[1], usr[3], variable, adj = c( 0, 0))
@@ -471,6 +472,7 @@ for (k in 1:length(my_outcome)){
     estimates = vector()
     s_errors = vector()
     labels = vector()
+    #Sys.sleep(300)
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
@@ -676,7 +678,7 @@ for (k in 1:length(my_outcome)){
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
-    
+    #Sys.sleep(300)
     #meta analysis here
     for (n in 1:length(variables)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
