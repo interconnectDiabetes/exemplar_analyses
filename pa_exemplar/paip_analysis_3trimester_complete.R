@@ -314,7 +314,7 @@ rm(summary_lga_temp)
 
 do_reg <- function(my_fmla, study, outcome, out_family){
 
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -1428,7 +1428,7 @@ model_6_REM <- REM_results
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU')
 my_interaction = 'ETHNICITY'
@@ -1454,8 +1454,15 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
 
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
+      if (study_names[i] == 'GECKO'){
+        # omit regression since Gecko has 0 black, 14 other, << 14 white and this causes problems in comparisons
+      }
+      else if(study_names[i]=='DNBC'){
+        #omit regression since interaction term contains ethnicity,
+        # which is 1 for all participants in REPRO (causes singular matrix
+        # that can't be inverted)
+        #fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
+        #reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='REPRO'){
         #omit regression since interaction term contains ethnicity,
@@ -1479,14 +1486,14 @@ for (k in 1:length(my_outcome)){
         reg_data = reg_data[1:9]
         colnames(reg_data)[8] <- "low0.95CI"
         colnames(reg_data)[9] <- "high0.95CI"
-
       }
-      study_regs = rbind(study_regs,reg_data)
-
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+      if (length(reg_data) > 0){
+        study_regs = rbind(study_regs,reg_data)
+        estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+        s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+        labels = rbind(labels, reg_data[2,1])
+        variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+      }
     }
 
     #meta analysis here
