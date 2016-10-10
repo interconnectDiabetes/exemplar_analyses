@@ -342,7 +342,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
     text(usr[1], usr[3], variable, adj = c( 0, 0 ))
   }
   else if (out_family == 'binomial'){
-    forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+    forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
                                   .(round(res$QEp,3)),')')),
            xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
                              .(round(res$pval,3)))), cex = 1.5, atransf = exp)
@@ -504,7 +504,11 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_1_',j,'_',k,'_',n, '.png',sep=''))
+      png(file=mypath, width = 1260, height = 940)
+      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      dev.off()
     }
   }
 }
@@ -685,7 +689,10 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_2_',j,'_',k,'_',n, '.png',sep=''))
+      png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      dev.off()
     }
   }
 }
@@ -791,7 +798,10 @@ model_2_REM <- REM_results
 #
 #     #meta analysis here
 #     for (n in 1:length(variables)){
+#       mypath <- file.path('~','plots',paste('model_3_1_',j,'_',k,'_',n, '.png',sep=''))
+#       png(file=mypath, width = 1260, height = 940)
 #       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+#       dev.off()
 #     }
 #   }
 # }
@@ -868,7 +878,10 @@ model_2_REM <- REM_results
 #
 #     #meta analysis here
 #     for (n in 1:length(variables)){
+#       mypath <- file.path('~','plots',paste('model_3_3_',j,'_',k,'_',n, '.png',sep=''))
+#       png(file=mypath, width = 1260, height = 940)
 #       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+#       dev.off()
 #     }
 #   }
 # }
@@ -944,7 +957,10 @@ model_2_REM <- REM_results
 #
 #     #meta analysis here
 #     for (n in 1:length(variables)){
+#       mypath <- file.path('~','plots',paste('model_3_4_',j,'_',k,'_',n, '.png',sep=''))
+#       png(file=mypath, width = 1260, height = 940)
 #       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+#       dev.off()
 #     }
 #   }
 # }
@@ -1049,7 +1065,10 @@ model_2_REM <- REM_results
 #
 #     #meta analysis here
 #     for (n in 1:length(variables)){
+#       mypath <- file.path('~','plots',paste('model_4_2_',j,'_',k,'_',n, '.png',sep=''))
+#       png(file=mypath, width = 1260, height = 940)
 #       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+#       dev.off()
 #     }
 #   }
 # }
@@ -1124,7 +1143,10 @@ model_2_REM <- REM_results
 #     }
 #     #meta analysis here
 #     for (n in 1:length(variables)){
+#       mypath <- file.path('~','plots',paste('model_4_3_',j,'_',k,'_',n, '.png',sep=''))
+#       png(file=mypath, width = 1260, height = 940)
 #       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+#       dev.off()
 #     }
 #   }
 # }
@@ -1200,7 +1222,10 @@ model_2_REM <- REM_results
 #
 #     #meta analysis here
 #     for (n in 1:length(variables)){
+#       mypath <- file.path('~','plots',paste('model_4_4_',j,'_',k,'_',n, '.png',sep=''))
+#       png(file=mypath, width = 1260, height = 940)
 #       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+#       dev.off()
 #     }
 #   }
 # }
@@ -1299,7 +1324,10 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
+      png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      dev.off()
     }
   }
 }
@@ -1331,7 +1359,7 @@ model_5_REM <- REM_results
 my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_OB')
 my_interaction = 'MATERNAL_OB'
 
 REM_results = list()
@@ -1398,7 +1426,10 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
+      png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      dev.off()
     }
   }
 }
@@ -1428,9 +1459,9 @@ model_6_REM <- REM_results
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
-my_outcome = c('MACROSOMIA')
+my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU')
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 my_interaction = 'ETHNICITY'
 
 REM_results = list()
@@ -1498,7 +1529,10 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
+      png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      dev.off()
     }
   }
 }
@@ -1530,7 +1564,7 @@ model_7_REM <- REM_results
 my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM')
 my_interaction = 'GDM'
 
 REM_results = list()
@@ -1597,7 +1631,10 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_8_',j,'_',k,'_',n, '.png',sep=''))
+      png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      dev.off()
     }
   }
 }
