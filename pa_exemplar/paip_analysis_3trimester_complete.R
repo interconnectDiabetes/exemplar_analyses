@@ -83,7 +83,7 @@ num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
-my_exp_all = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
+my_exp_all = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
@@ -266,8 +266,8 @@ colnames(summary_mod) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%",
 summary_mod <- summary_mod[,c(2,6,5,7)]
 rm(summary_mod_temp)
 
-# LTPA_EE
-summary_ee_temp <- ds.summary(x='E4$LTPA_EE')
+# LTPA_EE_3
+summary_ee_temp <- ds.summary(x='E4$LTPA_EE_3')
 summary_ee <- data.frame(matrix(unlist(summary_ee_temp), nrow = num_studies, ncol=10, byrow=TRUE))
 rownames(summary_ee) <- study_names
 colnames(summary_ee) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
@@ -448,7 +448,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
-my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
+my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
@@ -618,7 +618,7 @@ model_1_REM <- REM_results
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 
-my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3','LTPA_EE')
+my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3','LTPA_EE_3')
 #my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 #my_outcome = c('MACROSOMIA')
 my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
@@ -1253,7 +1253,7 @@ model_2_REM <- REM_results
 ### that stratifies the dataset by sex and then investigates models 2, 3 and 4
 
 
-my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
+my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -1356,7 +1356,7 @@ model_5_REM <- REM_results
 ### that stratifies the dataset by maternal obesity and
 ### then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
+my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_OB')
@@ -1458,7 +1458,7 @@ model_6_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
+my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -1561,7 +1561,7 @@ model_7_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by GDM and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE')
+my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM')
