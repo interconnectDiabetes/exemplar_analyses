@@ -109,7 +109,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
-  #forest plots
+  #forest plots_body_fat_1
   
   if (out_family == 'gaussian') {
     usr <- par("usr")
@@ -283,7 +283,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_1_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_1_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
@@ -468,7 +468,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_2_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_2_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -577,7 +577,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_3_1_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_3_1_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -660,7 +660,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_3_2_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_3_2_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -758,7 +758,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_3_3_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_3_3_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -943,7 +943,7 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_4_2_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_4_2_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -1020,7 +1020,7 @@ for (k in 1:length(my_outcome)){
     }
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_4_3_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_4_3_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -1099,7 +1099,7 @@ for (k in 1:length(my_outcome)){
 
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_4_4_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_4_4_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -1202,7 +1202,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -1304,7 +1304,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -1406,7 +1406,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
@@ -1507,7 +1507,7 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_8_',j,'_',k,'_',n, '.png',sep=''))
+      mypath <- file.path('~','plots_body_fat_1',paste('model_8_',j,'_',k,'_',n, '.png',sep=''))
       png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
       dev.off()
