@@ -31,7 +31,10 @@ library(metafor)
 # user
 # logindata_all
 
+setwd("/home/l_pms69/exemplar_analyses/")
 source("creds/paip_body_fat_percentage_creds.R")
+setwd("~")
+
 
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
