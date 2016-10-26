@@ -98,7 +98,7 @@ row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 #--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
 
 do_reg <- function(my_fmla, study, outcome, out_family){
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -109,32 +109,35 @@ do_reg <- function(my_fmla, study, outcome, out_family){
 }
 
 do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
-  
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
-  #forest plots_body_fat_1
+  #add the weights to the labels
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res)), "%)")
+  
+  #forest plots
   
   if (out_family == 'gaussian') {
-    usr <- par("usr")
+    
     forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
                                   .(round(res$QEp,3)),')')),
            xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
-                             .(round(res$pval,3)))), ilab = cbind(weights.rma.uni(res)),ilab.xpos = c(usr[1]))
-    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 8))
-    #text(usr[1], usr[4], gsub(paste0(ref_table,"\\$"),"", Reduce(paste, deparse(fmla))), adj = c( 0, 8 ))
-    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ))
-    text(usr[1], usr[3], variable, adj = c( 0, 0 ))
+                             .(round(res$pval,3)))))
+    usr <- par("usr")
+    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+    
   }
   else if (out_family == 'binomial'){
-    usr <- par("usr")
+    
     forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
                                             .(round(res$QEp,3)),')')),
            xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
-                             .(round(res$pval,3)))),ilab = cbind(weights.rma.uni(res)),ilab.xpos = c(usr[1]), atransf = exp)
-    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 8))
-    #text(usr[1], usr[4], gsub(paste0(ref_table,"\\$"),"", Reduce(paste, deparse(fmla))), adj = c( 0, 8 ))
-    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ))
-    text(usr[1], usr[3], variable, adj = c( 0, 0))
+                             .(round(res$pval,3)))), atransf = exp)
+    usr <- par("usr")
+    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
   }
   
   return(res)
@@ -258,12 +261,6 @@ for (k in 1:length(my_outcome)){
       
       if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='ROLO' & my_exposure[j] == 'PARITY'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else {
         fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
