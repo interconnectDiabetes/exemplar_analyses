@@ -41,13 +41,11 @@ library(metafor)
 # user
 # logindata_all
 #setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
-
-source("creds/pa_exemplar_creds.R")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
+source("creds/pa_exemplar_creds_1_pon_ind.R")
 setwd("~")
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
-
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
@@ -88,7 +86,7 @@ study_names <- names(temp)
 rm(temp)
 
 my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
@@ -336,13 +334,13 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
   #add the weights to the labels
-  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res)), "%)")
   
   #forest plots
   
   if (out_family == 'gaussian') {
     
-    forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+    forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
                                   .(round(res$QEp,3)),')')),
            xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
                              .(round(res$pval,3)))))
@@ -468,9 +466,9 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 mypath <- file.path('~','plots','model_1_pi.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+png(file=mypath, width = 1260*3, height = 940*3, res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(3,3))
 
 for (k in 1:length(my_outcome)){
   
@@ -634,14 +632,15 @@ for (o in 1:length(opals)){
 my_exposure = c('MOD_VIG', 'LTPA_DUR','LTPA_EE')
 #my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 #my_outcome = c('MACROSOMIA')
-my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
+#my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-mypath <- file.path('~','plots','model_2.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+mypath <- file.path('~','plots','model_2_pi.png')
+png(file=mypath, width = 1260*3, height = 940*3, res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(3,3))
 
 REM_results = list()
 study_regs = data.frame()
@@ -760,9 +759,9 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 mypath <- file.path('~','plots','model_3a.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+png(file=mypath, width = 1260*3, height = 940*3, res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(3,3))
 
 for (k in 1:length(my_outcome)){
   
@@ -837,9 +836,9 @@ my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
 mypath <- file.path('~','plots','model_3b.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+png(file=mypath, width = 1260*3, height = 940*3, res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(3,3))
 
 REM_results = list()
 study_regs = data.frame()
@@ -918,9 +917,9 @@ my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
 
 mypath <- file.path('~','plots','model_3c.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+png(file=mypath, width = 1260*3, height = 940*3, res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(3,3))
 
 REM_results = list()
 study_regs = data.frame()
@@ -1283,7 +1282,8 @@ model_4_4_REM <- REM_results
 
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 my_interaction = 'SEX'
@@ -1292,15 +1292,12 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
+#mypath <- file.path('~','plots','model_3a.png')
+#png(file=mypath, width = 1260*3, height = 940*3, res = 300)
+#par(mar=c(5,3,2,2)+0.1)
+#par(mfrow=c(3,3))
+
 for (k in 1:length(my_outcome)){
-  
-  
-  #set up plots here because there are plots for interaction terms too
-  #sadly have to hard code the levels of the interation term
-  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*2, height = 940*length(my_exposure), res = 300)
-  par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),2))
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1361,11 +1358,15 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
+      mypath <- file.path('~','plots',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
+      
+      png(file=mypath, width = 1260, height = 940)
+      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      
+      dev.off()
     }
   }
-  
-  dev.off()
 }
 
 #Store results
@@ -1393,7 +1394,8 @@ model_5_REM <- REM_results
 ### then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_OB')
 my_interaction = 'MATERNAL_OB'
@@ -1403,14 +1405,6 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
-  #set up plots here because there are plots for interaction terms too
-  #sadly have to hard code the levels of the interation term
-  mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
-  par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(my_outcome,length(my_exposure)))
-  
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1506,7 +1500,8 @@ model_6_REM <- REM_results
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU','ETHNICITY')
 my_interaction = 'ETHNICITY'
@@ -1516,14 +1511,6 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
-  #set up plots here because there are plots for interaction terms too
-  #sadly have to hard code the levels of the interation term
-  mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
-  par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(my_outcome,length(my_exposure)))
-  
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1618,7 +1605,8 @@ model_7_REM <- REM_results
 ### that stratifies the dataset by GDM and then investigates models 2, 3 and 4
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 my_interaction = 'GDM'
@@ -1628,14 +1616,6 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
-  #set up plots here because there are plots for interaction terms too
-  #sadly have to hard code the levels of the interation term
-  mypath <- file.path('~','plots',paste('model_8_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*2, height = 940*length(my_exposure), res = 300)
-  par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(my_outcome,length(my_exposure)))
-  
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
