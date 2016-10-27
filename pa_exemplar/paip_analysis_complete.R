@@ -40,7 +40,7 @@ library(metafor)
 # password 
 # user
 # logindata_all
-#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_pms69/exemplar_analyses/")
 #setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 source("creds/pa_exemplar_creds.R")
@@ -459,8 +459,8 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-#my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
-my_outcome = c( 'PON_INDEX')
+my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
+#my_outcome = c( 'PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
 REM_results = list()
@@ -470,7 +470,7 @@ ref_table = 'E4'
 mypath <- file.path('~','plots','model_1_pi.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
   
@@ -641,7 +641,7 @@ my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 mypath <- file.path('~','plots','model_2.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 REM_results = list()
 study_regs = data.frame()
@@ -762,7 +762,7 @@ ref_table = 'E4'
 mypath <- file.path('~','plots','model_3a.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
   
@@ -839,7 +839,7 @@ my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 mypath <- file.path('~','plots','model_3b.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 REM_results = list()
 study_regs = data.frame()
@@ -920,7 +920,7 @@ my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 mypath <- file.path('~','plots','model_3c.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(my_outcome,length(my_exposure)))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 REM_results = list()
 study_regs = data.frame()
@@ -1409,7 +1409,7 @@ for (k in 1:length(my_outcome)){
   mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
   png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(my_outcome,length(my_exposure)))
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1522,7 +1522,7 @@ for (k in 1:length(my_outcome)){
   mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
   png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(my_outcome,length(my_exposure)))
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1634,7 +1634,7 @@ for (k in 1:length(my_outcome)){
   mypath <- file.path('~','plots',paste('model_8_', k, '.png',sep=''))
   png(file=mypath, width = 1260*2, height = 940*length(my_exposure), res = 300)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(my_outcome,length(my_exposure)))
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
