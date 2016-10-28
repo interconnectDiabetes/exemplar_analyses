@@ -203,26 +203,17 @@ colnames(summary_eth) <- c("N", "black", "other", "white")
 summary_edu <- list()
 #DNBC
 summary_edu['DNBC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['DNBC'])
-#GECKO
 summary_edu['GECKO'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['GECKO'])
-#HSS
 summary_edu['HSS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['HSS'])
-#REPRO
 summary_edu['REPRO'] <- ds.table1D(x= 'E4$MATERNAL_EDU',datasource = opals['REPRO'])
-#SWS
 summary_edu['SWS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['SWS'])
 
 #alcohol
 summary_alc <- list()
-#DNBC
 summary_alc['DNBC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
-#GECKO
 summary_alc['GECKO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['GECKO'])
-#HSS
 summary_alc['HSS'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['HSS'])
-#REPRO
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
-#SWS
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
 
 

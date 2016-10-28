@@ -204,32 +204,20 @@ colnames(summary_eth) <- c("N", "black", "other", "white")
 
 #education
 summary_edu <- list()
-#ABCD
 summary_edu['ABCD'] <- ds.summary(x = 'E4$MATERNAL_EDU',datasources = opals['ABCD'])
-#ALSPAC
 summary_edu['ALSPAC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['ALSPAC'])
-#DNBC
 summary_edu['DNBC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['DNBC'])
-#REPRO
 summary_edu['REPRO'] <- ds.table1D(x= 'E4$MATERNAL_EDU',datasource = opals['REPRO'])
-#ROLO
 summary_edu['ROLO'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['ROLO'])
-#SWS
 summary_edu['SWS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['SWS'])
 
 #alcohol
 summary_alc <- list()
-#ABCD
 summary_alc['ABCD'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
-#ALSPAC
 summary_alc['ALSPAC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ALSPAC'])
-#DNBC
 summary_alc['DNBC'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
-#REPRO
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
-#ROLO
 summary_alc['ROLO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ROLO'])
-#SWS
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
 
 

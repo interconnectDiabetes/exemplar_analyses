@@ -25,16 +25,18 @@ library(metafor)
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
+# Set working directory to source our credentials
+#setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
-# source our login credentials this allocates values to variables:
+# Sourcing the credentials sets values for the following variables:
 # server
 # url
 # table
 # password 
 # user
 # logindata_all
-#setwd("/home/l_pms69/exemplar_analyses/")
-setwd("/home/l_trpb2/git/exemplar_analyses/")
+
 source("creds/pa_exemplar_creds_1_pon_ind.R")
 setwd("~")
 datashield.logout(opals)
@@ -71,19 +73,19 @@ ds.cbind(x=c('temp','D2'), newobj='D2a')
 #eval(parse(text=work2))
 #ds.cbind(x=c('temp','D2','LTPA_DUR'), newobj='D2a', datasource=opals["GECKO"])
 
-#-----------------------------------
-# code for filtering out missings
+# Filter out missing values
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
+# Variables used within analysis
 my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
+my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
-#--- either the big loop or
+# Loop to produce E4 and model_all_len for descriptive stats
 # my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
 # model_all_len <- data.frame()
 # 
@@ -96,7 +98,7 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 # row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 
 
-# #--- or just run this to generate E4
+# Generate E4 without the loop, doesnt produce model_all_len
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
 ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
 ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
@@ -106,12 +108,10 @@ ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 ###############################################################################
 ########################### RUN SUMMARIES  ####################################
 ###############################################################################
-#data summary - only need to run if you want participant summary
-
-
 #---------------------------------------------------------
 # Summaries for covariates and confounders
 
+# Sex
 summary_sex_temp <- ds.summary('E4$SEX')
 summary_sex <- data.frame(matrix(unlist(summary_sex_temp), nrow = num_studies, ncol=6, byrow=TRUE))
 rownames(summary_sex) <- study_names
@@ -153,9 +153,7 @@ rm(mean_age, var_age)
 without_list <- c("REPRO")
 without <- opals
 without[which(names(without) %in% without_list)] <- NULL
-
 studynames_without <- study_names[!study_names %in% without_list]
-
 summary_parity_temp <- ds.summary('E4$PARITY', datasources=without)
 summary_parity <- data.frame(matrix(unlist(summary_parity_temp), nrow = (length(without)), ncol=10, byrow=TRUE))
 rownames(summary_parity) <- studynames_without
@@ -167,9 +165,7 @@ rm(without_list)
 #REPRO PARITY
 ds.asNumeric(x = 'E4$PARITY', datasources = opals["REPRO"])
 summary_parity_REPRO <- ds.quantileMean(x = 'PARITY_num',datasources = opals["REPRO"])
-
 remove(without)
-
 
 # binaries
 binary_var <- c('SMOKING', 'GDM')
@@ -210,38 +206,23 @@ rownames(summary_eth) <- study_names
 summary_eth <- summary_eth[,c(2,7,8,6)]
 colnames(summary_eth) <- c("N", "black", "other", "white")
 
+
 #education
 summary_edu <- list()
-#ABCD
-summary_edu['ABCD'] <- ds.summary(x = 'E4$MATERNAL_EDU',datasources = opals['ABCD'])
-#ALSPAC
 summary_edu['ALSPAC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['ALSPAC'])
-#GECKO
-summary_edu['GECKO'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['GECKO'])
-#HSS
+summary_edu['DNBC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['DNBC'])
 summary_edu['HSS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['HSS'])
-#REPRO
 summary_edu['REPRO'] <- ds.table1D(x= 'E4$MATERNAL_EDU',datasource = opals['REPRO'])
-#ROLO
 summary_edu['ROLO'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['ROLO'])
-#SWS
 summary_edu['SWS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['SWS'])
 
 #alcohol
 summary_alc <- list()
-#ABCD
-summary_alc['ABCD'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
-#ALSPAC
 summary_alc['ALSPAC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ALSPAC'])
-#GECKO
-summary_alc['GECKO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['GECKO'])
-#HSS
+summary_alc['DNBC'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
 summary_alc['HSS'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['HSS'])
-#REPRO
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
-#ROLO
 summary_alc['ROLO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ROLO'])
-#SWS
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
 
 
