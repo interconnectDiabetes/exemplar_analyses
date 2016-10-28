@@ -1,18 +1,11 @@
-## Run summary information and analysis for physical activity in pregnancy exemplar
-## 1. Log in to the servers
-## 2. Filter out preterm and preeclampsia cases
-## 3. Remove incomplete cases for the variables of interest
-## 4. Generate appropriate summaries of the variables of interest (optional)
-## 5. Run the models as per the analysis plan
+## Analysis script for first trimester PAIP analysis
 
 ## Datasets:
 ## ABCD
 ## ALSPAC
 ## DNBC
-## GECKO
-## HSS
-## ROLO
 ## REPRO
+## ROLO
 ## SWS
 ##  
 ## Author: Tom Bishop
