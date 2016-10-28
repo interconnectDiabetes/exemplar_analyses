@@ -804,9 +804,6 @@ model_5_REM <- REM_results
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
 
-
-
-#------------------------
 ########## MODEL 6 (interaction maternal obesity) starts here #############
 ### This code allows you to look at the significance of the interaction term
 ### This is done per study (in the _all tables) and for a RMA
@@ -826,9 +823,7 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
-  #set up plots here because there are plots for interaction terms too
-  #sadly have to hard code the levels of the interation term
+  # Settings for graph image
   mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
   png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
   par(mar=c(5,3,2,2)+0.1)
