@@ -41,7 +41,6 @@ setwd("~")
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
 
-
 ###############################################################################
 ########################### SET UP DATA  ######################################
 ###############################################################################
@@ -431,6 +430,7 @@ for (o in 1:length(opals)){
     }
   }
 }
+
 
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
