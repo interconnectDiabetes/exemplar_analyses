@@ -1,4 +1,7 @@
 ## Analysis script for first trimester PAIP analysis
+## Author: Tom Bishop
+##         Paul Scherer
+## Date: 29/07/2016
 
 ## Datasets:
 ## ABCD
@@ -7,10 +10,6 @@
 ## REPRO
 ## ROLO
 ## SWS
-##  
-## Author: Tom Bishop
-##         Paul Scherer
-## Date: 29/07/2016
 
 ###############################################################################
 ########################### Dependencies   ####################################
@@ -25,16 +24,17 @@ library(metafor)
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
+# Set working directory to source our credentials
+#setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
-# source our login credentials this allocates values to variables:
+# Sourcing the credentials sets values for the following variables:
 # server
 # url
 # table
 # password 
 # user
 # logindata_all
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 source("creds/pa_exemplar_creds.R")
 setwd("~")
@@ -48,17 +48,17 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE)
 # basic counts
 all_infants <- ds.length('D$SEX', type = 'split')
 
-#remove preterm <37w
+# remove preterm <37w
 ds.subset(x = 'D', subset = 'D1', logicalOperator = 'GESTATIONAL_AGE>=', threshold = 37)
 no_preterm <- ds.length('D1$SEX', type = 'split')
 
-#remove preeclampsia
+# remove preeclampsia
 ds.subset(x = 'D1', subset = 'D2', logicalOperator = 'PREECLAMPSIA==', threshold = 0)
 no_preecl <- ds.length('D2$SEX', type = 'split')
 
-#variables for model 1
-#need to generate a 'temp' variable with no missings and add this in,
-#because the ds.subset command needs at least 2 columns to work with (a bug, I think)
+# variables for model 1
+# need to generate a 'temp' variable with no missings and add this in,
+# because the ds.subset command needs at least 2 columns to work with (a ds bug)
 for(i in 1:length(opals)){
   work1 <- no_preecl[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'temp', quote(c(1:",work1,")))")
@@ -66,26 +66,26 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('temp','D2'), newobj='D2a')
 
-#for GECKO only dummy variable for LTPA_DUR since this does not exist
+# for GECKO only dummy variable for LTPA_DUR since this does not exist
 # comment out if not using GECKO
 #work1 <- no_preecl$GECKO
 #work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR', quote(rep(1,",work1,")))")
 #eval(parse(text=work2))
 #ds.cbind(x=c('temp','D2','LTPA_DUR'), newobj='D2a', datasource=opals["GECKO"])
 
-#-----------------------------------
-# code for filtering out missings
+# Filter out missing values
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
+# Variables used within analysis
 my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
 my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
-#--- either the big loop or
+# Loop to produce E4 and model_all_len for descriptive stats
 # my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
 # model_all_len <- data.frame()
 # 
@@ -98,28 +98,24 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 # row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 
 
-# #--- or just run this to generate E4
+# Generate E4 without the loop, doesnt produce model_all_len
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
 ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
 ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 
 
-
 ###############################################################################
-########################### RUN SUMMARIES  ####################################
+########################### DATA SUMMARIES ####################################
 ###############################################################################
-#data summary - only need to run if you want participant summary
-
-
 #---------------------------------------------------------
 # Summaries for covariates and confounders
 
+# Sex
 summary_sex_temp <- ds.summary('E4$SEX')
 summary_sex <- data.frame(matrix(unlist(summary_sex_temp), nrow = num_studies, ncol=6, byrow=TRUE))
 rownames(summary_sex) <- study_names
 colnames(summary_sex) <- c("type", "N", "male", "female", "count0", "count1")
 rm(summary_sex_temp)
-
 
 # gestational age by sex - most of the code is to sort out formatting
 summary_ga_temp <- ds.meanByClass(x='E4$GESTATIONAL_AGE~E4$SEX', type = 'split')
@@ -133,8 +129,8 @@ rownames(summary_ga) <- study_names
 colnames(summary_ga) <- c("mean_0", "sd_0", "mean_1", "sd_1")
 rm(summary_ga_temp)
 
-#mothers'characteristics
-#BMI
+# mothers'characteristics
+# BMI
 mean_bmi <- data.frame(matrix(unlist(ds.mean("E4$MATERNAL_BMI", type = 'split')), nrow = num_studies, ncol = 1, byrow=TRUE))
 var_bmi <- data.frame(matrix(unlist(datashield.aggregate(opals, as.symbol("varDS(E4$MATERNAL_BMI)"))), nrow = num_studies, ncol = 1, byrow=TRUE))
 summary_bmi <- cbind(mean_bmi,sqrt(var_bmi))
@@ -142,7 +138,7 @@ rownames(summary_bmi) <- study_names
 colnames(summary_bmi) <- c("mean", "sd")
 rm(mean_bmi, var_bmi)
 
-#Age
+# Age
 mean_age <- data.frame(matrix(unlist(ds.mean("E4$MATERNAL_AGE", type = 'split')), nrow = num_studies, ncol = 1, byrow=TRUE))
 var_age <- data.frame(matrix(unlist(datashield.aggregate(opals, as.symbol("varDS(E4$MATERNAL_AGE)"))), nrow = num_studies, ncol = 1, byrow=TRUE))
 summary_age <- cbind(mean_age,sqrt(var_age))
@@ -150,14 +146,11 @@ rownames(summary_age) <- study_names
 colnames(summary_age) <- c("mean", "sd")
 rm(mean_age, var_age)
 
-#parity
-
+# parity
 without_list <- c("REPRO")
 without <- opals
 without[which(names(without) %in% without_list)] <- NULL
-
 studynames_without <- study_names[!study_names %in% without_list]
-
 summary_parity_temp <- ds.summary('E4$PARITY', datasources=without)
 summary_parity <- data.frame(matrix(unlist(summary_parity_temp), nrow = (length(without)), ncol=10, byrow=TRUE))
 rownames(summary_parity) <- studynames_without
@@ -166,12 +159,10 @@ summary_parity <- summary_parity[,c(2,6,5,7)]
 rm(summary_parity_temp)
 rm(without_list)
 
-#REPRO PARITY
+# REPRO PARITY
 ds.asNumeric(x = 'E4$PARITY', datasources = opals["REPRO"])
 summary_parity_REPRO <- ds.quantileMean(x = 'PARITY_num',datasources = opals["REPRO"])
-
 remove(without)
-
 
 # binaries
 binary_var <- c('SMOKING', 'GDM')
@@ -218,10 +209,8 @@ summary_edu <- list()
 summary_edu['ABCD'] <- ds.summary(x = 'E4$MATERNAL_EDU',datasources = opals['ABCD'])
 #ALSPAC
 summary_edu['ALSPAC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['ALSPAC'])
-#GECKO
-summary_edu['GECKO'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['GECKO'])
-#HSS
-summary_edu['HSS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['HSS'])
+#DNBC
+summary_edu['DNBC'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['DNBC'])
 #REPRO
 summary_edu['REPRO'] <- ds.table1D(x= 'E4$MATERNAL_EDU',datasource = opals['REPRO'])
 #ROLO
@@ -235,10 +224,8 @@ summary_alc <- list()
 summary_alc['ABCD'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
 #ALSPAC
 summary_alc['ALSPAC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ALSPAC'])
-#GECKO
-summary_alc['GECKO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['GECKO'])
-#HSS
-summary_alc['HSS'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['HSS'])
+#DNBC
+summary_alc['DNBC'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
 #REPRO
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
 #ROLO
@@ -370,83 +357,80 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\     \ \_\
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/
 
+# MODEL 1 with incremental covariate addition
+my_exp_1 = c('MOD_VIG', 'LTPA_DUR')
+my_outcome_1 = c('BIRTH_WEIGHT_LGA')
+my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
 
-#------------------FIRST MODEL BEGINS HERE----------------------------
-#######################################################
-# new model_1 code incremental addition of covariates etc.
-# my_exp_1 = c('MOD_VIG', 'LTPA_DUR')
-# my_outcome_1 = c('BIRTH_WEIGHT_LGA')
-# my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
-# 
-# model_1_ind = data.frame()
-# 
-# #for each opal server
-# for (o in 1:length(opals)){
-#   # For each exposure
-#   for (i in 1:length(my_exp_1)){
-#     # we skip LTPA for GECKO
-#     if (my_exp_1[i] == 'LTPA_DUR' & study_names[o] == 'GECKO'){
-#       next
-#     }
-#     # look at each possible outcome
-#     for (j in 1:length(my_outcome_1)){
-#       # perform a check on the type of outcome which dictates the data model we assume for
-#       # linear regression
-#       if (ds.class(paste0('E4$',my_outcome_1[j]), datasources=opals[o]) == 'factor'){
-#         dataModel <- 'binomial'
-#       } else {
-#         dataModel <- 'gaussian'
-#       }
-#       my_cov_1_buildup = vector('character')
-#       # of which we incrementally add mediators/covariates/modifiers
-#       for (k in 0:length(my_cov_1)){
-#         model_1 <- data.frame()
-#         
-#         # create the formula
-#         # start with simply exposure and create incrementally more complicated
-#         # formulas
-#         if (length(my_cov_1_buildup)==0){
-#           fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
-#           fmla_right <- paste0('E4$', my_exp_1[i])
-#           fmla <- paste(fmla_left, fmla_right, sep="")
-#           fmla <- as.formula(fmla)
-#         } else {
-#           fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
-#           fmla_right_exp <- paste0('E4$', my_exp_1[i])
-#           fmla_right_cov <- paste0('E4$', my_cov_1_buildup, collapse="+")
-#           fmla_right <- paste(fmla_right_exp, fmla_right_cov, sep="+")
-#           fmla <- paste(fmla_left, fmla_right, sep="")
-#           fmla <- as.formula(fmla)
-#         }
-#         
-#         # create the model
-#         model <- ds.glm(formula=fmla, data='E4', family=dataModel, datasources=opals[o])
-#         model_coeffs <- model$coefficients
-#         rownames(model_coeffs) <- paste(rownames(model_coeffs), names(opals[o]), sep="_")
-#         model_1 <- rbind(model_1, model_coeffs)
-#         
-#         # Write in the data into table
-#         model_1$desc <- paste(my_outcome_1[j] ,paste(my_exp_1[i], paste0(my_cov_1_buildup,collapse="+"), sep="+"), sep="~")
-#         model_1 <- model_1[,c(ncol(model_1),1:(ncol(model_1)-1))]
-#         # binomial and gaussian regression have different outputs names which can confuse R's dataframes
-#         if (dataModel == 'binomial'){
-#           model_1 <- model_1[-c(8:10)]
-#           names(model_1)[names(model_1) == 'low0.95CI.LP' ] <- 'low0.95CI'
-#           names(model_1)[names(model_1) == 'high0.95CI.LP' ] <- 'high0.95CI'
-#           model_1_ind <- rbind(model_1_ind,model_1)
-#         } else {
-#           model_1_ind <- rbind(model_1_ind,model_1)
-#         }
-#         
-#         # to make sure that my_cov_1_buildup doesnt cause errors
-#         if (k == length(my_cov_1)){
-#         } else {
-#           my_cov_1_buildup <- c(my_cov_1_buildup, my_cov_1[k+1])
-#         }
-#       }
-#     }
-#   }
-# }
+model_1_ind = data.frame()
+
+#for each opal server
+for (o in 1:length(opals)){
+  # For each exposure
+  for (i in 1:length(my_exp_1)){
+    # we skip LTPA for GECKO
+    if (my_exp_1[i] == 'LTPA_DUR' & study_names[o] == 'GECKO'){
+      next
+    }
+    # look at each possible outcome
+    for (j in 1:length(my_outcome_1)){
+      # perform a check on the type of outcome which dictates the data model we assume for
+      # linear regression
+      if (ds.class(paste0('E4$',my_outcome_1[j]), datasources=opals[o]) == 'factor'){
+        dataModel <- 'binomial'
+      } else {
+        dataModel <- 'gaussian'
+      }
+      my_cov_1_buildup = vector('character')
+      # of which we incrementally add mediators/covariates/modifiers
+      for (k in 0:length(my_cov_1)){
+        model_1 <- data.frame()
+        
+        # create the formula
+        # start with simply exposure and create incrementally more complicated
+        # formulas
+        if (length(my_cov_1_buildup)==0){
+          fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
+          fmla_right <- paste0('E4$', my_exp_1[i])
+          fmla <- paste(fmla_left, fmla_right, sep="")
+          fmla <- as.formula(fmla)
+        } else {
+          fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
+          fmla_right_exp <- paste0('E4$', my_exp_1[i])
+          fmla_right_cov <- paste0('E4$', my_cov_1_buildup, collapse="+")
+          fmla_right <- paste(fmla_right_exp, fmla_right_cov, sep="+")
+          fmla <- paste(fmla_left, fmla_right, sep="")
+          fmla <- as.formula(fmla)
+        }
+        
+        # create the model
+        model <- ds.glm(formula=fmla, data='E4', family=dataModel, datasources=opals[o])
+        model_coeffs <- model$coefficients
+        rownames(model_coeffs) <- paste(rownames(model_coeffs), names(opals[o]), sep="_")
+        model_1 <- rbind(model_1, model_coeffs)
+        
+        # Write in the data into table
+        model_1$desc <- paste(my_outcome_1[j] ,paste(my_exp_1[i], paste0(my_cov_1_buildup,collapse="+"), sep="+"), sep="~")
+        model_1 <- model_1[,c(ncol(model_1),1:(ncol(model_1)-1))]
+        # binomial and gaussian regression have different outputs names which can confuse R's dataframes
+        if (dataModel == 'binomial'){
+          model_1 <- model_1[-c(8:10)]
+          names(model_1)[names(model_1) == 'low0.95CI.LP' ] <- 'low0.95CI'
+          names(model_1)[names(model_1) == 'high0.95CI.LP' ] <- 'high0.95CI'
+          model_1_ind <- rbind(model_1_ind,model_1)
+        } else {
+          model_1_ind <- rbind(model_1_ind,model_1)
+        }
+        
+        # to make sure that my_cov_1_buildup doesnt cause errors
+        if (k == length(my_cov_1)){
+        } else {
+          my_cov_1_buildup <- c(my_cov_1_buildup, my_cov_1[k+1])
+        }
+      }
+    }
+  }
+}
 
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
