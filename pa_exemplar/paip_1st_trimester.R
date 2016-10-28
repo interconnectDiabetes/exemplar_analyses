@@ -431,7 +431,7 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_1_pi.png')
+mypath <- file.path('~','plots','model_1.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -507,7 +507,7 @@ model_1_REM <- REM_results
 
 # MODEL 2 with incremental covariate addition
 my_exp_2 = c('MOD_VIG', 'LTPA_DUR')
-my_outcome_2 = c('BIRHT_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -593,8 +593,6 @@ for (o in 1:length(opals)){
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 my_exposure = c('MOD_VIG', 'LTPA_DUR','LTPA_EE')
-#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
-#my_outcome = c('MACROSOMIA')
 my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -630,20 +628,17 @@ for (k in 1:length(my_outcome)){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
+        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
@@ -664,8 +659,6 @@ for (k in 1:length(my_outcome)){
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
-    #Sys.sleep(300)
-    #meta analysis here
     for (n in 1:length(variables)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }

@@ -81,7 +81,7 @@ rm(temp)
 
 # Variables used within analysis
 my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
-my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
@@ -308,13 +308,13 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
   #add the weights to the labels
-  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res)), "%)")
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
   
   #forest plots
   
   if (out_family == 'gaussian') {
     
-    forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+    forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
                                   .(round(res$QEp,3)),')')),
            xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
                              .(round(res$pval,3)))))
@@ -349,83 +349,80 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\     \ \_\
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/
 
+# MODEL 1 with incremental covariate addition
+my_exp_1 = c('MOD_VIG', 'LTPA_DUR')
+my_outcome_1 = c('PON_INDEX')
+my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
 
-#------------------FIRST MODEL BEGINS HERE----------------------------
-#######################################################
-# new model_1 code incremental addition of covariates etc.
-# my_exp_1 = c('MOD_VIG', 'LTPA_DUR')
-# my_outcome_1 = c('BIRTH_WEIGHT_LGA')
-# my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
-# 
-# model_1_ind = data.frame()
-# 
-# #for each opal server
-# for (o in 1:length(opals)){
-#   # For each exposure
-#   for (i in 1:length(my_exp_1)){
-#     # we skip LTPA for GECKO
-#     if (my_exp_1[i] == 'LTPA_DUR' & study_names[o] == 'GECKO'){
-#       next
-#     }
-#     # look at each possible outcome
-#     for (j in 1:length(my_outcome_1)){
-#       # perform a check on the type of outcome which dictates the data model we assume for
-#       # linear regression
-#       if (ds.class(paste0('E4$',my_outcome_1[j]), datasources=opals[o]) == 'factor'){
-#         dataModel <- 'binomial'
-#       } else {
-#         dataModel <- 'gaussian'
-#       }
-#       my_cov_1_buildup = vector('character')
-#       # of which we incrementally add mediators/covariates/modifiers
-#       for (k in 0:length(my_cov_1)){
-#         model_1 <- data.frame()
-#         
-#         # create the formula
-#         # start with simply exposure and create incrementally more complicated
-#         # formulas
-#         if (length(my_cov_1_buildup)==0){
-#           fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
-#           fmla_right <- paste0('E4$', my_exp_1[i])
-#           fmla <- paste(fmla_left, fmla_right, sep="")
-#           fmla <- as.formula(fmla)
-#         } else {
-#           fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
-#           fmla_right_exp <- paste0('E4$', my_exp_1[i])
-#           fmla_right_cov <- paste0('E4$', my_cov_1_buildup, collapse="+")
-#           fmla_right <- paste(fmla_right_exp, fmla_right_cov, sep="+")
-#           fmla <- paste(fmla_left, fmla_right, sep="")
-#           fmla <- as.formula(fmla)
-#         }
-#         
-#         # create the model
-#         model <- ds.glm(formula=fmla, data='E4', family=dataModel, datasources=opals[o])
-#         model_coeffs <- model$coefficients
-#         rownames(model_coeffs) <- paste(rownames(model_coeffs), names(opals[o]), sep="_")
-#         model_1 <- rbind(model_1, model_coeffs)
-#         
-#         # Write in the data into table
-#         model_1$desc <- paste(my_outcome_1[j] ,paste(my_exp_1[i], paste0(my_cov_1_buildup,collapse="+"), sep="+"), sep="~")
-#         model_1 <- model_1[,c(ncol(model_1),1:(ncol(model_1)-1))]
-#         # binomial and gaussian regression have different outputs names which can confuse R's dataframes
-#         if (dataModel == 'binomial'){
-#           model_1 <- model_1[-c(8:10)]
-#           names(model_1)[names(model_1) == 'low0.95CI.LP' ] <- 'low0.95CI'
-#           names(model_1)[names(model_1) == 'high0.95CI.LP' ] <- 'high0.95CI'
-#           model_1_ind <- rbind(model_1_ind,model_1)
-#         } else {
-#           model_1_ind <- rbind(model_1_ind,model_1)
-#         }
-#         
-#         # to make sure that my_cov_1_buildup doesnt cause errors
-#         if (k == length(my_cov_1)){
-#         } else {
-#           my_cov_1_buildup <- c(my_cov_1_buildup, my_cov_1[k+1])
-#         }
-#       }
-#     }
-#   }
-# }
+model_1_ind = data.frame()
+
+#for each opal server
+for (o in 1:length(opals)){
+  # For each exposure
+  for (i in 1:length(my_exp_1)){
+    # we skip LTPA for GECKO
+    if (my_exp_1[i] == 'LTPA_DUR' & study_names[o] == 'GECKO'){
+      next
+    }
+    # look at each possible outcome
+    for (j in 1:length(my_outcome_1)){
+      # perform a check on the type of outcome which dictates the data model we assume for
+      # linear regression
+      if (ds.class(paste0('E4$',my_outcome_1[j]), datasources=opals[o]) == 'factor'){
+        dataModel <- 'binomial'
+      } else {
+        dataModel <- 'gaussian'
+      }
+      my_cov_1_buildup = vector('character')
+      # of which we incrementally add mediators/covariates/modifiers
+      for (k in 0:length(my_cov_1)){
+        model_1 <- data.frame()
+        
+        # create the formula
+        # start with simply exposure and create incrementally more complicated
+        # formulas
+        if (length(my_cov_1_buildup)==0){
+          fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
+          fmla_right <- paste0('E4$', my_exp_1[i])
+          fmla <- paste(fmla_left, fmla_right, sep="")
+          fmla <- as.formula(fmla)
+        } else {
+          fmla_left <- paste(paste('E4$', my_outcome_1[j], " ~ ", sep=""))
+          fmla_right_exp <- paste0('E4$', my_exp_1[i])
+          fmla_right_cov <- paste0('E4$', my_cov_1_buildup, collapse="+")
+          fmla_right <- paste(fmla_right_exp, fmla_right_cov, sep="+")
+          fmla <- paste(fmla_left, fmla_right, sep="")
+          fmla <- as.formula(fmla)
+        }
+        
+        # create the model
+        model <- ds.glm(formula=fmla, data='E4', family=dataModel, datasources=opals[o])
+        model_coeffs <- model$coefficients
+        rownames(model_coeffs) <- paste(rownames(model_coeffs), names(opals[o]), sep="_")
+        model_1 <- rbind(model_1, model_coeffs)
+        
+        # Write in the data into table
+        model_1$desc <- paste(my_outcome_1[j] ,paste(my_exp_1[i], paste0(my_cov_1_buildup,collapse="+"), sep="+"), sep="~")
+        model_1 <- model_1[,c(ncol(model_1),1:(ncol(model_1)-1))]
+        # binomial and gaussian regression have different outputs names which can confuse R's dataframes
+        if (dataModel == 'binomial'){
+          model_1 <- model_1[-c(8:10)]
+          names(model_1)[names(model_1) == 'low0.95CI.LP' ] <- 'low0.95CI'
+          names(model_1)[names(model_1) == 'high0.95CI.LP' ] <- 'high0.95CI'
+          model_1_ind <- rbind(model_1_ind,model_1)
+        } else {
+          model_1_ind <- rbind(model_1_ind,model_1)
+        }
+        
+        # to make sure that my_cov_1_buildup doesnt cause errors
+        if (k == length(my_cov_1)){
+        } else {
+          my_cov_1_buildup <- c(my_cov_1_buildup, my_cov_1[k+1])
+        }
+      }
+    }
+  }
+}
 
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
@@ -440,9 +437,9 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 mypath <- file.path('~','plots','model_1_pi.png')
-png(file=mypath, width = 1260*3, height = 940*3, res = 300)
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(3,3))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
   
@@ -517,7 +514,7 @@ model_1_REM <- REM_results
 ######### MODEL 2 starts here #######
 # new model_2 code incremental addition of covariates etc.
 my_exp_2 = c('MOD_VIG', 'LTPA_DUR')
-my_outcome_2 = c('BIRHT_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -604,17 +601,14 @@ for (o in 1:length(opals)){
 # Then it runs random effects models per outcome/exposure combinations
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR','LTPA_EE')
-#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
-#my_outcome = c('MACROSOMIA')
-#my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-mypath <- file.path('~','plots','model_2_pi.png')
-png(file=mypath, width = 1260*3, height = 940*3, res = 300)
+mypath <- file.path('~','plots','model_2.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(3,3))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 REM_results = list()
 study_regs = data.frame()
@@ -642,20 +636,17 @@ for (k in 1:length(my_outcome)){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
+        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
@@ -677,8 +668,6 @@ for (k in 1:length(my_outcome)){
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
-    #Sys.sleep(300)
-    #meta analysis here
     for (n in 1:length(variables)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
