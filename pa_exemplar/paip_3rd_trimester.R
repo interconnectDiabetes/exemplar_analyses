@@ -1,4 +1,4 @@
-## Analysis script for first trimester PAIP analysis
+## Analysis script for third trimester PAIP analysis
 ## Author: Tom Bishop
 ##         Paul Scherer
 ## Date: 29/07/2016
@@ -293,7 +293,7 @@ rm(summary_lga_temp)
 
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -308,7 +308,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
   #add the weights to the labels
-  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res)), "%)")
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
   
   #forest plots
   
