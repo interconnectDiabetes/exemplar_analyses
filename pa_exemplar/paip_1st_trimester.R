@@ -757,7 +757,6 @@ for (k in 1:length(my_outcome)){
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
       labels = rbind(labels, reg_data[2,1])
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
     }
     
     #meta analysis here
@@ -849,15 +848,12 @@ for (k in 1:length(my_outcome)){
         reg_data = reg_data[1:9]
         colnames(reg_data)[8] <- "low0.95CI"
         colnames(reg_data)[9] <- "high0.95CI"
-        
       }
       study_regs = rbind(study_regs,reg_data)
-      
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
       labels = rbind(labels, reg_data[2,1])
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
     }
     
     #meta analysis here
