@@ -437,7 +437,6 @@ for (o in 1:length(opals)){
 # Then it runs random effects models per outcome/exposure combinations
 my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
 my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
-#my_outcome = c( 'PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
 REM_results = list()
@@ -669,7 +668,6 @@ for (k in 1:length(my_outcome)){
         reg_data = reg_data[1:9]
         colnames(reg_data)[8] <- "low0.95CI"
         colnames(reg_data)[9] <- "high0.95CI"
-        
       }
       study_regs = rbind(study_regs,reg_data)
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -721,8 +719,6 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
-  
   #set up plots here because there are plots for interaction terms too
   #sadly have to hard code the levels of the interation term
   mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
@@ -792,7 +788,6 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
-  
   dev.off()
 }
 

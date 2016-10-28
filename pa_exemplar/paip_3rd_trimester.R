@@ -432,11 +432,14 @@ my_exposure = c('MOD_VIG_3', 'LTPA_DUR_3', 'LTPA_EE_3')
 my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
+REM_results = list()
+study_regs = data.frame()
+ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_1.png')
-png(file=mypath, width = 1260*3, height = 940*3, res = 300)
+mypath <- file.path('~','plots','model_1_pi.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(3,3))
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
   
@@ -602,7 +605,7 @@ my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
 mypath <- file.path('~','plots','model_2.png')
-png(file=mypath, width = 1260*3, height = 940*3, res = 300)
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
 
@@ -658,7 +661,6 @@ for (k in 1:length(my_outcome)){
         reg_data = reg_data[1:9]
         colnames(reg_data)[8] <- "low0.95CI"
         colnames(reg_data)[9] <- "high0.95CI"
-        
       }
       study_regs = rbind(study_regs,reg_data)
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -710,7 +712,13 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
+  #set up plots here because there are plots for interaction terms too
+  #sadly have to hard code the levels of the interation term
+  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*2, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),2))
+
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -770,12 +778,10 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
     }
   }
+  dev.off()
 }
 
 #Store results
