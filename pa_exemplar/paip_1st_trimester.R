@@ -849,20 +849,17 @@ for (k in 1:length(my_outcome)){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        # omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
+        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
@@ -888,15 +885,14 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
-      
-      png(file=mypath, width = 1260, height = 940)
-      
+      # mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
+      # REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      # dev.off()
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
-      dev.off()
     }
   }
+  dev.off()
 }
 
 #Store results
@@ -934,9 +930,6 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
-  #set up plots here because there are plots for interaction terms too
-  #sadly have to hard code the levels of the interation term
   mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
   png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
   par(mar=c(5,3,2,2)+0.1)
@@ -962,16 +955,10 @@ for (k in 1:length(my_outcome)){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit regression since interaction term contains ethnicity, 
-        # which is 1 for all participants in REPRO (causes singular matrix 
-        # that can't be inverted)
-        #fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
-        #reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+        #omit regression since interaction term contains singular ethnicity
       }
       else if(study_names[i]=='DNBC'){
-        #omit regression since interaction term contains ethnicity,
-        #fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
-        #reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+        #omit regression since interaction term contains singular ethnicity
       }
       else if(study_names[i]=='ROLO'){
         #omit from regression as problem interaction term
@@ -991,7 +978,6 @@ for (k in 1:length(my_outcome)){
         
       }
       study_regs = rbind(study_regs,reg_data)
-      
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
       labels = rbind(labels, reg_data[2,1])
@@ -1000,18 +986,16 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      
-      mypath <- file.path('~','plots',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
-      
-      png(file=mypath, width = 1260, height = 940)
-      
+      # mypath <- file.path('~','plots',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
+      # REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      # dev.off()
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
-      dev.off()
-      
     }
   }
+  dev.off()
 }
+
 
 #Store results
 model_7_all <- study_regs
@@ -1025,9 +1009,6 @@ model_7_REM <- REM_results
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
 
-
-
-#------------------------
 ######### MODEL 8 (interaction GDM) starts here ############
 ### This code allows you to look at the significance of the interaction term
 ### This is done per study (in the _all tables) and for a RMA
