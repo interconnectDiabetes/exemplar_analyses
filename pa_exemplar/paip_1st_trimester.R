@@ -727,20 +727,17 @@ for (k in 1:length(my_outcome)){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
+        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
@@ -756,7 +753,6 @@ for (k in 1:length(my_outcome)){
         
       }
       study_regs = rbind(study_regs,reg_data)
-      
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
       labels = rbind(labels, reg_data[2,1])
