@@ -23,7 +23,7 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_pms69/exemplar_analyses/")
 #setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # source our login credentials this allocates values to variables:
@@ -510,7 +510,7 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 
 # Settings for graph image
 mypath <- file.path('~','plots','model_5.png')
-png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
+png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_exposure),number_of_interactions))
 
@@ -835,7 +835,7 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 
 # Settings for graph image
 mypath <- file.path('~','plots','model_8.png')
-png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
+png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_exposure),number_of_interactions))
 
