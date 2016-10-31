@@ -239,7 +239,7 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_1_pi.png')
+mypath <- file.path('~','plots','model_1.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -615,12 +615,15 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
+number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
+
+# Settings for graph image
+mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
+png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_exposure),number_of_interactions))
+
 for (k in 1:length(my_outcome)){
-  # Settings for graph image
-  mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
-  par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_outcome),length(my_exposure)))
 
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -676,18 +679,18 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      # mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
-      # png(file=mypath, width = 1260, height = 940)
-      # REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      # dev.off()
+      #mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
+      #png(file=mypath, width = 1260, height = 940)
+      #REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      #dev.off()
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
-  dev.off()
 }
 
 
 #Store results
+dev.off()
 model_6_all <- study_regs
 model_6_REM <- REM_results
 
