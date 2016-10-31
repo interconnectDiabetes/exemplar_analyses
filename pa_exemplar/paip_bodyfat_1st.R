@@ -153,10 +153,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\     \ \_\
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/
 
-
-#------------------FIRST MODEL BEGINS HERE----------------------------
-#######################################################
-# new model_1 code incremental addition of covariates etc.
+# MODEL 1 with incremental covariate addition
 my_exp_1 = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
 my_outcome_1 = c('NEO_PER_BFAT')
 my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
@@ -308,9 +305,7 @@ model_1_REM <- REM_results
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/_____/ 
 
 
-#------------------------
-######### MODEL 2 starts here #######
-# new model_2 code incremental addition of covariates etc.
+# MODEL 2 with incremental covariate addition
 my_exp_2 = c('MOD_VIG', 'LTPA_DUR')
 my_outcome_2 = c('NEO_PER_BFAT')
 my_cov_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
@@ -399,8 +394,6 @@ for (o in 1:length(opals)){
 # Then it runs random effects models per outcome/exposure combinations
 
 my_exposure = c('MOD_VIG', 'LTPA_DUR','LTPA_EE')
-#my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
-#my_outcome = c('MACROSOMIA')
 my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
