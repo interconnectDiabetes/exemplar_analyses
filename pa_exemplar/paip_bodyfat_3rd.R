@@ -99,12 +99,9 @@ ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 ###############################################################################
 ########################### RUN MODELS  #######################################
 ###############################################################################
-
-#--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
-
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -114,12 +111,13 @@ do_reg <- function(my_fmla, study, outcome, out_family){
   return(model_coeffs)
 }
 
+
 do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
   #add the weights to the labels
-  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res)), "%)")
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
   
   #forest plots
   
