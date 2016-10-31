@@ -441,7 +441,6 @@ par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
   
-  #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
     outcome_family = 'binomial'

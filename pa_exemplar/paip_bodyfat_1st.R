@@ -22,6 +22,9 @@ library(metafor)
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
+# Set working directory to source our credentials
+#setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # source our login credentials this allocates values to variables:
 # server
@@ -31,11 +34,8 @@ library(metafor)
 # user
 # logindata_all
 
-setwd("/home/l_pms69/exemplar_analyses/")
 source("creds/paip_body_fat_percentage_creds.R")
 setwd("~")
-
-
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
 
@@ -63,41 +63,40 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('temp','D2'), newobj='D2a')
 
-
-#-----------------------------------
-# code for filtering out missings
+# Filter out missing values
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
+# Variables used within analysis
 my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
 my_outcome_all = c('NEO_PER_BFAT')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
-#--- either the big loop or
-my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
-model_all_len <- data.frame()
+# Loop to produce E4 and model_all_len for descriptive stats
+# my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
+# model_all_len <- data.frame()
+# 
+# for (i in 2:length(my_vars_all)){
+#   ds.subset(x = 'D2a', subset = 'E3', cols =  c(my_vars_all[1:i]))
+#   ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+#   model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
+# }
+# 
+# row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 
-for (i in 2:length(my_vars_all)){
-  ds.subset(x = 'D2a', subset = 'E3', cols =  c(my_vars_all[1:i]))
-  ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
-  model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
-}
-
-row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
-
+# Generate E4 without the loop, doesnt produce model_all_len
+my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
+ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
+ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 
 ###############################################################################
 ########################### RUN MODELS  #######################################
 ###############################################################################
-
-#--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
-
-#--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
-
 do_reg <- function(my_fmla, study, outcome, out_family){
+  
   model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
@@ -108,11 +107,13 @@ do_reg <- function(my_fmla, study, outcome, out_family){
   return(model_coeffs)
 }
 
+
 do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
+  
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
   
   #add the weights to the labels
-  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res)), "%)")
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
   
   #forest plots
   
@@ -241,9 +242,13 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
+mypath <- file.path('~','plots','model_1_pi.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+
 for (k in 1:length(my_outcome)){
   
-  #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
     outcome_family = 'binomial'
@@ -283,17 +288,13 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_1_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
     }
   }
 }
 
 #Store results
-
+dev.off()
 model_1_all <- study_regs
 model_1_REM <- REM_results
 
@@ -404,114 +405,10 @@ my_outcome = c('NEO_PER_BFAT')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  
-  #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-  
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-      
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-        
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
-    }
-    
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_2_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
-  }
-}
-
-
-
-#  /'\_/`\            /\ \        /\_ \       /'__`\   
-# /\      \    ___    \_\ \     __\//\ \     /\_\L\ \  
-# \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \    \/_/_\_<_ 
-#  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_    /\ \L\ \
-#   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
-#    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
-
-
-
-#------------------------
-################## MODEL 3 starts here ########################
-################## NEED TO FOLLOW GUIDE FOR MEDIATORS ##############
-# 1. If there is no overall association between the exposure and outcome
-#    then no need to run the following models
-# 2. If there is an association, model exposure association with mediator
-# 3. Then model mediator association with outcome
-# 4. If 2 and 3 were significant then test model with both mediator and exposure
-#   looking at their association with outcome
-# 5. If the mediator is still significant after controlling for exposure, then
-#    mediation is supported. If exposure is no longer significant while mediator is
-#    still significant then full mediation is occuring.
-
-#### Step 1 - is covered by model 2 (i.e. test for overall association between 
-#### exposure and outcome)
-
-
-####  Step 2 - Exposure association with mediator
-# Slightly confusing as the mediator is now the outcome in the model
-
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = c('NEO_PER_BFAT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
-
+mypath <- file.path('~','plots','model_2.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 REM_results = list()
 study_regs = data.frame()
@@ -520,273 +417,6 @@ ref_table = 'E4'
 for (k in 1:length(my_outcome)){
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-  
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-      
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in DNBC (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-        
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
-    }
-    
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_3_1_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
-  }
-}
-
-#Store results
-
-model_3_1_all <- study_regs
-model_3_1_REM <- REM_results
-
-my_exposure = c('MATERNAL_BMI','GDM')
-my_outcome = c('NEO_PER_BFAT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  
-  #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-  
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-      
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in DNBC (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-        
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
-    }
-    
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_3_2_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
-  }
-}
-
-#Store results
-model_3_2_all <- study_regs
-model_3_2_REM <- REM_results
-
-####  Step 3 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
-
-my_exposure = 'MATERNAL_BMI'
-my_outcome = c('NEO_PER_BFAT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-# ####  Step 4 - Mediator association with outcome
-# # Slightly confusing as the mediator is now the exposure in the model
-#
-my_exposure = c('LTPA_EE_3')
-my_outcome = c('LTPA_EE_3')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY','MATERNAL_BMI')
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  
-  #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-  
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-      
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in DNBC (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-        
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
-    }
-    
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_3_3_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
-  }
-}
-#
-# #Store results
-
-model_3_3_all <- study_regs
-model_3_3_REM <- REM_results
-
-####  Step 4 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
-
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = c('NEO_PER_BFAT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  
-  #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
     outcome_family = 'binomial'
@@ -811,6 +441,12 @@ for (k in 1:length(my_outcome)){
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
+      else if(study_names[i]=='DNBC'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
+        # be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
       else if(study_names[i]=='ROLO'){
         #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
         # be inverted)
@@ -831,7 +467,7 @@ for (k in 1:length(my_outcome)){
       study_regs = rbind(study_regs,reg_data)
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])      
+      labels = rbind(labels, reg_data[2,1])
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
@@ -839,278 +475,14 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-    }   
-  }
-}
-
-#Store results
-
-model_3_4_all <- study_regs
-model_3_4_REM <- REM_results
-
-
-#  /'\_/`\            /\ \        /\_ \     /\ \\ \     
-# /\      \    ___    \_\ \     __\//\ \    \ \ \\ \    
-# \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \    \ \ \\ \_  
-#  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_   \ \__ ,__\
-#   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \/_/\_\_/
-#    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/  
-
-
-
-#------------------------
-################## MODEL 4 starts here ########################
-################## NEED TO FOLLOW GUIDE FOR MEDIATORS ##############
-# 1. If there is no overall association between the exposure and outcome
-#    then no need to run the following models
-# 2. If there is an association, model exposure association with mediator
-# 3. Then model mediator association with outcome
-# 4. If 2 and 3 were significant then test model with both mediator and exposure
-#   looking at their association with outcome
-# 5. If the mediator is still significant after controlling for exposure, then
-#    mediation is supported. If exposure is no longer significant while mediator is
-#    still significant then full mediation is occuring.
-
-#### Step 1 - is covered by model 2 (i.e. test for overall association between 
-#### exposure and outcome)
-
-
-####  Step 2 - Exposure association with mediator
-# Slightly confusing as the mediator is now the outcome in the model
-### Note that depending on model 3, the mediator may need to be added in!
-
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = c('NEO_PER_BFAT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-
-  #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-
-    }
-
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_4_2_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
     }
   }
 }
 
 #Store results
-
-model_4_2_all <- study_regs
-model_4_2_REM <- REM_results
-
-####  Step 3 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
-
-my_exposure = 'GDM'
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-    }
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_4_3_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
-  }
-}
-
-#Store results
-
-model_4_3_all <- study_regs
-model_4_3_REM <- REM_results
-
-####  Step 4 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
-
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
-my_outcome = c('NEO_PER_BFAT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
-
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  #!!! Need to check whether there are other outcomes we need to handle !!!
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-
-    }
-
-    #meta analysis here
-    for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_4_4_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
-  }
-}
-
-#Store results
-model_4_4_all <- study_regs
-model_4_4_REM <- REM_results
-
+dev.off()
+model_2_all <- study_regs
+model_2_REM <- REM_results
 
 
 #                      __          ___       ______    
@@ -1142,7 +514,13 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
-  
+  #set up plots here because there are plots for interaction terms too
+  #sadly have to hard code the levels of the interation term
+  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*2, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),2))
+
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1159,7 +537,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -1192,22 +570,22 @@ for (k in 1:length(my_outcome)){
         
       }
       study_regs = rbind(study_regs,reg_data)
-      
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
       labels = rbind(labels, reg_data[2,1])
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
     }
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
+      # mypath <- file.path('~','plots',paste('model_5_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
+      # REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      # dev.off()
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
     }
   }
+  dev.off()
 }
 
 #Store results
@@ -1245,6 +623,12 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 for (k in 1:length(my_outcome)){
+  # Settings for graph image
+  mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
+
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1261,24 +645,21 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_3' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
       else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
+        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
         reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
       }
@@ -1294,23 +675,24 @@ for (k in 1:length(my_outcome)){
         
       }
       study_regs = rbind(study_regs,reg_data)
-      
       estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
       s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
       labels = rbind(labels, reg_data[2,1])
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
     }
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
+      # mypath <- file.path('~','plots',paste('model_6_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
+      # REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      # dev.off()
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
     }
   }
+  dev.off()
 }
+
 
 #Store results
 model_6_all <- study_regs
@@ -1345,7 +727,13 @@ my_interaction = 'ETHNICITY'
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
+
 for (k in 1:length(my_outcome)){
+  mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*3, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
+
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1363,21 +751,13 @@ for (k in 1:length(my_outcome)){
       reg_data <- data.frame()
       
       if (study_names[i] == 'GECKO'){
-        # omit regression since Gecko has 0 black, 14 other, << 14 white and this causes problems in comparisons
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit regression since interaction term contains ethnicity,
-        # which is 1 for all participants in REPRO (causes singular matrix
-        # that can't be inverted)
-        #fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
-        #reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+        # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
-        #omit regression since interaction term contains ethnicity,
-        # which is 1 for all participants in REPRO (causes singular matrix
-        # that can't be inverted)
-        #fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+"),"+", ref_table,"$",my_interaction,"*", ref_table,"$",my_exposure[j]))
-        #reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+        #omit regression since interaction term contains singular ethnicity
+      }
+      else if(study_names[i]=='DNBC'){
+        #omit regression since interaction term contains singular ethnicity
       }
       else if(study_names[i]=='ROLO'){
         #omit from regression as problem interaction term
@@ -1406,13 +786,16 @@ for (k in 1:length(my_outcome)){
     
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots_body_fat_1',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
+      # mypath <- file.path('~','plots',paste('model_7_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
+      # REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+      # dev.off()
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
     }
   }
+  dev.off()
 }
+
 
 #Store results
 model_7_all <- study_regs

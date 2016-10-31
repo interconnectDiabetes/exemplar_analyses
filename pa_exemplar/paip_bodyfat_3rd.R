@@ -1,26 +1,17 @@
-## Run summary information and analysis for physical activity in pregnancy exemplar
-## 1. Log in to the servers
-## 2. Filter out preterm and preeclampsia cases
-## 3. Remove incomplete cases for the variables of interest
-## 4. Generate appropriate summaries of the variables of interest (optional)
-## 5. Run the models as per the analysis plan
+# Analysis of Percentage body fat for babies against physical activity
 
 ## Datasets:
-## DNBC
-## GECKO
 ## HSS
-## REPRO
+## ROLO
 ## SWS
-##
-## Author: Tom Bishop
-##         Paul Scherer
-## Date: 29/07/2016
+
+## Author: Paul Scherer
+##         Tom Bishop
+## Date: 30/08/2016
 
 ###############################################################################
 ########################### Dependencies   ####################################
 ###############################################################################
-
-
 library(opal)
 library(dsBaseClient)
 library(dsStatsClient)
@@ -31,20 +22,20 @@ library(metafor)
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
+# Set working directory to source our credentials
+#setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # source our login credentials this allocates values to variables:
 # server
 # url
 # table
-# password
+# password 
 # user
 # logindata_all
-# set the working directory for credentials
-#setwd("/home/l_pms69/exemplar_analyses/")
-setwd("/home/l_trpb2/git/exemplar_analyses/")
+
 source("creds/paip_body_fat_percentage_creds.R")
 setwd("~")
-
 datashield.logout(opals)
 opals <- datashield.login(logins=logindata_all, assign=TRUE)
 
