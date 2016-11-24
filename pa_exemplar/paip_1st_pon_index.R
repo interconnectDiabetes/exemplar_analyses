@@ -66,12 +66,12 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('temp','D2'), newobj='D2a')
 
-#for GECKO only dummy variable for LTPA_DUR since this does not exist
+#for GECKO only dummy variable for LTPA_DUR_temp since this does not exist
 # comment out if not using GECKO
 #work1 <- no_preecl$GECKO
-#work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR', quote(rep(1,",work1,")))")
+#work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR_temp', quote(rep(1,",work1,")))")
 #eval(parse(text=work2))
-#ds.cbind(x=c('temp','D2','LTPA_DUR'), newobj='D2a', datasource=opals["GECKO"])
+#ds.cbind(x=c('temp','D2','LTPA_DUR_temp'), newobj='D2a', datasource=opals["GECKO"])
 
 # Filter out missing values
 temp <- ds.summary('D$SEX')
@@ -80,7 +80,7 @@ study_names <- names(temp)
 rm(temp)
 
 # Variables used within analysis
-my_exp_all = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exp_all = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
@@ -230,23 +230,23 @@ summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
 # Summaries for exposures
 
 #LTPA
-summary_ltpa_temp <- ds.summary('E4$LTPA_DUR')
+summary_ltpa_temp <- ds.summary('E4$LTPA_DUR_temp')
 summary_ltpa <- data.frame(matrix(unlist(summary_ltpa_temp), nrow = num_studies, ncol=10, byrow=TRUE))
 rownames(summary_ltpa) <- study_names
 colnames(summary_ltpa) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
 summary_ltpa <- summary_ltpa[,c(2,6,5,7)]
 rm(summary_ltpa_temp)
 
-# MOD_VIG
-summary_mod_temp <- ds.summary('E4$MOD_VIG')
+# MOD_VIG_temp
+summary_mod_temp <- ds.summary('E4$MOD_VIG_temp')
 summary_mod <- data.frame(matrix(unlist(summary_mod_temp), nrow = num_studies, ncol=10, byrow=TRUE))
 rownames(summary_mod) <- study_names
 colnames(summary_mod) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
 summary_mod <- summary_mod[,c(2,6,5,7)]
 rm(summary_mod_temp)
 
-# LTPA_EE
-summary_ee_temp <- ds.summary(x='E4$LTPA_EE')
+# LTPA_EE_temp
+summary_ee_temp <- ds.summary(x='E4$LTPA_EE_temp')
 summary_ee <- data.frame(matrix(unlist(summary_ee_temp), nrow = num_studies, ncol=10, byrow=TRUE))
 rownames(summary_ee) <- study_names
 colnames(summary_ee) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
@@ -350,7 +350,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/
 
 # MODEL 1 with incremental covariate addition
-my_exp_1 = c('MOD_VIG', 'LTPA_DUR')
+my_exp_1 = c('MOD_VIG_temp', 'LTPA_DUR_temp')
 my_outcome_1 = c('PON_INDEX')
 my_cov_1 = c('GESTATIONAL_AGE', 'SEX')
 
@@ -361,7 +361,7 @@ for (o in 1:length(opals)){
   # For each exposure
   for (i in 1:length(my_exp_1)){
     # we skip LTPA for GECKO
-    if (my_exp_1[i] == 'LTPA_DUR' & study_names[o] == 'GECKO'){
+    if (my_exp_1[i] == 'LTPA_DUR_temp' & study_names[o] == 'GECKO'){
       next
     }
     # look at each possible outcome
@@ -427,7 +427,7 @@ for (o in 1:length(opals)){
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
-my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 #my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_outcome = c( 'PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
@@ -460,7 +460,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='ROLO' & my_exposure[j] == 'PARITY'){
@@ -513,7 +513,7 @@ model_1_REM <- REM_results
 #------------------------
 ######### MODEL 2 starts here #######
 # new model_2 code incremental addition of covariates etc.
-my_exp_2 = c('MOD_VIG', 'LTPA_DUR')
+my_exp_2 = c('MOD_VIG_temp', 'LTPA_DUR_temp')
 my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -525,7 +525,7 @@ for (o in 1:length(opals)){
   # For each exposure
   for (i in 1:length(my_exp_2)){
     # we skip LTPA for GECKO
-    if (my_exp_2[i] == 'LTPA_DUR' & study_names[o] == 'GECKO'){
+    if (my_exp_2[i] == 'LTPA_DUR_temp' & study_names[o] == 'GECKO'){
       next
     }
     if (study_names[o] == 'REPRO') {
@@ -600,7 +600,7 @@ for (o in 1:length(opals)){
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR','LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp','LTPA_EE_temp')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -632,7 +632,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -698,7 +698,7 @@ model_2_REM <- REM_results
 ### that stratifies the dataset by sex and then investigates models 2, 3 and 4
 
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -734,7 +734,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -808,7 +808,7 @@ model_5_REM <- REM_results
 ### that stratifies the dataset by maternal obesity and 
 ### then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_OB')
@@ -844,7 +844,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -916,7 +916,7 @@ model_6_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU','ETHNICITY')
@@ -952,7 +952,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -1020,7 +1020,7 @@ model_7_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by GDM and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -1056,7 +1056,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){

@@ -24,7 +24,7 @@
 ####  Step 2 - Exposure association with mediator
 # Slightly confusing as the mediator is now the outcome in the model
 
-my_exposure = c('LTPA_')
+my_exposure = c('LTPA_DUR_temp')
 my_outcome = 'MATERNAL_BMI'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -57,7 +57,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -138,7 +138,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -187,7 +187,7 @@ model_3_3_REM <- REM_results
 ####  Step 4 - Mediator association with outcome
 # Slightly confusing as the mediator is now the exposure in the model
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
@@ -219,7 +219,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -296,7 +296,7 @@ model_3_4_REM <- REM_results
 # Slightly confusing as the mediator is now the outcome in the model
 ### Note that depending on model 3, the mediator may need to be added in!
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp')
 my_outcome = 'GDM'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
@@ -324,7 +324,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -407,7 +407,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -460,7 +460,7 @@ model_4_3_REM <- REM_results
 ####  Step 4 - Mediator association with outcome
 # Slightly confusing as the mediator is now the exposure in the model
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
@@ -487,7 +487,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){

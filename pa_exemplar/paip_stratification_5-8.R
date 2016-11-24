@@ -15,7 +15,7 @@ ds.subset(x = 'E4', subset = 'E4_6_1', logicalOperator = 'MATERNAL_OB==', thresh
 ds.subset(x = 'E4', subset = 'E4_6_2', logicalOperator = 'MATERNAL_OB==', threshold = 2)
 
 
-my_exposure = c('MOD_VIG', 'LTPA_DUR', 'LTPA_EE')
+my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
 my_outcome = c('MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -46,7 +46,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -124,7 +124,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -207,7 +207,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
