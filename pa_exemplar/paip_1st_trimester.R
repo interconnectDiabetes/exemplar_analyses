@@ -1088,7 +1088,6 @@ for (k in 1:length(my_outcome)){
   }
 }
 
-
 #Store results
 dev.off()
 model_8_all <- study_regs
