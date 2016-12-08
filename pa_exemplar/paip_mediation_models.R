@@ -24,7 +24,7 @@
 ####  Step 2 - Exposure association with mediator
 # Slightly confusing as the mediator is now the outcome in the model
 
-my_exposure = c('LTPA_DUR_temp')
+my_exposure = c('LTPA_DUR_filt')
 my_outcome = 'MATERNAL_BMI'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -57,7 +57,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -138,7 +138,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -187,7 +187,7 @@ model_3_3_REM <- REM_results
 ####  Step 4 - Mediator association with outcome
 # Slightly confusing as the mediator is now the exposure in the model
 
-my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp')
+my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
@@ -219,7 +219,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -296,7 +296,7 @@ model_3_4_REM <- REM_results
 # Slightly confusing as the mediator is now the outcome in the model
 ### Note that depending on model 3, the mediator may need to be added in!
 
-my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp')
+my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt')
 my_outcome = 'GDM'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
@@ -324,7 +324,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -361,18 +361,14 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       mypath <- file.path('~','plots',paste('model_3_',j,'_',k,'_',n, '.png',sep=''))
-      
       png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
       dev.off()
     }
   }
 }
 
 #Store results
-
 model_4_2_all <- study_regs
 model_4_2_REM <- REM_results
 
@@ -384,7 +380,6 @@ my_exposure = 'GDM'
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
-
 
 REM_results = list()
 study_regs = data.frame()
@@ -407,7 +402,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -442,11 +437,8 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       mypath <- file.path('~','plots',paste('model_4_3_',j,'_',k,'_',n, '.png',sep=''))
-      
       png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
       dev.off()
     }
   }
@@ -460,11 +452,10 @@ model_4_3_REM <- REM_results
 ####  Step 4 - Mediator association with outcome
 # Slightly confusing as the mediator is now the exposure in the model
 
-my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp')
+my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
-
 
 REM_results = list()
 study_regs = data.frame()
@@ -487,7 +478,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -524,11 +515,8 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       mypath <- file.path('~','plots',paste('model_4_4_',j,'_',k,'_',n, '.png',sep=''))
-      
       png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
       dev.off()
     }
   }

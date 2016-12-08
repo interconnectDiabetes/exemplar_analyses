@@ -15,7 +15,7 @@ ds.subset(x = 'E4', subset = 'E4_6_1', logicalOperator = 'MATERNAL_OB==', thresh
 ds.subset(x = 'E4', subset = 'E4_6_2', logicalOperator = 'MATERNAL_OB==', threshold = 2)
 
 
-my_exposure = c('MOD_VIG_temp', 'LTPA_DUR_temp', 'LTPA_EE_temp')
+my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
 my_outcome = c('MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -46,7 +46,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -89,11 +89,8 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       mypath <- file.path('~','plots',paste('model_6_0_',j,'_',k,'_',n, '.png',sep=''))
-      
       png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
       dev.off()
     }
   }
@@ -101,13 +98,12 @@ for (k in 1:length(my_outcome)){
 
 
 # second stratum - 1
-
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_6_1'
 
 for (k in 1:length(my_outcome)){
-  
+
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -124,7 +120,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -167,11 +163,8 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       mypath <- file.path('~','plots',paste('model_6_1_',j,'_',k,'_',n, '.png',sep=''))
-      
       png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
       dev.off()
     }
   }
@@ -207,7 +200,7 @@ for (k in 1:length(my_outcome)){
     for(i in 1:length(opals)) {
       reg_data <- data.frame()
       
-      if (my_exposure[j] == 'LTPA_DUR_temp' & study_names[i] == 'GECKO'){
+      if (my_exposure[j] == 'LTPA_DUR_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -250,16 +243,12 @@ for (k in 1:length(my_outcome)){
     #meta analysis here
     for (n in 1:length(variables)){
       mypath <- file.path('~','plots',paste('model_6_2_',j,'_',k,'_',n, '.png',sep=''))
-      
       png(file=mypath, width = 1260, height = 940)
-      
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      
       dev.off()
     }
   }
 }
-
 
 #Store results
 model_6_2_all <- study_regs
