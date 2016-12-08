@@ -14,19 +14,21 @@ ds.subset(x = 'E4', subset = 'E4_6_0', logicalOperator = 'MATERNAL_OB==', thresh
 ds.subset(x = 'E4', subset = 'E4_6_1', logicalOperator = 'MATERNAL_OB==', threshold = 1)
 ds.subset(x = 'E4', subset = 'E4_6_2', logicalOperator = 'MATERNAL_OB==', threshold = 2)
 
-
 my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
 my_outcome = c('MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
 
-
 # first stratum - 0
-
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_6_0'
+
+mypath <- file.path('~','plots','model_6_0.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
   
@@ -85,23 +87,29 @@ for (k in 1:length(my_outcome)){
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
-    #Sys.sleep(300)
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_6_0_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
+      # mypath <- file.path('~','plots',paste('model_6_0_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
+    } 
   }
 }
-
+#Store results
+dev.off()
+model_6_0_all <- study_regs
+model_6_0_REM <- REM_results
 
 # second stratum - 1
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_6_1'
 
+mypath <- file.path('~','plots','model_6_1.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+
 for (k in 1:length(my_outcome)){
 
   #!!! Need to check whether there are other outcomes we need to handle !!! 
@@ -159,19 +167,16 @@ for (k in 1:length(my_outcome)){
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
-    #Sys.sleep(300)
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_6_1_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
+      # mypath <- file.path('~','plots',paste('model_6_1_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
+    } 
   }
 }
-
-
 #Store results
+dev.off()
 model_6_1_all <- study_regs
 model_6_1_REM <- REM_results
 
@@ -182,6 +187,11 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_6_2'
 
+mypath <- file.path('~','plots','model_6_2.png')
+png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+
 for (k in 1:length(my_outcome)){
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
@@ -239,17 +249,15 @@ for (k in 1:length(my_outcome)){
       variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       
     }
-    #Sys.sleep(300)
     #meta analysis here
     for (n in 1:length(variables)){
-      mypath <- file.path('~','plots',paste('model_6_2_',j,'_',k,'_',n, '.png',sep=''))
-      png(file=mypath, width = 1260, height = 940)
+      # mypath <- file.path('~','plots',paste('model_6_2_',j,'_',k,'_',n, '.png',sep=''))
+      # png(file=mypath, width = 1260, height = 940)
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-      dev.off()
-    }
+    } 
   }
 }
-
 #Store results
+dev.off()
 model_6_2_all <- study_regs
 model_6_2_REM <- REM_results
