@@ -24,8 +24,10 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
+
+#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
+
 
 # Sourcing the credentials sets values for the following variables:
 # server
@@ -86,16 +88,16 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
 # Loop to produce E4 and model_all_len for descriptive stats
-# my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
-# model_all_len <- data.frame()
-# 
-# for (i in 2:length(my_vars_all)){
-#   ds.subset(x = 'D2a', subset = 'E3', cols =  c(my_vars_all[1:i]))
-#   ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
-#   model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
-# }
-# 
-# row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
+my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
+model_all_len <- data.frame()
+
+for (i in 2:length(my_vars_all)){
+  ds.subset(x = 'D2a', subset = 'E3', cols =  c(my_vars_all[1:i]))
+  ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+  model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
+}
+
+row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 
 # Generate E4 without the loop, doesnt produce model_all_len
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
@@ -164,7 +166,7 @@ summary_parity_GECKO <- ds.table1D(x = 'E4$PARITY',datasources = opals["GECKO"])
 remove(without)
 
 # binaries
-binary_var <- c('SMOKING', 'GDM')
+binary_var <- c('GDM')
 binary_df <- data.frame()
 for (bin in binary_var) {
   summary_temp <- ds.summary(paste0('E4$',bin))
