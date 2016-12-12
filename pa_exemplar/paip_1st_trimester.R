@@ -709,13 +709,15 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_5.png')
-png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
+  
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -777,6 +779,7 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 #Store results
@@ -813,13 +816,15 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_6.png')
-png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
+    
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -880,6 +885,7 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 
@@ -920,14 +926,15 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_7.png')
-png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
 
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
+  
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -986,6 +993,7 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 
@@ -1022,13 +1030,14 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_8.png')
-png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_8_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1094,6 +1103,7 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 #Store results
