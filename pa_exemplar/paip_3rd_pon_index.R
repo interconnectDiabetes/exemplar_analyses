@@ -705,7 +705,7 @@ model_2_REM <- REM_results
 ####  Step 2 - Exposure association with mediator
 # Slightly confusing as the mediator is now the outcome in the model
 
-my_exposure = c('LTPA_DUR_3_filt')
+my_exposure = c('MOD_VIG_3_filt')
 my_outcome = 'MATERNAL_BMI'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -794,7 +794,7 @@ model_3_2_REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = 'MATERNAL_BMI'
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -880,8 +880,8 @@ model_3_3_REM <- REM_results
 ####  Step 4_1 - Mediator association with outcome
 # Slightly confusing as the mediator is now the exposure in the model
 
-my_exposure = c('LTPA_DUR_3_filt')
-my_outcome = c('BIRTH_WEIGHT')
+my_exposure = c('MOD_VIG_3_filt')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
 
@@ -968,9 +968,9 @@ model_3_4_1_REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = c( 'MATERNAL_BMI')
-my_outcome = c('BIRTH_WEIGHT')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'LTPA_DUR_3_filt')
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MOD_VIG_3_filt')
 
 mypath <- file.path('~','plots','model_3c2.png')
 png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
@@ -1082,7 +1082,7 @@ model_3_4_2_REM <- REM_results
 # Slightly confusing as the mediator is now the outcome in the model
 ### Note that depending on model 3, the mediator may need to be added in!
 
-my_exposure = c('LTPA_DUR_3_filt')
+my_exposure = c('MOD_VIG_3_filt')
 my_outcome = 'GDM'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
@@ -1172,7 +1172,7 @@ model_4_2_REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = 'GDM'
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
 
@@ -1256,8 +1256,8 @@ model_4_3_REM <- REM_results
 ####  Step 4_1 - Mediator association with outcome
 # Slightly confusing as the mediator is now the exposure in the model
 
-my_exposure = c( 'LTPA_DUR_3_filt')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_exposure = c( 'MOD_VIG_3_filt')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
 
@@ -1344,9 +1344,9 @@ model_4_4_1REM <- REM_results
 # Slightly confusing as the mediator is now the exposure in the model
 
 my_exposure = c( 'GDM')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'LTPA_DUR_3_filt') #maybe also MATERNAL_BMI
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MOD_VIG_3_filt') #maybe also MATERNAL_BMI
 
 REM_results = list()
 study_regs = data.frame()
