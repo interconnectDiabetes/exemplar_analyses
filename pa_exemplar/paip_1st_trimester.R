@@ -783,7 +783,7 @@ for (k in 1:length(my_outcome)){
 }
 
 #Store results
-dev.off()
+
 model_5_all <- study_regs
 model_5_REM <- REM_results
 
@@ -890,7 +890,7 @@ for (k in 1:length(my_outcome)){
 
 
 #Store results
-dev.off()
+
 model_6_all <- study_regs
 model_6_REM <- REM_results
 
@@ -998,7 +998,7 @@ for (k in 1:length(my_outcome)){
 
 
 #Store results
-dev.off()
+
 model_7_all <- study_regs
 model_7_REM <- REM_results
 
@@ -1107,6 +1107,6 @@ for (k in 1:length(my_outcome)){
 }
 
 #Store results
-dev.off()
+
 model_8_all <- study_regs
 model_8_REM <- REM_results

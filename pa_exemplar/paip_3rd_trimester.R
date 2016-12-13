@@ -24,8 +24,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
+#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Sourcing the credentials sets values for the following variables:
 # server
@@ -287,7 +287,7 @@ rm(summary_lga_temp)
 
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 40)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -1455,13 +1455,14 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_5.png')
-png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1529,10 +1530,11 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 #Store results
-dev.off()
+
 model_5_all <- study_regs
 model_5_REM <- REM_results
 
@@ -1565,13 +1567,15 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_6.png')
-png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
+  
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1636,11 +1640,12 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 
 #Store results
-dev.off()
+
 model_6_all <- study_regs
 model_6_REM <- REM_results
 
@@ -1676,13 +1681,15 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_7.png')
-png(file=mypath, width = 1260*3, height = 940*number_of_interactions, res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
+  
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
   if (out_class == 'factor') {
@@ -1742,11 +1749,12 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 
 #Store results
-dev.off()
+
 model_7_all <- study_regs
 model_7_REM <- REM_results
 
@@ -2025,13 +2033,14 @@ ref_table = 'E4'
 
 number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
 
-# Settings for graph image
-mypath <- file.path('~','plots','model_8.png')
-png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_exposure),number_of_interactions))
-
 for (k in 1:length(my_outcome)){
+  
+  #set up plots here because there are plots for interaction terms too
+  
+  mypath <- file.path('~','plots',paste('model_8_', k, '.png',sep=''))
+  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_exposure),number_of_interactions))
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -2097,10 +2106,11 @@ for (k in 1:length(my_outcome)){
       REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
     }
   }
+  dev.off()
 }
 
 
 #Store results
-dev.off()
+
 model_8_all <- study_regs
 model_8_REM <- REM_results
