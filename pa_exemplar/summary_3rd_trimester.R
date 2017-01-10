@@ -277,3 +277,4 @@ rownames(summary_lga) <- study_names
 summary_lga <- summary_lga[,c(1,2,5,6)]
 colnames(summary_lga) <- c("class", "length", "No", "Yes")
 rm(summary_lga_temp)
+
