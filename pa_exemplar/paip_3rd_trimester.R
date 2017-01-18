@@ -285,9 +285,10 @@ rm(summary_lga_temp)
 
 #--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
 
+
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 40)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -309,30 +310,34 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   if (out_family == 'gaussian') {
     
     forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-                                  .(round(res$QEp,3)),')')),
+                                  .(sprintf("%.3f", round(res$QEp,3))),')')),
            xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
-                             .(round(res$pval,3)))))
+                             .(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
     usr <- par("usr")
-    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
-    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+    
+    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=1)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
     
   }
   else if (out_family == 'binomial'){
     
     forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-                                            .(round(res$QEp,3)),')')),
+                                            .(sprintf("%.3f", round(res$QEp,3))),')')),
            xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
-                             .(round(res$pval,3)))), atransf = exp)
+                             .(sprintf("%.3f", round(res$pval,3))))), atransf = exp, cex=1, cex.lab=0.75, cex.axis=1)
     usr <- par("usr")
-    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
-    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+    
+    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=1)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=1)
+    
   }
   
   return(res)
   
 }
+
 
 
 
@@ -430,10 +435,14 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_1.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+mypath <- file.path('~','plots','model_1.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   
@@ -598,10 +607,14 @@ my_outcome = c('BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-mypath <- file.path('~','plots','model_2.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+mypath <- file.path('~','plots','model_2.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 REM_results = list()
 study_regs = data.frame()
@@ -679,26 +692,27 @@ model_2_REM <- REM_results
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
 #------------------------
 ################## MODEL 3 starts here ########################
-################## NEED TO FOLLOW GUIDE FOR MEDIATORS ##############
+#
+#  Mediation analysis looks at 4 steps (more information here:
+#  http://davidakenny.net/cm/mediate.htm). The steps are:
+#
 # 1. If there is no overall association between the exposure and outcome
-#    then no need to run the following models
-# 2. If there is an association, model exposure association with mediator
-# 3. Then model mediator association with outcome
-# 4. If 2 and 3 were significant then test model with both mediator and exposure
-#   looking at their association with outcome
-# 5. If the mediator is still significant after controlling for exposure, then
-#    mediation is supported. If exposure is no longer significant while mediator is
-#    still significant then full mediation is occuring.
+#    then no need to run mediation analysis (i.e. model 2 not significant)
+# 2. Run model 2 but with mediator as the outcome. Is the exposure coefficient
+#    significant? ie is the exposure correlated with the mediator?
+# 3. Run model 2 with the mediator included as the exposure (the true exposure
+#    should still be included as a covariate). Is the mediator coefficient significant
+#    ? ie does the mediator effect the outcome?
+# 4. Run model 2 with the mediator as a covariate. Is the exposure coefficient zero?
+#    If yes, then full mediation, if no and 1-3 are true then partial mediation.
+#
+# 
 
-#### Step 1 - is covered by model 2 (i.e. test for overall association between 
-#### exposure and outcome)
+#### Step 1 - Normally not needed as just model 2
 
 
-####  Step 2 - Exposure association with mediator
-# Slightly confusing as the mediator is now the outcome in the model
-
-my_exposure = c('LTPA_EE_3_filt')
-my_outcome = 'MATERNAL_BMI'
+my_exposure = 'MATERNAL_BMI'
+my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA' )
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -707,10 +721,106 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_3a.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_3_1.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+for (k in 1:length(my_outcome)){
+  
+  #!!! Need to check whether there are other outcomes we need to handle !!! 
+  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
+  if (out_class == 'factor') {
+    outcome_family = 'binomial'
+  }
+  else if (out_class == 'numeric' | out_class == 'integer') {
+    outcome_family = 'gaussian'
+  }
+  
+  for (j in 1:length(my_exposure)){
+    estimates = vector()
+    s_errors = vector()
+    labels = vector()
+    for(i in 1:length(opals)) {
+      reg_data <- data.frame()
+      
+      if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
+      else if(study_names[i]=='REPRO'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
+        # be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else if(study_names[i]=='DNBC'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
+        # be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else if(study_names[i]=='ROLO'){
+        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
+        # be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else {
+        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      
+      if (outcome_family == 'binomial' & length(reg_data) > 0){
+        reg_data = reg_data[1:9]
+        colnames(reg_data)[8] <- "low0.95CI"
+        colnames(reg_data)[9] <- "high0.95CI"
+        
+      }
+      study_regs = rbind(study_regs,reg_data)
+      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+      labels = rbind(labels, reg_data[2,1])      
+      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+      
+    }
+    
+    #meta analysis here
+    for (n in 1:length(variables)){
+      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+    } 
+  }
+}
+#Store results
+dev.off()
+model_3_1_all <- study_regs
+model_3_1_REM <- REM_results
+
+
+#### Step 2 - this is Model 2 but with the mediator as the outcome
+
+
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt') 
+my_outcome ='MATERNAL_BMI'
+my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+
+
+REM_results = list()
+study_regs = data.frame()
+ref_table = 'E4'
+
+mypath <- file.path('~','plots','model_3_2.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   
@@ -782,18 +892,23 @@ model_3_2_all <- study_regs
 model_3_2_REM <- REM_results
 
 
-####  Step 3 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
+#### Step 3 - Run model 2 with the mediator included as the exposure (the true exposure
+#    should still be included as a covariate)
+# Need to run on a per exposure basis
 
-my_exposure = 'MATERNAL_BMI'
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt')
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
 
-mypath <- file.path('~','plots','model_3b.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_3_3.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 REM_results = list()
 study_regs = data.frame()
@@ -869,18 +984,22 @@ dev.off()
 model_3_3_all <- study_regs
 model_3_3_REM <- REM_results
 
-####  Step 4_1 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
+####  Step 4 - Run model 2 with the mediator as a covariate.
 
-my_exposure = c('LTPA_EE_3_filt')
-my_outcome = c('BIRTH_WEIGHT')
+
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
 
-mypath <- file.path('~','plots','model_3c1.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_3_4.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 REM_results = list()
 study_regs = data.frame()
@@ -956,93 +1075,6 @@ dev.off()
 model_3_4_1_all <- study_regs
 model_3_4_1_REM <- REM_results
 
-####  Step 4_2 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
-
-my_exposure = c( 'MATERNAL_BMI')
-my_outcome = c('BIRTH_WEIGHT')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'LTPA_EE_3_filt')
-
-mypath <- file.path('~','plots','model_3c2.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_outcome),length(my_exposure)))
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-for (k in 1:length(my_outcome)){
-  
-  #!!! Need to check whether there are other outcomes we need to handle !!! 
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-  
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-      
-      if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-        
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])      
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
-    }
-    
-    #meta analysis here
-    for (n in 1:length(variables)){
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-    }   
-  }
-}
-
-#Store results
-dev.off()
-model_3_4_2_all <- study_regs
-model_3_4_2_REM <- REM_results
-
 
 #  /'\_/`\            /\ \        /\_ \     /\ \\ \     
 # /\      \    ___    \_\ \     __\//\ \    \ \ \\ \    
@@ -1055,38 +1087,44 @@ model_3_4_2_REM <- REM_results
 
 #------------------------
 ################## MODEL 4 starts here ########################
-################## NEED TO FOLLOW GUIDE FOR MEDIATORS ##############
+#
+#  Mediation analysis looks at 4 steps (more information here:
+#  http://davidakenny.net/cm/mediate.htm). The steps are:
+#
 # 1. If there is no overall association between the exposure and outcome
-#    then no need to run the following models
-# 2. If there is an association, model exposure association with mediator
-# 3. Then model mediator association with outcome
-# 4. If 2 and 3 were significant then test model with both mediator and exposure
-#   looking at their association with outcome
-# 5. If the mediator is still significant after controlling for exposure, then
-#    mediation is supported. If exposure is no longer significant while mediator is
-#    still significant then full mediation is occuring.
+#    then no need to run mediation analysis (i.e. model 2 not significant)
+# 2. Run model 2 but with mediator as the outcome. Is the exposure coefficient
+#    significant? ie is the exposure correlated with the mediator?
+# 3. Run model 2 with the mediator included as the exposure (the true exposure
+#    should still be included as a covariate). Is the mediator coefficient significant
+#    ? ie does the mediator effect the outcome?
+# 4. Run model 2 with the mediator as a covariate. Is the exposure coefficient zero?
+#    If yes, then full mediation, if no and 1-3 are true then partial mediation.
+#
+# 
 
-#### Step 1 - is covered by model 2 (i.e. test for overall association between 
-#### exposure and outcome)
+#### Step 1 - Normally not needed as just model 2
 
 
-####  Step 2 - Exposure association with mediator
-# Slightly confusing as the mediator is now the outcome in the model
-### Note that depending on model 3, the mediator may need to be added in!
+#### Step 2 - this is Model 2 but with the mediator as the outcome
 
-my_exposure = c('LTPA_EE_3_filt')
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt')
 my_outcome = 'GDM'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_4a.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_4_2.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   
@@ -1159,23 +1197,27 @@ dev.off()
 model_4_2_all <- study_regs
 model_4_2_REM <- REM_results
 
-
-####  Step 3 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
+#### Step 3 - Run model 2 with the mediator included as the exposure (the true exposure
+#    should still be included as a covariate)
+# Need to run on a per exposure basis
 
 my_exposure = 'GDM'
 my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY') #maybe also MATERNAL_BMI
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'LTPA_EE_3_filt')
 
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_4b.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_4_3.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   #!!! Need to check whether there are other outcomes we need to handle !!! 
@@ -1247,22 +1289,25 @@ model_4_3_REM <- REM_results
 
 
 
-####  Step 4_1 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
+####  Step 4 - Run model 2 with the mediator as a covariate.
 
-my_exposure = c('GDM')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'LTPA_EE_3_filt') #maybe also MATERNAL_BMI
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM')
 
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_4c1.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_4_4.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   #!!! Need to check whether there are other outcomes we need to handle !!! 
@@ -1335,96 +1380,6 @@ model_4_4_1all <- study_regs
 model_4_4_1REM <- REM_results
 
 
-
-
-####  Step 4_2 - Mediator association with outcome
-# Slightly confusing as the mediator is now the exposure in the model
-
-my_exposure = c('LTPA_EE_3_filt')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA')
-my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
-
-REM_results = list()
-study_regs = data.frame()
-ref_table = 'E4'
-
-mypath <- file.path('~','plots','model_4c2.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_outcome),length(my_exposure)))
-
-for (k in 1:length(my_outcome)){
-  #!!! Need to check whether there are other outcomes we need to handle !!! 
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-  if (out_class == 'factor') {
-    outcome_family = 'binomial'
-  }
-  else if (out_class == 'numeric' | out_class == 'integer') {
-    outcome_family = 'gaussian'
-  }
-  
-  for (j in 1:length(my_exposure)){
-    estimates = vector()
-    s_errors = vector()
-    labels = vector()
-    for(i in 1:length(opals)) {
-      reg_data <- data.frame()
-      
-      if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
-        # don't do LTPA for GECKO, as the variable doesn't exist
-      }
-      else if(study_names[i]=='REPRO'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='DNBC'){
-        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else if(study_names[i]=='ROLO'){
-        #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
-        # be inverted)
-        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'PARITY'])), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      else {
-        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
-      }
-      
-      if (outcome_family == 'binomial' & length(reg_data) > 0){
-        reg_data = reg_data[1:9]
-        colnames(reg_data)[8] <- "low0.95CI"
-        colnames(reg_data)[9] <- "high0.95CI"
-        
-      }
-      study_regs = rbind(study_regs,reg_data)
-      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-      labels = rbind(labels, reg_data[2,1])      
-      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-      
-    }
-    
-    #meta analysis here
-    for (n in 1:length(variables)){
-      # mypath <- file.path('~','plots',paste('model_4_4_',j,'_',k,'_',n, '.png',sep=''))
-      # png(file=mypath, width = 1260, height = 940)
-      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-    } 
-  }
-}
-#Store results
-dev.off()
-model_4_4_2all <- study_regs
-model_4_4_2REM <- REM_results
-
-
 #                      __          ___       ______
 #  /'\_/`\            /\ \        /\_ \     /\  ___\
 # /\      \    ___    \_\ \     __\//\ \    \ \ \__/
@@ -1459,10 +1414,15 @@ for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
   
-  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  mypath <- file.path('~','plots',paste('model_5_', k, '.svg',sep=''))
+
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1572,9 +1532,13 @@ for (k in 1:length(my_outcome)){
   #set up plots here because there are plots for interaction terms too
   
   mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1685,10 +1649,14 @@ for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
   
-  mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  mypath <- file.path('~','plots',paste('model_7_', k, '.svg',sep=''))
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1782,10 +1750,14 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_7_0'
 
-mypath <- file.path('~','plots','model_7_0.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_7_0.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   
@@ -1858,10 +1830,14 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_7_1'
 
-mypath <- file.path('~','plots','model_7_1.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_7_1.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   
@@ -1936,10 +1912,14 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4_7_2'
 
-mypath <- file.path('~','plots','model_7_2.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome))
+mypath <- file.path('~','plots','model_7_2.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
   
@@ -2037,10 +2017,14 @@ for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
   
-  mypath <- file.path('~','plots',paste('model_8_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  mypath <- file.path('~','plots',paste('model_8_', k, '.svg',sep=''))
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
   
   #!!! Need to check whether there are other outcomes we need to handle !!!
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
