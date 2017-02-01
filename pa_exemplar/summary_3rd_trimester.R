@@ -103,6 +103,11 @@ ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
 ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 
 
+# NOTE ON MODVIG GREATER THAN ZERO
+ds.subset(x = 'E4', subset = 'E5', logicalOperator = 'MOD_VIG_filt>', threshold = 0)
+ds.summary('E5$MOD_VIG')
+
+
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
@@ -218,6 +223,15 @@ summary_alc['GECKO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['GECKO']
 summary_alc['HSS'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['HSS'])
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
+
+#smoking
+summary_smoke <- list()
+summary_smoke['DNBC'] <- ds.summary(x = 'E4$SMOKING',datasources = opals['DNBC'])
+summary_smoke['GECKO'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['GECKO'])
+summary_smoke['HSS'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['HSS'])
+summary_smoke['REPRO'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['REPRO'])
+summary_smoke['SWS'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['SWS'])
+
 
 
 #---------------------------------------------------------

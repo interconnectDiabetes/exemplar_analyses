@@ -26,8 +26,8 @@ library(metafor)
 ###############################################################################
 # Set working directory to source our credentials
 
-#setwd("/home/l_pms69/exemplar_analyses/")
-setwd("/home/l_trpb2/git/exemplar_analyses/")
+setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 
 # Sourcing the credentials sets values for the following variables:
@@ -107,6 +107,11 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
 ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
 ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+
+
+# NOTE ON MODVIG GREATER THAN ZERO
+ds.subset(x = 'E4', subset = 'E5', logicalOperator = 'MOD_VIG_filt>', threshold = 0)
+ds.summary('E5$MOD_VIG')
 
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
@@ -218,12 +223,22 @@ summary_edu['SWS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['SWS'
 
 #alcohol
 summary_alc <- list()
-summary_alc['ABCD'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
+summary_alc['ABCD'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
 summary_alc['ALSPAC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ALSPAC'])
-summary_alc['DNBC'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
+summary_alc['DNBC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
 summary_alc['ROLO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ROLO'])
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
+
+
+#smoking
+summary_smoke <- list()
+summary_smoke['ABCD'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['ABCD'])
+summary_smoke['ALSPAC'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['ALSPAC'])
+summary_smoke['DNBC'] <- ds.summary(x = 'E4$SMOKING',datasources = opals['DNBC'])
+summary_smoke['REPRO'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['REPRO'])
+summary_smoke['ROLO'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['ROLO'])
+summary_smoke['SWS'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['SWS'])
 
 
 #---------------------------------------------------------
@@ -284,7 +299,3 @@ summary_lga <- summary_lga[,c(1,2,5,6)]
 colnames(summary_lga) <- c("class", "length", "No", "Yes")
 rm(summary_lga_temp)
 
-
-###############################################################################
-########################### RUN MODELS  #######################################
-###############################################################################
