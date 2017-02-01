@@ -274,7 +274,7 @@ summary_vig <- data.frame(matrix(unlist(summary_vig), nrow = num_studies, ncol=1
 rownames(summary_vig) <- study_names
 colnames(summary_vig) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
 summary_vig <- summary_vig[,c(2,6,5,7)]
-rm(summary_vig)
+
 
 #---------------------------------------------------------
 # Summaries for outcomes
