@@ -295,7 +295,7 @@ rm(summary_lga_temp)
 
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -431,7 +431,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
-my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
+my_outcome = c( 'BIRTH_WEIGHT', 'MACROSOMIA','BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
 
@@ -515,8 +515,8 @@ model_1_REM <- REM_results
 
 
 # MODEL 2 with incremental covariate addition
-my_exp_2 = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
-my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_exp_2 = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
+my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_cov_2 = c( 'GESTATIONAL_AGE', 'SEX','MATERNAL_EDU', 'ETHNICITY', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL')
 
