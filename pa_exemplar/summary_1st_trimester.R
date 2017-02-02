@@ -26,8 +26,8 @@ library(metafor)
 ###############################################################################
 # Set working directory to source our credentials
 
-#setwd("/home/l_pms69/exemplar_analyses/")
-setwd("/home/l_trpb2/git/exemplar_analyses/")
+setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 
 # Sourcing the credentials sets values for the following variables:
@@ -42,7 +42,7 @@ source("creds/pa_exemplar_creds.R")
 setwd("~")
 datashield.logout(opals)
 
-myvars = list('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt','BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
+myvars = list('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt','VIG_filt','BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
               'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA')
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/pa')
@@ -85,8 +85,8 @@ study_names <- names(temp)
 rm(temp)
 
 # Variables used within analysis
-my_exp_all = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
-my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_exp_all = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
+my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
@@ -107,6 +107,11 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
 ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
 ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+
+
+# NOTE ON MODVIG GREATER THAN ZERO
+ds.subset(x = 'E4', subset = 'E5', logicalOperator = 'MOD_VIG_filt>', threshold = 0)
+ds.summary('E5$MOD_VIG')
 
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
@@ -218,12 +223,22 @@ summary_edu['SWS'] <- ds.table1D(x = 'E4$MATERNAL_EDU',datasources = opals['SWS'
 
 #alcohol
 summary_alc <- list()
-summary_alc['ABCD'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
+summary_alc['ABCD'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ABCD'])
 summary_alc['ALSPAC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['ALSPAC'])
-summary_alc['DNBC'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
+summary_alc['DNBC'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['DNBC'])
 summary_alc['REPRO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['REPRO'])
 summary_alc['ROLO'] <- ds.table1D(x = 'E4$ALCOHOL',datasources = opals['ROLO'])
 summary_alc['SWS'] <- ds.summary(x = 'E4$ALCOHOL',datasources = opals['SWS'])
+
+
+#smoking
+summary_smoke <- list()
+summary_smoke['ABCD'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['ABCD'])
+summary_smoke['ALSPAC'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['ALSPAC'])
+summary_smoke['DNBC'] <- ds.summary(x = 'E4$SMOKING',datasources = opals['DNBC'])
+summary_smoke['REPRO'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['REPRO'])
+summary_smoke['ROLO'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['ROLO'])
+summary_smoke['SWS'] <- ds.table1D(x = 'E4$SMOKING',datasources = opals['SWS'])
 
 
 #---------------------------------------------------------
@@ -252,6 +267,14 @@ rownames(summary_ee) <- study_names
 colnames(summary_ee) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
 summary_ee <- summary_ee[,c(2,6,5,7)]
 rm(summary_ee_temp)
+
+# VIG_filt
+summary_vig <- ds.summary('E4$VIG_filt')
+summary_vig <- data.frame(matrix(unlist(summary_vig), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_vig) <- study_names
+colnames(summary_vig) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_vig <- summary_vig[,c(2,6,5,7)]
+
 
 #---------------------------------------------------------
 # Summaries for outcomes
@@ -284,7 +307,10 @@ summary_lga <- summary_lga[,c(1,2,5,6)]
 colnames(summary_lga) <- c("class", "length", "No", "Yes")
 rm(summary_lga_temp)
 
-
-###############################################################################
-########################### RUN MODELS  #######################################
-###############################################################################
+# BIRTH_WEIGHT_SGA
+summary_sga_temp <- ds.summary('E4$BIRTH_WEIGHT_SGA')
+summary_sga <- data.frame(matrix(unlist(summary_sga_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+rownames(summary_sga) <- study_names
+summary_sga <- summary_sga[,c(1,2,5,6)]
+colnames(summary_sga) <- c("class", "length", "No", "Yes")
+rm(summary_sga_temp)
