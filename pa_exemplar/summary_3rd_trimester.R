@@ -73,6 +73,13 @@ work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR_3_filt', quote(rep
 eval(parse(text=work2))
 ds.cbind(x=c('temp','D2','LTPA_DUR_3_filt'), newobj='D2a', datasource=opals["GECKO"])
 
+#for GECKO only dummy variable for VIG_3_filt since this does not exist
+work1 <- no_preecl$GECKO
+work2 <- paste0("datashield.assign(opals[\"GECKO\"],'VIG_3_filt', quote(rep(1,",work1,")))")
+eval(parse(text=work2))
+ds.cbind(x=c('temp','D2a','VIG_3_filt'), newobj='D2a', datasource=opals["GECKO"])
+
+
 # Filter out missing values
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
@@ -90,7 +97,7 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 # model_all_len <- data.frame()
 # 
 # for (i in 2:length(my_vars_all)){
-#   ds.subset(x = 'D2a', subset = 'E3', cols =  c(my_vars_all[1:i]))
+#   ds.subset(x = 'D2b', subset = 'E3', cols =  c(my_vars_all[1:i]))
 #   ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 #   model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
 # }

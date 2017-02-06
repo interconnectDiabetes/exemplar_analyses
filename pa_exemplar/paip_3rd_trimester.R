@@ -74,6 +74,13 @@ work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR_3_filt', quote(rep
 eval(parse(text=work2))
 ds.cbind(x=c('temp','D2','LTPA_DUR_3_filt'), newobj='D2a', datasource=opals["GECKO"])
 
+#for GECKO only dummy variable for VIG_3_filt since this does not exist
+work1 <- no_preecl$GECKO
+work2 <- paste0("datashield.assign(opals[\"GECKO\"],'VIG_3_filt', quote(rep(1,",work1,")))")
+eval(parse(text=work2))
+ds.cbind(x=c('temp','D2a','VIG_3_filt'), newobj='D2a', datasource=opals["GECKO"])
+
+
 # Filter out missing values
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
@@ -91,7 +98,7 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 # model_all_len <- data.frame()
 # 
 # for (i in 2:length(my_vars_all)){
-#   ds.subset(x = 'D2a', subset = 'E3', cols =  c(my_vars_all[1:i]))
+#   ds.subset(x = 'D2b', subset = 'E3', cols =  c(my_vars_all[1:i]))
 #   ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 #   model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
 # }
@@ -467,6 +474,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='ROLO' & my_exposure[j] == 'PARITY'){
         #omit parity, since it is 1 for all participants in ROLO (causes singular matrix that can't
         # be inverted)
@@ -640,6 +650,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='REPRO'){
         #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
         fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
@@ -750,6 +763,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='REPRO'){
         #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
         # be inverted)
@@ -840,6 +856,9 @@ for (k in 1:length(my_outcome)){
       reg_data <- data.frame()
       
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -934,6 +953,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='REPRO'){
         #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
         # be inverted)
@@ -1023,6 +1045,9 @@ for (k in 1:length(my_outcome)){
       reg_data <- data.frame()
       
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -1146,6 +1171,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='REPRO'){
         #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
         # be inverted)
@@ -1238,6 +1266,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='REPRO'){
         #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
         # be inverted)
@@ -1326,6 +1357,9 @@ for (k in 1:length(my_outcome)){
       reg_data <- data.frame()
       
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -1442,6 +1476,9 @@ for (k in 1:length(my_outcome)){
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
       else if(study_names[i]=='REPRO'){
         #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't
         # be inverted)
@@ -1556,6 +1593,9 @@ for (k in 1:length(my_outcome)){
       reg_data <- data.frame()
       
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
@@ -2042,6 +2082,9 @@ for (k in 1:length(my_outcome)){
       reg_data <- data.frame()
       
       if (my_exposure[j] == 'LTPA_DUR_3_filt' & study_names[i] == 'GECKO'){
+        # don't do LTPA for GECKO, as the variable doesn't exist
+      }
+      else if (my_exposure[j] == 'VIG_3_filt' & study_names[i] == 'GECKO'){
         # don't do LTPA for GECKO, as the variable doesn't exist
       }
       else if(study_names[i]=='REPRO'){
