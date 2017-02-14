@@ -15,9 +15,16 @@ library(metafor)
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
-setwd("/home/l_trpb2/git/exemplar_analyses/")
-source("creds/pa_exemplar_creds.R")
+#Login Details
 setwd("~")
+server <- c( 'ALSPAC','DNBC','HSS','REPRO', 'ROLO', 'SWS')
+url <- c( 'https://opal-dev.mrc-epid.cam.ac.uk:8443','https://193.163.131.62:8443', 'https://interconnect.ucdenver.edu:8443',
+          'https://212.51.193.40:8443', 'https://dougal.ucd.ie:8443', 'https://152.78.10.99:8443')
+table <- c( 'ALSPAC_PAIP_01.ALSPAC_harm', 'DNBC_InterConnect.DNBC_harm','Interconnect.HSS_harm', 'a2.REPRO_harm_view', 'ROLO.ROLO_harm2', 'SWS.SWS_harm')
+password <- c('datashield-test-privatekey.pem','datashield-test-privatekey.pem', 'datashield-test-privatekey.pem', 'datashield-test-privatekey.pem', 'datashield-test-privatekey.pem', 'datashield-test-privatekey.pem')
+user <- c('datashield-test-publickey.pem','datashield-test-publickey.pem','datashield-test-publickey.pem', 'datashield-test-publickey.pem', 'datashield-test-publickey.pem', 'datashield-test-publickey.pem')
+logindata_all <- data.frame(server,url,user,password, table)
+
 datashield.logout(opals)
 myvars = list('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt','VIG_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
@@ -88,13 +95,14 @@ rownames(summary_sex) <- study_names
 colnames(summary_sex) <- c("type", "N", "male", "female", "count0", "count1")
 rm(summary_sex_temp)
 
-# Macrosomia
-summary_mac_temp <- ds.summary('E4$MACROSOMIA')
-summary_mac <- data.frame(matrix(unlist(summary_mac_temp), nrow = num_studies, ncol=6, byrow=TRUE))
-rownames(summary_mac) <- study_names
-summary_mac <- summary_mac[,c(1,2,5,6)]
-colnames(summary_mac) <- c("class", "length", "No", "Yes")
-rm(summary_mac_temp)
+#LTPA
+summary_ltpa_temp <- ds.summary('E4$LTPA_DUR_filt')
+summary_ltpa <- data.frame(matrix(unlist(summary_ltpa_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_ltpa) <- study_names
+colnames(summary_ltpa) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_ltpa <- summary_ltpa[,c(2,6,5,7)]
+rm(summary_ltpa_temp)
+
 
 
 ###############################################################################
@@ -162,8 +170,8 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
-my_outcome = c( 'BIRTH_WEIGHT', 'MACROSOMIA','BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
+my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'VIG_filt')
+my_outcome = c( 'BIRTH_WEIGHT', 'MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
 
@@ -248,8 +256,8 @@ model_1_REM <- REM_results
 # model 2
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
-my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
+my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'VIG_filt')
+my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
@@ -333,8 +341,8 @@ model_2_REM <- REM_results
 
 
 # MODEL 2 with incremental covariate addition
-my_exp_2 = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
-my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
+my_exp_2 = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'VIG_filt')
+my_outcome_2 = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
 my_cov_2 = c( 'GESTATIONAL_AGE', 'SEX','MATERNAL_EDU', 'ETHNICITY', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
              'ALCOHOL')
 
