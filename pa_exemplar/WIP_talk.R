@@ -25,6 +25,24 @@ password <- c('datashield-test-privatekey.pem','datashield-test-privatekey.pem',
 user <- c('datashield-test-publickey.pem','datashield-test-publickey.pem','datashield-test-publickey.pem', 'datashield-test-publickey.pem', 'datashield-test-publickey.pem', 'datashield-test-publickey.pem')
 logindata_all <- data.frame(server,url,user,password, table)
 
+
+# # Set working directory to source our credentials
+# 
+# #setwd("/home/l_pms69/exemplar_analyses/")
+# setwd("/home/l_trpb2/git/exemplar_analyses/")
+# 
+# 
+# # Sourcing the credentials sets values for the following variables:
+# # server
+# # url
+# # table
+# # password 
+# # user
+# # logindata_all
+# 
+# source("creds/pa_exemplar_creds.R")
+# setwd("~")
+
 datashield.logout(opals)
 myvars = list('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt','VIG_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
@@ -399,7 +417,7 @@ for (o in 1:length(opals)){
         }
 
         # create the model
-        model <- ds.glm(formula=fmla, data='E4', family=dataModel, datasources=opals[o])
+        model <- ds.glm(formula=fmla, data='E4', family=dataModel, datasources=opals[o], maxit = 100)
         model_coeffs <- model$coefficients
         rownames(model_coeffs) <- paste(rownames(model_coeffs), names(opals[o]), sep="_")
         model_2 <- rbind(model_2, model_coeffs)
