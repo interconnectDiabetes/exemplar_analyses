@@ -175,16 +175,25 @@ study_regs = data.frame()
 ref_table = 'E4'
 
 fmla <- 'BIRTH_WEIGHT ~ MOD_VIG_3_filt + GESTATIONAL_AGE + SEX'
+estimates <- vector()
+s_errors <- vector()
+labels <- vector()
 
+for (i in 1: length(opals)) {
 
-model <- ds.glm(formula = fmla, data = ref_table, family = 'gaussian', datasources = opals[i], maxit = 100)
-model_coeffs <- as.data.frame(model$coefficients)
-model_coeffs$study = study
-model_coeffs$outcome = outcome
-model_coeffs$cov = rownames(model_coeffs)
-for (x in 1:3){ model_coeffs <- model_coeffs[,c(ncol(model_coeffs),1:(ncol(model_coeffs)-1))]}
-rownames(model_coeffs) = NULL
-return(model_coeffs)
+  reg_data <- data.frame()
+  reg_data <- do_reg(my_fmla = fmla, study = names(opals[i]), outcome = "BIRTH_WEIGHT", out_family = "gaussian")
+
+  study_regs = rbind(study_regs,reg_data)
+  estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+  s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+  labels = rbind(labels, reg_data[2,1])      
+  variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+}
+
+for (n in 1:length(variables)){
+  REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+}
 
 #  /'\_/`\            /\ \        /\_ \        /'___`\   
 # /\      \    ___    \_\ \     __\//\ \      /\_\ /\ \  
@@ -192,7 +201,6 @@ return(model_coeffs)
 #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_      // /_\ \
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\    /\______/
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/_____/ 
-
 
 
 #  /'\_/`\            /\ \        /\_ \       /'__`\   
