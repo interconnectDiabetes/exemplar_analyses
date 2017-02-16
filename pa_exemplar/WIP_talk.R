@@ -1,6 +1,5 @@
 ## Work in progress seminar 2017
 ## Live Demo 
-## Hopefully it wont be a repeat of Jobs' first iphone 4 demo
 
 ###############################################################################
 ########################### Dependencies   ####################################
@@ -17,6 +16,8 @@ library(metafor)
 ###############################################################################
 #Login Details
 setwd("~")
+datashield.logout(opals) # kill off any previous sessions
+
 server <- c('DNBC','GECKO', 'HSS', 'REPRO','SWS')
 url <- c('https://193.163.131.62:8443','https://molgenis34.target.rug.nl:8443','https://interconnect.ucdenver.edu:8443', 'https://212.51.193.40:8443', 'https://152.78.10.99:8443')
 table <- c('DNBC_InterConnect.DNBC_harm','gecko.gecko_harm', 'Interconnect.HSS_harm', 'a2.REPRO_harm_view','SWS.SWS_harm')
@@ -24,8 +25,7 @@ password <- c('datashield-test-privatekey.pem','datashield-test-privatekey.pem',
 user <- c('datashield-test-publickey.pem','datashield-test-publickey.pem','datashield-test-publickey.pem', 'datashield-test-publickey.pem', 'datashield-test-publickey.pem')
 logindata_all <- data.frame(server,url,user,password, table)
 
-datashield.logout(opals)
-myvars = list('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt', 'VIG_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
+myvars = list('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
               'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'BIRTH_WEIGHT_SGA')
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/pa')
@@ -54,42 +54,17 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('temp','D2'), newobj='D2a')
 
-#for GECKO only dummy variable for LTPA_DUR_3_filt since this does not exist
-work1 <- no_preecl$GECKO
-work2 <- paste0("datashield.assign(opals[\"GECKO\"],'LTPA_DUR_3_filt', quote(rep(1,",work1,")))")
-eval(parse(text=work2))
-ds.cbind(x=c('temp','D2','LTPA_DUR_3_filt'), newobj='D2a', datasource=opals["GECKO"])
-
-#for GECKO only dummy variable for VIG_3_filt since this does not exist
-work1 <- no_preecl$GECKO
-work2 <- paste0("datashield.assign(opals[\"GECKO\"],'VIG_3_filt', quote(rep(1,",work1,")))")
-eval(parse(text=work2))
-ds.cbind(x=c('temp','D2a','VIG_3_filt'), newobj='D2a', datasource=opals["GECKO"])
-
-
-# Filter out missing values
+# some nice descriptives for later processing
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
 # Variables used within analysis
-my_exp_all = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt', 'VIG_3_filt')
+my_exp_all = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt')
 my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
-
-# Loop to produce E4 and model_all_len for descriptive stats
-# my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
-# model_all_len <- data.frame()
-# 
-# for (i in 2:length(my_vars_all)){
-#   ds.subset(x = 'D2b', subset = 'E3', cols =  c(my_vars_all[1:i]))
-#   ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
-#   model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
-# }
-# 
-# row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 
 # Generate E4 without the loop, doesnt produce model_all_len
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
