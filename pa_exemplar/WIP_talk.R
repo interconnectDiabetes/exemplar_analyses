@@ -33,9 +33,8 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ###############################################################################
 ########################### SET UP DATA  ######################################
 ###############################################################################
-# basic count of all the infants in the study per study
+# basic counts
 all_infants <- ds.length('D$SEX', type = 'split')
-all_infants_combined <- ds.length('D$SEX', type='combined')
 
 # remove preterm <37w
 ds.subset(x = 'D', subset = 'D1', logicalOperator = 'GESTATIONAL_AGE>=', threshold = 37)
@@ -67,6 +66,7 @@ work2 <- paste0("datashield.assign(opals[\"GECKO\"],'VIG_3_filt', quote(rep(1,",
 eval(parse(text=work2))
 ds.cbind(x=c('temp','D2a','VIG_3_filt'), newobj='D2a', datasource=opals["GECKO"])
 
+
 # Filter out missing values
 temp <- ds.summary('D$SEX')
 num_studies <- length(temp)
@@ -79,6 +79,17 @@ my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIG
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
 
+# Loop to produce E4 and model_all_len for descriptive stats
+# my_vars_all <- c('temp', my_exp_all, my_outcome_all, my_cov_all)
+# model_all_len <- data.frame()
+# 
+# for (i in 2:length(my_vars_all)){
+#   ds.subset(x = 'D2b', subset = 'E3', cols =  c(my_vars_all[1:i]))
+#   ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+#   model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
+# }
+# 
+# row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
 
 # Generate E4 without the loop, doesnt produce model_all_len
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
@@ -98,13 +109,13 @@ rownames(summary_sex) <- study_names
 colnames(summary_sex) <- c("type", "N", "male", "female", "count0", "count1")
 rm(summary_sex_temp)
 
-#LTPA
-summary_ltpa_temp <- ds.summary('E4$LTPA_DUR_filt')
-summary_ltpa <- data.frame(matrix(unlist(summary_ltpa_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_ltpa) <- study_names
-colnames(summary_ltpa) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_ltpa <- summary_ltpa[,c(2,6,5,7)]
-rm(summary_ltpa_temp)
+# MOD_VIG_3_filt
+summary_mod_temp <- ds.summary('E4$MOD_VIG_3_filt')
+summary_mod <- data.frame(matrix(unlist(summary_mod_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_mod) <- study_names
+colnames(summary_mod) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_mod <- summary_mod[,c(2,6,5,7)]
+rm(summary_mod_temp)
 
 
 
@@ -170,29 +181,37 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\     \ \_\
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/
 
+my_exposure = c('MOD_VIG_3_filt')
+my_outcome = c( 'BIRTH_WEIGHT')
+my_covariate = c('GESTATIONAL_AGE', 'SEX')
+
+
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-fmla <- 'BIRTH_WEIGHT ~ MOD_VIG_3_filt + GESTATIONAL_AGE + SEX'
-estimates <- vector()
-s_errors <- vector()
-labels <- vector()
+fmla <- as.formula('E4$BIRTH_WEIGHT~E4$MOD_VIG_3_filt+E4$GESTATIONAL_AGE+E4$SEX')
 
-for (i in 1: length(opals)) {
-
-  reg_data <- data.frame()
-  reg_data <- do_reg(my_fmla = fmla, study = names(opals[i]), outcome = "BIRTH_WEIGHT", out_family = "gaussian")
-
-  study_regs = rbind(study_regs,reg_data)
-  estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-  s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-  labels = rbind(labels, reg_data[2,1])      
-  variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-}
-
-for (n in 1:length(variables)){
-  REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+for (k in 1:length(my_outcome)){
+  for (j in 1:length(my_exposure)){
+    estimates <- vector()
+    s_errors <- vector()
+    labels <- vector()
+    for (i in 1: length(opals)) {
+      reg_data <- data.frame()
+      reg_data <- do_reg(fmla, names(opals[i]), "BIRTH_WEIGHT", "gaussian")
+      
+      study_regs = rbind(study_regs,reg_data)
+      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+      labels = rbind(labels, reg_data[2,1])      
+      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+    }
+    
+    for (n in 1:length(variables)){
+      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "gaussian", variable = variables[n])
+    }
+  }
 }
 
 #  /'\_/`\            /\ \        /\_ \        /'___`\   
@@ -202,6 +221,51 @@ for (n in 1:length(variables)){
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\    /\______/
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/_____/ 
 
+my_exposure = c('MOD_VIG_3_filt')
+my_outcome = c( 'BIRTH_WEIGHT')
+my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+REM_results = list()
+study_regs = data.frame()
+ref_table = 'E4'
+outcome_family = "gaussian"
+
+fmla <- as.formula('E4$BIRTH_WEIGHT~E4$MOD_VIG_3_filt+E4$GESTATIONAL_AGE+E4$SEX+E4$PARITY+E4$MATERNAL_AGE+E4$SMOKING+E4$ALCOHOL+E4$MATERNAL_EDU+E4$ETHNICITY')
+
+for (k in 1:length(my_outcome)){
+  for (j in 1:length(my_exposure)){
+    estimates <- vector()
+    s_errors <- vector()
+    labels <- vector()
+    for (i in 1: length(opals)) {
+      reg_data <- data.frame()
+      if(study_names[i]=='REPRO'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else if(study_names[i]=='DNBC'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else {
+        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      
+      study_regs = rbind(study_regs,reg_data)
+      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+      labels = rbind(labels, reg_data[2,1])      
+      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+    }
+    
+    for (n in 1:length(variables)){
+      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "gaussian", variable = variables[n])
+    }
+  }
+}
 
 #  /'\_/`\            /\ \        /\_ \       /'__`\   
 # /\      \    ___    \_\ \     __\//\ \     /\_\L\ \  
@@ -209,3 +273,50 @@ for (n in 1:length(variables)){
 #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_    /\ \L\ \
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ FIXER
+
+my_exposure = c('MOD_VIG_3_filt')
+my_outcome = c( 'BIRTH_WEIGHT_SGA')
+my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
+                 'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+
+REM_results = list()
+study_regs = data.frame()
+ref_table = 'E4'
+outcome_family = "binomial"
+
+fmla <- as.formula('E4$BIRTH_WEIGHT_SGA~E4$MOD_VIG_3_filt+E4$GESTATIONAL_AGE+E4$SEX+E4$PARITY+E4$MATERNAL_AGE+E4$SMOKING+E4$ALCOHOL+E4$MATERNAL_EDU+E4$ETHNICITY')
+
+for (k in 1:length(my_outcome)){
+  for (j in 1:length(my_exposure)){
+    estimates <- vector()
+    s_errors <- vector()
+    labels <- vector()
+    for (i in 1: length(opals)) {
+      reg_data <- data.frame()
+      if(study_names[i]=='REPRO'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else if(study_names[i]=='DNBC'){
+        #omit ethnicity, since it is 1 for all participants in REPRO (causes singular matrix that can't be inverted)
+        fmla <- as.formula(paste(ref_table,'$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table,'$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'ETHNICITY'])), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      else {
+        fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+        reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+      }
+      
+      study_regs = rbind(study_regs,reg_data)
+      estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+      s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+      labels = rbind(labels, reg_data[2,1])      
+      variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+    }
+    
+    for (n in 1:length(variables)){
+      REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "gaussian", variable = variables[n])
+    }
+  }
+}
