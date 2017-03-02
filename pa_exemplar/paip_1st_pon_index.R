@@ -40,9 +40,10 @@ setwd("/home/l_trpb2/git/exemplar_analyses/")
 source("creds/pa_exemplar_creds_1_pon_ind.R")
 setwd("~")
 datashield.logout(opals)
-myvars = list('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt','BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
+myvars = list('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
               'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'PON_INDEX')
+
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/pa')
 
 ###############################################################################
@@ -83,7 +84,7 @@ study_names <- names(temp)
 rm(temp)
 
 # Variables used within analysis
-my_exp_all = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
+my_exp_all = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
 my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
@@ -294,9 +295,10 @@ rm(summary_lga_temp)
 
 #--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
 
+
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -318,25 +320,28 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   if (out_family == 'gaussian') {
     
     forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-                                  .(round(res$QEp,3)),')')),
+                                  .(sprintf("%.3f", round(res$QEp,3))),')')),
            xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
-                             .(round(res$pval,3)))))
+                             .(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
     usr <- par("usr")
-    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
-    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+    
+    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=1)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
     
   }
   else if (out_family == 'binomial'){
     
     forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-                                            .(round(res$QEp,3)),')')),
+                                            .(sprintf("%.3f", round(res$QEp,3))),')')),
            xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
-                             .(round(res$pval,3)))), atransf = exp)
+                             .(sprintf("%.3f", round(res$pval,3))))), atransf = exp, cex=1, cex.lab=0.75, cex.axis=1)
     usr <- par("usr")
-    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
-    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+    
+    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=1)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=1)
+    
   }
   
   return(res)
@@ -430,7 +435,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
+my_exposure = c('VIG_filt')
 #my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_outcome = c( 'PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
@@ -439,10 +444,15 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_1_pi.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+mypath <- file.path('~','plots','model_1_pi_vig.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
 
 for (k in 1:length(my_outcome)){
   
@@ -603,15 +613,20 @@ model_1_REM <- REM_results
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt','LTPA_EE_filt')
+my_exposure = c('VIG_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-mypath <- file.path('~','plots','model_2.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+mypath <- file.path('~','plots','model_2_pi_vig.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
 
 REM_results = list()
 study_regs = data.frame()
@@ -701,7 +716,7 @@ model_2_REM <- REM_results
 ### that stratifies the dataset by sex and then investigates models 2, 3 and 4
 
 
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
+my_exposure = c('VIG_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -716,10 +731,17 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_5_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  
+  mypath <- file.path('~','plots',paste('model_5_pi_vig_', k, '.svg',sep=''))
+  
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
+  
 
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -812,7 +834,25 @@ model_5_REM <- REM_results
 ### that stratifies the dataset by maternal obesity and 
 ### then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
+##############################################################
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# SPECIAL EXCEPTION FOR USING VIG_FILT - REPRO & ROLO HAVE SINGULAR
+# MATRIX PROBLEM WITH L2 IN MATERNAL_OB
+# REMOVE HERE AND PUT BACK AT THE END
+#
+# THIS IS PROBABLY NOT THE CORRECT WAY TO DEAL WITH THIS
+# BUT IT IS COMPLEX TO WORK AROUND IT
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+###########################################################
+
+opals_temp = opals
+opals = opals[-4:-5]
+
+my_exposure = c('VIG_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_OB')
@@ -822,18 +862,25 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
+number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction),datasources = opals)[[1]])
 
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_6_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  
+  mypath <- file.path('~','plots',paste('model_6_pi_vig_', k, '.svg',sep=''))
+  
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
+  
 
   #!!! Need to check whether there are other outcomes we need to handle !!! 
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
+  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]), datasources = opals)[[1]]
   if (out_class == 'factor') {
     outcome_family = 'binomial'
   }
@@ -901,6 +948,10 @@ for (k in 1:length(my_outcome)){
 model_6_all <- study_regs
 model_6_REM <- REM_results
 
+####### fix REPRO exception
+
+opals = opals_temp
+rm(opals_temp)
 
 
 #                      __          ___          ________ 
@@ -921,7 +972,7 @@ model_6_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
+my_exposure = c('VIG_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU','ETHNICITY')
@@ -936,10 +987,16 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_7_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  
+  mypath <- file.path('~','plots',paste('model_7_pi_vig_', k, '.svg',sep=''))
+  
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
@@ -1026,7 +1083,7 @@ model_7_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by GDM and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt')
+my_exposure = c('VIG_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -1041,10 +1098,17 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_8_', k, '.png',sep=''))
-  png(file=mypath, width = 1260*number_of_interactions, height = 940*length(my_exposure), res = 300)
+  
+  mypath <- file.path('~','plots',paste('model_8_pi_vig_', k, '.svg',sep=''))
+  
+  svg(filename=mypath, 
+      width=4 * number_of_interactions, 
+      height=3 * length(my_outcome), 
+      pointsize=10)
   par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_exposure),number_of_interactions))
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
+  
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
   out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]

@@ -38,7 +38,7 @@ setwd("/home/l_trpb2/git/exemplar_analyses/")
 source("creds/pa_exemplar_creds_3_pon_ind.R")
 setwd("~")
 datashield.logout(opals)
-myvars = list('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt','BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
+myvars = list('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt','VIG_3_filt','BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
               'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'PON_INDEX')
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/pa')
@@ -81,7 +81,7 @@ study_names <- names(temp)
 rm(temp)
 
 # Variables used within analysis
-my_exp_all = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_exp_all = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt','VIG_3_filt')
 my_outcome_all = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'PON_INDEX')
 my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM', 'MATERNAL_BMI', 'MATERNAL_OB')
@@ -294,7 +294,7 @@ rm(summary_lga_temp)
 
 do_reg <- function(my_fmla, study, outcome, out_family){
   
-  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 20)
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
   model_coeffs <- as.data.frame(model$coefficients)
   model_coeffs$study = study
   model_coeffs$outcome = outcome
@@ -324,7 +324,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
     text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=1)
     text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
     text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
-   
+    
   }
   else if (out_family == 'binomial'){
     
@@ -431,7 +431,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 # model 1
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 #my_outcome = c( 'BIRTH_WEIGHT','MACROSOMIA','BIRTH_WEIGHT_LGA')
 my_outcome = c( 'PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
@@ -440,8 +440,7 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_1_test.svg')
-#png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+mypath <- file.path('~','plots','model_1_pi_3rd_vig.svg')
 svg(filename=mypath, 
     width=4 * length(my_exposure), 
     height=3 * length(my_outcome), 
@@ -449,7 +448,6 @@ svg(filename=mypath,
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
 par(ps=10)
-
 
 
 for (k in 1:length(my_outcome)){
@@ -610,12 +608,13 @@ model_1_REM <- REM_results
 # This runs regressions per outcome/exposure combination, per study with all covariates
 # Then it runs random effects models per outcome/exposure combinations
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt','LTPA_EE_3_filt')
+#my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt','LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-mypath <- file.path('~','plots','model_2.svg')
+mypath <- file.path('~','plots','model_2_pi_3rd_vig.svg')
 svg(filename=mypath, 
     width=4 * length(my_exposure), 
     height=3 * length(my_outcome), 
@@ -724,7 +723,8 @@ model_2_REM <- REM_results
 #### Step 2 - this is Model 2 but with the mediator as the outcome
 
 
-my_exposure = c('LTPA_DUR_3_filt', 'MOD_VIG_3_filt', 'LTPA_EE_3_filt')
+#my_exposure = c('LTPA_DUR_3_filt', 'MOD_VIG_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 my_outcome = 'MATERNAL_BMI'
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -734,7 +734,7 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_3_2_PI.svg')
+mypath <- file.path('~','plots','model_3_2_PI3rd_vig.svg')
 svg(filename=mypath, 
     width=4 * length(my_exposure), 
     height=3 * length(my_outcome), 
@@ -1323,7 +1323,8 @@ model_4_4_1REM <- REM_results
 ### that stratifies the dataset by sex and then investigates models 2, 3 and 4
 
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+#my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -1339,7 +1340,7 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_5_', k, '.svg',sep=''))
+  mypath <- file.path('~','plots',paste('model_5_pi_3rd_vig_', k, '.svg',sep=''))
   svg(filename=mypath, 
       width=4 * number_of_interactions, 
       height=3 * length(my_outcome), 
@@ -1348,13 +1349,6 @@ for (k in 1:length(my_outcome)){
   par(mfrow=c(length(my_outcome),number_of_interactions))
   par(ps=10)
   
-  svg(filename=mypath, 
-      width=4 * number_of_interactions, 
-      height=3 * length(my_outcome), 
-      pointsize=10)
-  par(mar=c(5,3,2,2)+0.1)
-  par(mfrow=c(length(my_outcome),number_of_interactions))
-  par(ps=10)
   
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
@@ -1448,7 +1442,8 @@ model_5_REM <- REM_results
 ### that stratifies the dataset by maternal obesity and 
 ### then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+#my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_OB')
@@ -1463,7 +1458,7 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 for (k in 1:length(my_outcome)){
 
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_6_', k, '.svg',sep=''))
+  mypath <- file.path('~','plots',paste('model_6_pi_3rd_vig_', k, '.svg',sep=''))
   svg(filename=mypath, 
       width=4 * number_of_interactions, 
       height=3 * length(my_outcome), 
@@ -1838,7 +1833,8 @@ model_6_2_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by ethnicity and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
+#my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU','ETHNICITY')
@@ -1853,7 +1849,7 @@ number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_7_', k, '.svg',sep=''))
+  mypath <- file.path('~','plots',paste('model_7_pi_3rd_vig_', k, '.svg',sep=''))
   svg(filename=mypath, 
       width=4 * number_of_interactions, 
       height=3 * length(my_outcome), 
@@ -2218,7 +2214,26 @@ model_7_2_REM <- REM_results
 ### If the interaction term is significant then we will need some more code
 ### that stratifies the dataset by GDM and then investigates models 2, 3 and 4
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
+##############################################################
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# SPECIAL EXCEPTION FOR USING VIG_FILT - HSS HAVE SINGULAR
+# MATRIX PROBLEM WITH GDM
+# REMOVE HERE AND PUT BACK AT THE END
+#
+# THIS IS PROBABLY NOT THE CORRECT WAY TO DEAL WITH THIS
+# BUT IT IS COMPLEX TO WORK AROUND IT
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+###########################################################
+
+opals_temp = opals
+opals = opals[-2]
+
+my_exposure = c('VIG_3_filt')
+#my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
@@ -2228,12 +2243,12 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction))[[1]])
+number_of_interactions <- length(ds.levels(paste0(ref_table,'$',my_interaction), datasources = opals)[[1]])
 
 for (k in 1:length(my_outcome)){
   
   #set up plots here because there are plots for interaction terms too
-  mypath <- file.path('~','plots',paste('model_8_', k, '.svg',sep=''))
+  mypath <- file.path('~','plots',paste('model_8_pi_3rd_vig_', k, '.svg',sep=''))
   svg(filename=mypath, 
       width=4 * number_of_interactions, 
       height=3 * length(my_outcome), 
@@ -2243,7 +2258,7 @@ for (k in 1:length(my_outcome)){
   par(ps=10)
   
   #!!! Need to check whether there are other outcomes we need to handle !!! 
-  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
+  out_class = ds.class(paste0(ref_table, '$', my_outcome[k]), datasources = opals)[[1]]
   if (out_class == 'factor') {
     outcome_family = 'binomial'
   }
@@ -2315,7 +2330,8 @@ for (k in 1:length(my_outcome)){
 model_8_all <- study_regs
 model_8_REM <- REM_results
 
-
+opals = opals_temp
+rm(opals_temp)
 
 # ___  ___          _      _   _____            _____ _             _        
 # |  \/  |         | |    | | |  _  |          /  ___| |           | |       

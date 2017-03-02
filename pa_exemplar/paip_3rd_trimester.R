@@ -1008,8 +1008,8 @@ model_3_3_REM <- REM_results
 ####  Step 4 - Run model 2 with the mediator as a covariate.
 
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt', 'VIG_3_filt')
+my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
 
@@ -1321,8 +1321,8 @@ model_4_3_REM <- REM_results
 
 ####  Step 4 - Run model 2 with the mediator as a covariate.
 
-my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt')
-my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA')
+my_exposure = c('MOD_VIG_3_filt', 'LTPA_DUR_3_filt', 'LTPA_EE_3_filt', 'VIG_3_filt')
+my_outcome = c('BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM')
 
