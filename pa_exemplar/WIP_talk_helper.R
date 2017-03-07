@@ -1,6 +1,10 @@
 
 #----predefined variables -----#
 
+# some useful values for later processing - how many studies and their names
+num_studies <- 5
+study_names <- c("DNBC", "GECKO", "HSS", "REPRO", "SWS")
+
 # List of variables for the analysis
 
 myvars = list('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',

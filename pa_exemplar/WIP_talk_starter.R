@@ -28,9 +28,6 @@ datashield.logout(opals) # kill off any previous sessions
 # Log in
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/pa',symbol = 'harmonised_data')
 
-# some useful values for later processing - how many studies and their names
-num_studies <- length(opals)
-study_names <- names(opals)
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
