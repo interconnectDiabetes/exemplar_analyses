@@ -909,7 +909,8 @@ model_3_3_REM <- REM_results
 
 ####  Step 4 - Run model 2 with the mediator as a covariate.
 
-my_exposure = c('LTPA_DUR_3_filt', 'MOD_VIG_3_filt', 'LTPA_EE_3_filt')
+#my_exposure = c('LTPA_DUR_3_filt', 'MOD_VIG_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'MATERNAL_BMI')
@@ -1216,7 +1217,8 @@ model_4_3_REM <- REM_results
 ####  Step 4 - Run model 2 with the mediator as a covariate.
 
 
-my_exposure = c('LTPA_DUR_3_filt', 'MOD_VIG_3_filt', 'LTPA_EE_3_filt')
+#my_exposure = c('LTPA_DUR_3_filt', 'MOD_VIG_3_filt', 'LTPA_EE_3_filt')
+my_exposure = c('VIG_3_filt')
 my_outcome = c('PON_INDEX')
 my_covariate = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
                  'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 'GDM') #maybe also MATERNAL_BMI
@@ -1225,7 +1227,7 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'
 
-mypath <- file.path('~','plots','model_4_4_GDM.svg')
+mypath <- file.path('~','plots','model_4_4_pi_3_vig.svg')
 svg(filename=mypath, 
     width=4 * length(my_exposure), 
     height=3 * length(my_outcome), 

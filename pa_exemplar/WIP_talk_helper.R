@@ -1,3 +1,20 @@
+
+#----predefined variables -----#
+
+# List of variables for the analysis
+
+myvars = list('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
+              'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
+              'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'BIRTH_WEIGHT_SGA')
+
+covariates_mod_1 = c('GESTATIONAL_AGE', 'SEX')
+
+covariates_mod_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
+                     'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+
+covariates_mod_3 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
+                     'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+
 #--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
 
 do_reg <- function(my_fmla, study, outcome, out_family, current_study, data_table){
