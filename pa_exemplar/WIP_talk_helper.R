@@ -1,3 +1,4 @@
+datashield.logout(opals) # kill off any previous sessions
 
 #----predefined variables -----#
 
@@ -7,7 +8,7 @@ study_names <- c("DNBC", "GECKO", "HSS", "REPRO", "SWS")
 
 # List of variables for the analysis
 
-myvars = list('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
+myvars = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
               'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
               'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'BIRTH_WEIGHT_SGA')
 

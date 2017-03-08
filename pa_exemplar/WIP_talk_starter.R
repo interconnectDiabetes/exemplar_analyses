@@ -18,15 +18,15 @@ library(metafor)
 
 setwd("/home/l_trpb2/git/exemplar_analyses/")
 source("creds/pa_exemplar_3_creds.R")
-
 setwd("~")
-datashield.logout(opals) # kill off any previous sessions
+
 
 # List of variables for the analysis
 
 
 # Log in
-opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/pa',symbol = 'harmonised_data')
+opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars,
+        directory = '/home/shared/certificates/pa',symbol = 'harmonised_data')
 
 
 ###############################################################################
@@ -40,7 +40,8 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 
 # remove preeclampsia
 
-# Filter data set to exclude participants with missing values for variables used in the analysis
+# Filter data set to exclude participants with missing values for 
+# variables used in the analysis
 
 
 ###############################################################################
