@@ -17,7 +17,7 @@ ds.subset(x = 'HD', subset = 'HD_filt_1',
           logicalOperator = 'GESTATIONAL_AGE>=', threshold = 37)
 
 # show that a new object has been created in each study
-ds.ls()
+ds.exists(x = 'HD_filt_1')
 
 # show that the new object is smaller after filtering
 ds.length('HD_filt_1$SEX')
@@ -40,11 +40,11 @@ ds.subset(x = 'HD_filt_2', subset = 'HD_comp',
 
 # Sex
 
-ds.summary('harm_data_complete$SEX')
+ds.summary('HD_comp$SEX')
 
 # Moderate-vigorous physical activity
 
-ds.summary('harm_data_complete$MOD_VIG_3_filt')
+ds.summary('HD_comp$MOD_VIG_3_filt')
 
 
 ###############################################################################
@@ -56,6 +56,7 @@ ds.summary('harm_data_complete$MOD_VIG_3_filt')
 exposures = c('MOD_VIG_3_filt')
 outcomes = c( 'BIRTH_WEIGHT')
 covariates = c('GESTATIONAL_AGE', 'SEX')
+
 
 ds.random_effects(my_exposure = exposures, my_outcome = outcomes, 
         my_covariate = covariates, ref_table = 'HD_comp')

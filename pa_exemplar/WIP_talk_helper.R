@@ -27,7 +27,7 @@ myvars = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BI
 
 # Log in
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
-                          directory = '/home/shared/certificates/pa',symbol = 'harmonised_data')
+                          directory = '/home/shared/certificates/pa',symbol = 'HD')
 
 
 #----predefined variables -----#
