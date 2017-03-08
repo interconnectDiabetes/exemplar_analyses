@@ -1,24 +1,41 @@
+###############################################################################
+########################### Dependencies   ####################################
+###############################################################################
+library(opal)
+library(dsBaseClient)
+library(dsModellingClient)
+library(metafor)
+
+###############################################################################
+########################### SET UP SERVERS  ###################################
+###############################################################################
+# Login Details
+
+# Set working directory to source our credentials
+
+setwd("/home/l_trpb2/git/exemplar_analyses/")
+source("creds/pa_exemplar_3_creds.R")
+setwd("~")
+
 datashield.logout(opals) # kill off any previous sessions
-
-#----predefined variables -----#
-
-# some useful values for later processing - how many studies and their names
-num_studies <- 5
-study_names <- c("DNBC", "GECKO", "HSS", "REPRO", "SWS")
 
 # List of variables for the analysis
 
 myvars = c('MOD_VIG_3_filt', 'LTPA_EE_3_filt', 'BIRTH_WEIGHT', 'MACROSOMIA', 'BIRTH_WEIGHT_LGA',
-              'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
-              'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'BIRTH_WEIGHT_SGA')
+           'GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING','ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY', 
+           'GDM', 'MATERNAL_BMI', 'MATERNAL_OB', 'PREECLAMPSIA', 'BIRTH_WEIGHT_SGA')
 
-covariates_mod_1 = c('GESTATIONAL_AGE', 'SEX')
+# Log in
+opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
+                          directory = '/home/shared/certificates/pa',symbol = 'harmonised_data')
 
-covariates_mod_2 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                     'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
 
-covariates_mod_3 = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
-                     'ALCOHOL', 'MATERNAL_EDU', 'ETHNICITY')
+#----predefined variables -----#
+
+# some useful values for later processing - how many studies and their names
+num_studies <- length(opals)
+study_names <- names(opals)
+
 
 #--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
 
