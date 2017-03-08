@@ -111,8 +111,9 @@ ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
 
 
 # NOTE ON MODVIG GREATER THAN ZERO
-ds.subset(x = 'E4', subset = 'E5', logicalOperator = 'MOD_VIG_filt>', threshold = 0)
-ds.summary('E5$MOD_VIG')
+ds.subset(x = 'E4', subset = 'E5', logicalOperator = 'MOD_VIG_3_filt>', threshold = 0)
+ds.summary('E5$MOD_VIG_3_filt')
+ds.length('E5$MOD_VIG_3_filt')
 
 
 ###############################################################################
