@@ -17,8 +17,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-#setwd("/home/l_pms69/exemplar_analyses/")
-setwd("/home/l_trpb2/git/exemplar_analyses/")
+setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Sourcing the credentials sets values for the following variables:
 # server
@@ -28,7 +28,7 @@ setwd("/home/l_trpb2/git/exemplar_analyses/")
 # user
 # logindata_all
 
-source("creds/fishExemplar.R")
+source("creds/fish_exemplar_creds.R")
 setwd("~")
 datashield.logout(opals)
 
