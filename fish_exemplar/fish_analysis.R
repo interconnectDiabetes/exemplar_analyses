@@ -21,14 +21,7 @@ library(metafor)
 setwd("/home/l_pms69/exemplar_analyses/")
 #setwd("/home/l_trpb2/git/exemplar_analyses/")
 
-# Sourcing the credentials sets values for the following variables:
-# server
-# url
-# table
-# password 
-# user
-# logindata_all
-
+# Retrieve Credential Details
 source("creds/fish_exemplar_creds.R")
 setwd("~")
 
