@@ -11,6 +11,7 @@ library(dsBaseClient)
 library(dsStatsClient)
 library(dsGraphicsClient)
 library(dsModellingClient)
+library(dsBetaTestClient)
 library(metafor)
 
 ###############################################################################
@@ -30,9 +31,10 @@ setwd("/home/l_pms69/exemplar_analyses/")
 
 source("creds/fish_exemplar_creds.R")
 setwd("~")
-datashield.logout(opals)
 
-opals <- datashield.login(logins=logindata_all, assign=TRUE)
+datashield.logout(opals)
+opals <- datashield.login(logins=logindata_all, assign=TRUE, directory = '/home/shared/certificates/fish')
+
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
@@ -79,7 +81,6 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE)
 #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_    /\ \L\ \
 #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
 #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
-
 
 
 #  /'\_/`\            /\ \        /\_ \     /\ \\ \     
