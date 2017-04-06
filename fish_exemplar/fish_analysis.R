@@ -116,11 +116,17 @@ rm(summary_temp)
 
 # pa
 
-# alcohol
+#alcohol
 
 # supplements
 
 # eintake
+summary_eintake_temp <- ds.summary('D$E_INTAKE')
+summary_eintake <- data.frame(matrix(unlist(summary_eintake_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_eintake) <- study_names
+colnames(summary_eintake) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_eintake <- summary_eintake[,c(2,6,5,7)]
+rm(summary_eintake_temp)
 
 # meat
 summary_meat_temp <- ds.summary('D$MEAT')
