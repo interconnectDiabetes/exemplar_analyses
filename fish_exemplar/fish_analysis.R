@@ -101,19 +101,22 @@ rm(summary_total_temp)
 
 # ses
 
-# smoking
+# smoking, mi, stroke, cancer, hypertension
+smoking_temp <- c('SMOKING', 'MI', 'STROKE', 'CANCER', 'HYPERTENSION')
+smoking_df <- data.frame()
+for (bin in smoking_temp) {
+  summary_temp <- ds.summary(paste0('E4$',bin))
+  summary_temp <- data.frame(matrix(unlist(summary_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+  rownames(summary_temp) <- paste0(study_names,'_',bin)
+  smoking_df <- rbind(smoking_df, summary_temp)
+}
+colnames(smoking_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
+smoking_df <- smoking_df[,c(5,6)]
+rm(summary_temp)
 
 # pa
 
 # alcohol
-
-# mi
-
-# stroke
-
-# cancer 
-
-# hypertension
 
 # supplements
 
