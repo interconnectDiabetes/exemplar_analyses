@@ -123,16 +123,52 @@ rm(summary_temp)
 # eintake
 
 # meat
+summary_meat_temp <- ds.summary('D$MEAT')
+summary_meat <- data.frame(matrix(unlist(summary_meat_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_meat) <- study_names
+colnames(summary_meat) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_meat <- summary_meat[,c(2,6,5,7)]
+rm(summary_meat_temp)
 
 # fruit
+summary_fruit_temp <- ds.summary('D$FRUIT')
+summary_fruit <- data.frame(matrix(unlist(summary_fruit_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_fruit) <- study_names
+colnames(summary_fruit) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_fruit <- summary_fruit[,c(2,6,5,7)]
+rm(summary_fruit_temp)
 
 # veg
+summary_veg_temp <- ds.summary('D$VEG')
+summary_veg <- data.frame(matrix(unlist(summary_veg_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_veg) <- study_names
+colnames(summary_veg) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_veg <- summary_veg[,c(2,6,5,7)]
+rm(summary_veg_temp)
 
 # dairy
+summary_dairy_temp <- ds.summary('D$DAIRY')
+summary_dairy <- data.frame(matrix(unlist(summary_dairy_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_dairy) <- study_names
+colnames(summary_dairy) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_dairy <- summary_dairy[,c(2,6,5,7)]
+rm(summary_dairy_temp)
 
 # fiber
+summary_fiber_temp <- ds.summary('D$FIBER')
+summary_fiber <- data.frame(matrix(unlist(summary_fiber_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_fiber) <- study_names
+colnames(summary_fiber) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_fiber <- summary_fiber[,c(2,6,5,7)]
+rm(summary_fiber_temp)
 
 # sugary drinks
+summary_sugBev_temp <- ds.summary('D$SUG_BEVS')
+summary_sug_bevs <- data.frame(matrix(unlist(summary_sugBev_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+rownames(summary_sug_bevs) <- study_names
+colnames(summary_sug_bevs) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+summary_sug_bevs <- summary_sug_bevs[,c(2,6,5,7)]
+rm(summary_sugBev_temp)
 
 ###############################################################################
 ########################### FUNCTIONS  ########################################
