@@ -434,8 +434,6 @@ my_exposure = c('MOD_VIG_filt', 'LTPA_DUR_filt', 'LTPA_EE_filt', 'VIG_filt')
 my_outcome = c( 'BIRTH_WEIGHT', 'MACROSOMIA','BIRTH_WEIGHT_LGA', 'BIRTH_WEIGHT_SGA')
 my_covariate = c('GESTATIONAL_AGE', 'SEX')
 
-
-
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'E4'

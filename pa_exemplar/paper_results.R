@@ -95,3 +95,64 @@ my_cov_all = c('GESTATIONAL_AGE', 'SEX', 'PARITY', 'MATERNAL_AGE', 'SMOKING',
 my_vars_all <- c(my_exp_all, my_outcome_all, my_cov_all)
 ds.subset(x = 'D2a', subset = 'E3', cols =  my_vars_all)
 ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+
+
+
+###############################################################################
+########################### RUN MODELS  #######################################
+###############################################################################
+
+#--------------- FUNCTIONS TO HELP WITH REGRESSIONS AND REM ------------------#
+
+do_reg <- function(my_fmla, study, outcome, out_family){
+  
+  model <- ds.glm(formula= my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit = 100)
+  model_coeffs <- as.data.frame(model$coefficients)
+  model_coeffs$study = study
+  model_coeffs$outcome = outcome
+  model_coeffs$cov = rownames(model_coeffs)
+  for (x in 1:3){ model_coeffs <- model_coeffs[,c(ncol(model_coeffs),1:(ncol(model_coeffs)-1))]}
+  rownames(model_coeffs) = NULL
+  return(model_coeffs)
+}
+
+do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
+  
+  res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
+  
+  #add the weights to the labels
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+  
+  #forest plots
+  
+  if (out_family == 'gaussian') {
+    
+    forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+                                  .(round(res$QEp,3)),')')),
+           xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
+                             .(round(res$pval,3)))))
+    usr <- par("usr")
+    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+    
+  }
+  else if (out_family == 'binomial'){
+    
+    forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+                                            .(round(res$QEp,3)),')')),
+           xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
+                             .(round(res$pval,3)))), atransf = exp)
+    usr <- par("usr")
+    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+  }
+  
+  return(res)
+  
+}
+
+run_Model <- function(){
+	return (remResults)
+}
