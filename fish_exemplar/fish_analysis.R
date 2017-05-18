@@ -48,6 +48,16 @@ rm(temp)
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
+# Missing Checker
+ds.summary('D$FATTY')
+ds.summary('D$FRESH')
+ds.summary('D$FRIED')
+ds.summary('D$LEAN')
+ds.summary('D$NONFISH')
+ds.summary('D$SALT')
+ds.summary('D$SSD')
+ds.summary('D$TOTAL')
+
 #---------------------------------------------------------
 # Summaries for exposures 
 # fatty fish
