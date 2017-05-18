@@ -49,15 +49,18 @@ rm(temp)
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
 # Missing Checker
-ds.summary('D$FATTY')
-ds.summary('D$FRESH')
-ds.summary('D$FRIED')
-ds.summary('D$LEAN')
-ds.summary('D$NONFISH')
-ds.summary('D$SALT')
-ds.summary('D$SSD')
-ds.summary('D$TOTAL')
+fullNum = ds.length('D$AGE_BASE', type = 'split') 
+fattyMissing =  ds.numNA('D$FATTY')
+freshMissing = ds.numNA('D$FRESH')
+friedMissing = ds.numNA('D$FRIED')
+leanMissing = ds.numNA('D$LEAN')
+nonfishMissing = ds.numNA('D$NONFISH')
+saltMissing = ds.numNA('D$SALT')
+ssdMissing = ds.numNA('D$SSD')
+totalMissing = ds.numNA('D$TOTAL')
 
+missings_table = data.frame(cbind(study_names,fullNum, fattyMissing, freshMissing, friedMissing, leanMissing, nonfishMissing, saltMissing, ssdMissing, totalMissing))
+colnames(missings_table) <- c('Study Name', 'Total in Study', 'fattyMissing', 'freshMissing', 'friedMissing', 'leanMissing', 'nonfishMissing', 'saltMissing', 'ssdMissing', 'totalMissing')
 #---------------------------------------------------------
 # Summaries for exposures 
 # fatty fish
