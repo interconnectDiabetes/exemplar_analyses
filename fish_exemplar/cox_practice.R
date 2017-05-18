@@ -12,6 +12,7 @@ user <- c('administrator')
 password <- c('password')
 table <- c('test.cox')
 logindata <- data.frame(server,url,user,password,table)
+datashield.logout(opals)
 opals <- datashield.login(logins=logindata,assign=TRUE)
 
 
