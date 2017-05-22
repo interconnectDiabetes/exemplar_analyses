@@ -26,7 +26,9 @@ source("creds/fish_exemplar_creds.R")
 setwd("~")
 
 datashield.logout(opals)
-opals <- datashield.login(logins=logindata_all, assign=TRUE, directory = '/home/shared/certificates/fish')
+
+myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL')
+opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
 
 ###############################################################################
