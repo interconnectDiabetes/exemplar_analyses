@@ -130,15 +130,15 @@ rm(summary_total_temp)
 
 # mi, stroke, cancer, hypertension
 bintemp <- c( 'MI', 'STROKE', 'CANCER', 'HYPERTENSION')
-smoking_df <- data.frame()
+binary_df <- data.frame()
 for (bin in bintemp) {
   summary_temp <- ds.summary(paste0('D$',bin))
   summary_temp <- data.frame(matrix(unlist(summary_temp), nrow = num_studies, ncol=6, byrow=TRUE))
   rownames(summary_temp) <- paste0(study_names,'_',bin)
-  smoking_df <- rbind(smoking_df, summary_temp)
+  binary_df <- rbind(binary_df, summary_temp)
 }
-colnames(smoking_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
-smoking_df <- smoking_df[,c(5,6)]
+colnames(binary_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
+binary_df <- binary_df[,c(5,6)]
 rm(summary_temp)
 # 
 # # pa
@@ -203,6 +203,14 @@ rm(summary_temp)
 # summary_sug_bevs <- summary_sug_bevs[,c(2,6,5,7)]
 # rm(summary_sugBev_temp)
 # 
+
+# Logic testing area
+# is it possible to take two values and apply logic on them to cascade this into another?
+ds.assign(toAssign='D$MI && D$STROKE', newobj = "miAndStroke")
+ds.length("miAndStroke")
+
+
+
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
