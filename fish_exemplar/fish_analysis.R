@@ -71,7 +71,7 @@ cancerMissing = ds.numNA('D$CANCER')
 hypertensionMissing = ds.numNA('D$HYPERTENSION')
 
 conf_missings_table = data.frame(cbind(study_names, fullNum, miMissing, cancerMissing, strokeMissing, hypertensionMissing))
-colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'nonfishMissing', 'saltMissing', 'ssdMissing', 'totalMissing')
+colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 'cancerMissing', 'strokeMissing', 'hypertensionMissing')
 # 
 # #---------------------------------------------------------
 # # Summaries for exposures 
