@@ -129,7 +129,7 @@ rm(summary_total_temp)
 # smoking
 
 # mi, stroke, cancer, hypertension
-bintemp <- c( 'MI', 'STROKE', 'CANCER', 'HYPERTENSION')
+bintemp <- c( 'MI', 'STROKE', 'HYPERTENSION')
 binary_df <- data.frame()
 for (bin in bintemp) {
   summary_temp <- ds.summary(paste0('D$',bin))
