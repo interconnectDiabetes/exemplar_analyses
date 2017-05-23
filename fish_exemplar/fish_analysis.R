@@ -214,7 +214,8 @@ my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN','FATTY')
 my_outcome = c( 'CASE_OBJ')
 my_covariate = c("MI", "STROKE", "HYPERTENSION")
 
-# 
+
+
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |1|
 #   +-+-+-+-+-+ +-+
@@ -223,15 +224,19 @@ my_covariate = c("MI", "STROKE", "HYPERTENSION")
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension
 # 
 # To assess the impact of each confounder we will also run models including each confounder separately. 
+my_exposure = c('TOTAL')
+my_outcome = c( 'CASE_OBJ')
+my_covariate = c("AGE_BASE")
 
-# 
+
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |2|
 #   +-+-+-+-+-+ +-+
 # Model 2a: As model 1 + adj for alcohol intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
 # Model 2b: As model 2a + adj for energy intake
 
-# 
+
+
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |3|
 #   +-+-+-+-+-+ +-+
@@ -240,7 +245,8 @@ my_covariate = c("MI", "STROKE", "HYPERTENSION")
 # 
 # Models to test Interaction 
 
-# 
+
+
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |4|
 #   +-+-+-+-+-+ +-+
@@ -250,7 +256,7 @@ my_covariate = c("MI", "STROKE", "HYPERTENSION")
 # 
 # Stratified analyses by sex (men, women) if positive interaction 
 
-# 
+
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |5|
 #   +-+-+-+-+-+ +-+
@@ -260,7 +266,7 @@ my_covariate = c("MI", "STROKE", "HYPERTENSION")
 # 
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction
 
-# 
+
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |6|
 #   +-+-+-+-+-+ +-+
