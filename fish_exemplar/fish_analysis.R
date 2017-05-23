@@ -210,10 +210,11 @@ rm(summary_temp)
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 # repeat for each exposure
-my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN','FATTY')
-my_outcome = c( 'CASE_OBJ')
-my_covariate = c("MI", "STROKE", "HYPERTENSION")
-
+my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
+my_outcome = c('CASE_OBJ', "CASE_OBJ_SELF")
+my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST",
+	"SUPPLEMENTS")
 
 
 # +-+-+-+-+-+ +-+
