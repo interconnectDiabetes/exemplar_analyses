@@ -27,7 +27,8 @@ setwd("~")
 
 datashield.logout(opals)
 
-myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION')
+myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
+              'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
 
@@ -204,52 +205,70 @@ rm(summary_temp)
 # rm(summary_sugBev_temp)
 # 
 
-# Logic testing area
-# is it possible to take two values and apply logic on them to cascade this into another?
-ds.assign(toAssign='D$MI && D$STROKE', newobj = "miAndStroke")
-ds.length("miAndStroke")
-
-
 
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
+# repeat for each exposure
+my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN','FATTY')
+my_outcome = c( 'CASE_OBJ')
+my_covariate = c("MI", "STROKE", "HYPERTENSION")
+
 # 
-# #  /'\_/`\            /\ \        /\_ \       /' \    
-# # /\      \    ___    \_\ \     __\//\ \     /\_, \   
-# # \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \    \/_/\ \  
-# #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_     \ \ \ 
-# #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\     \ \_\
-# #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/
+# +-+-+-+-+-+ +-+
+#   |m|o|d|e|l| |1|
+#   +-+-+-+-+-+ +-+
+# Exposure: total fish (g/d) at baseline
+# Outcome: Type 2 diabetes incidence
+# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension
 # 
+# To assess the impact of each confounder we will also run models including each confounder separately. 
+
 # 
-# #  /'\_/`\            /\ \        /\_ \        /'___`\   
-# # /\      \    ___    \_\ \     __\//\ \      /\_\ /\ \  
-# # \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \     \/_/// /__ 
-# #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_      // /_\ \
-# #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\    /\______/
-# #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/_____/ 
+# +-+-+-+-+-+ +-+
+#   |m|o|d|e|l| |2|
+#   +-+-+-+-+-+ +-+
+# Model 2a: As model 1 + adj for alcohol intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
+# Model 2b: As model 2a + adj for energy intake
+
 # 
+# +-+-+-+-+-+ +-+
+#   |m|o|d|e|l| |3|
+#   +-+-+-+-+-+ +-+
+# Model 3: As model 2b + adj for BMI,  
+# Sensitivity analyses: include waist circumference or waist to hip ratio
 # 
-# #  /'\_/`\            /\ \        /\_ \       /'__`\   
-# # /\      \    ___    \_\ \     __\//\ \     /\_\L\ \  
-# # \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \    \/_/_\_<_ 
-# #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_    /\ \L\ \
-# #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
-# #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
+# Models to test Interaction 
+
 # 
+# +-+-+-+-+-+ +-+
+#   |m|o|d|e|l| |4|
+#   +-+-+-+-+-+ +-+
+# Exposure: total fish (g/d) at baseline*sex
+# Outcome: Type 2 diabetes incidence
+# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension,  energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
 # 
-# #  /'\_/`\            /\ \        /\_ \     /\ \\ \     
-# # /\      \    ___    \_\ \     __\//\ \    \ \ \\ \    
-# # \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \    \ \ \\ \_  
-# #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_   \ \__ ,__\
-# #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \/_/\_\_/
-# #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/      \/_/  
+# Stratified analyses by sex (men, women) if positive interaction 
+
 # 
-# #                      __          ___       ______    
-# #  /'\_/`\            /\ \        /\_ \     /\  ___\   
-# # /\      \    ___    \_\ \     __\//\ \    \ \ \__/   
-# # \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \    \ \___``\ 
-# #  \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_   \/\ \L\ \
-# #   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\   \ \____/
-# #    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/    \/___/ 
+# +-+-+-+-+-+ +-+
+#   |m|o|d|e|l| |5|
+#   +-+-+-+-+-+ +-+
+# Exposure: total fish (g/d) at baseline*BMI
+# Outcome: Type 2 diabetes incidence
+# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
+# 
+# Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction
+
+# 
+# +-+-+-+-+-+ +-+
+#   |m|o|d|e|l| |6|
+#   +-+-+-+-+-+ +-+
+# Exposure: total fish (g/d) at baseline*geographical area
+# Outcome: Type 2 diabetes incidence
+# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
+# 
+# Stratified analyses by geographical area (Central area, Eastern area, Western area) if positive interaction 
+
+
+
