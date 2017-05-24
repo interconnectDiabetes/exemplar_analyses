@@ -62,6 +62,20 @@ summaryContExp <- function(column, study_names, num_studies) {
 	return(summary_column)
 }
 
+summaryBinExp <- function(column, study_names, num_studies) {
+	# given a table name and binary valued column as a struing, return the summary
+	# table for the binary variable
+	binary_df = data.frame()
+	summary_column_temp = ds.summary(column)
+	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+	rownames(summary_column_temp) <- paste0(study_names,'_',bin)
+	binary_df <- rbind(binary_df, summary_temp)
+	colnames(binary_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
+	binary_df <- binary_df[,c(5,6)]
+	rm(summary_column_temp)
+	return(summary_column)
+}
+
 # Exposures Missing Checker
 fullNum = ds.length('D$AGE_BASE', type = 'split') 
 fattyMissing =  ds.numNA('D$FATTY')
@@ -112,17 +126,10 @@ summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 # smoking
 
 # mi, stroke, cancer, hypertension
-bintemp <- c( 'MI', 'STROKE', 'HYPERTENSION')
-binary_df <- data.frame()
-for (bin in bintemp) {
-  summary_temp <- ds.summary(paste0('D$',bin))
-  summary_temp <- data.frame(matrix(unlist(summary_temp), nrow = num_studies, ncol=6, byrow=TRUE))
-  rownames(summary_temp) <- paste0(study_names,'_',bin)
-  binary_df <- rbind(binary_df, summary_temp)
-}
-colnames(binary_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
-binary_df <- binary_df[,c(5,6)]
-rm(summary_temp)
+summaryBinExp('D$MI', study_names, num_studies)
+summaryBinExp('D$STROKE', study_names, num_studies)
+summaryBinExp('D$CANCER', study_names, num_studies)
+summaryBinExp('D$HYPERTENSION', study_names, num_studies)
 
 # pa
 summary_pa = summaryContExp('D$PA', study_names, num_studies)
