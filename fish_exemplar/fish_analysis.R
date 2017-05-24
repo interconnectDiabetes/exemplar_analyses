@@ -226,8 +226,8 @@ my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "B
 # 
 # To assess the impact of each confounder we will also run models including each confounder separately. 
 my_exposure = c('TOTAL')
-my_outcome = c( 'CASE_OBJ')
-my_covariate = c("AGE_BASE")
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 
 
 # +-+-+-+-+-+ +-+
@@ -236,7 +236,17 @@ my_covariate = c("AGE_BASE")
 # Model 2a: As model 1 + adj for alcohol intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
 # Model 2b: As model 2a + adj for energy intake
 
+# model2a
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
 
+# model2b
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE")
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |3|
@@ -245,8 +255,22 @@ my_covariate = c("AGE_BASE")
 # Sensitivity analyses: include waist circumference or waist to hip ratio
 # 
 # Models to test Interaction 
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
+
+# interaction with waist
+my_exposure = c('TOTAL')
+my_outcome = c('WAIST')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
 
 
+my_exposure = c('WAIST')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |4|
@@ -256,7 +280,10 @@ my_covariate = c("AGE_BASE")
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension,  energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
 # 
 # Stratified analyses by sex (men, women) if positive interaction 
-
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |5|
@@ -267,6 +294,11 @@ my_covariate = c("AGE_BASE")
 # 
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction
 
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+# medication is new here
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
+				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |6|
@@ -277,5 +309,11 @@ my_covariate = c("AGE_BASE")
 # 
 # Stratified analyses by geographical area (Central area, Eastern area, Western area) if positive interaction 
 
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
+				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
+
+# GEOGRAPHIC AREA (BUT MIGHT NOT DO THIS ONE ANYWAY)
 
 
