@@ -88,7 +88,7 @@ colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 
 #---------------------------------------------------------
 # Summaries for exposures
 # fatty fish
-summary_fatty = summmaryContExp('D$FATTY', study_names, num_studies)
+summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
 # fresh fish
 summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
 # lean fish
@@ -123,69 +123,28 @@ for (bin in bintemp) {
 colnames(binary_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
 binary_df <- binary_df[,c(5,6)]
 rm(summary_temp)
-# 
-# # pa
-# 
-# #alcohol
-# 
-# # supplements
-# 
-# # eintake
-# summary_eintake_temp <- ds.summary('D$E_INTAKE')
-# summary_eintake <- data.frame(matrix(unlist(summary_eintake_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_eintake) <- study_names
-# colnames(summary_eintake) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_eintake <- summary_eintake[,c(2,6,5,7)]
-# rm(summary_eintake_temp)
-# 
-# # meat
-# summary_meat_temp <- ds.summary('D$MEAT')
-# summary_meat <- data.frame(matrix(unlist(summary_meat_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_meat) <- study_names
-# colnames(summary_meat) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_meat <- summary_meat[,c(2,6,5,7)]
-# rm(summary_meat_temp)
-# 
-# # fruit
-# summary_fruit_temp <- ds.summary('D$FRUIT')
-# summary_fruit <- data.frame(matrix(unlist(summary_fruit_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_fruit) <- study_names
-# colnames(summary_fruit) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_fruit <- summary_fruit[,c(2,6,5,7)]
-# rm(summary_fruit_temp)
-# 
-# # veg
-# summary_veg_temp <- ds.summary('D$VEG')
-# summary_veg <- data.frame(matrix(unlist(summary_veg_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_veg) <- study_names
-# colnames(summary_veg) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_veg <- summary_veg[,c(2,6,5,7)]
-# rm(summary_veg_temp)
-# 
-# # dairy
-# summary_dairy_temp <- ds.summary('D$DAIRY')
-# summary_dairy <- data.frame(matrix(unlist(summary_dairy_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_dairy) <- study_names
-# colnames(summary_dairy) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_dairy <- summary_dairy[,c(2,6,5,7)]
-# rm(summary_dairy_temp)
-# 
-# # fiber
-# summary_fiber_temp <- ds.summary('D$FIBER')
-# summary_fiber <- data.frame(matrix(unlist(summary_fiber_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_fiber) <- study_names
-# colnames(summary_fiber) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_fiber <- summary_fiber[,c(2,6,5,7)]
-# rm(summary_fiber_temp)
-# 
-# # sugary drinks
-# summary_sugBev_temp <- ds.summary('D$SUG_BEVS')
-# summary_sug_bevs <- data.frame(matrix(unlist(summary_sugBev_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-# rownames(summary_sug_bevs) <- study_names
-# colnames(summary_sug_bevs) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-# summary_sug_bevs <- summary_sug_bevs[,c(2,6,5,7)]
-# rm(summary_sugBev_temp)
-# 
+
+# pa
+summary_pa = summaryContExp('D$PA', study_names, num_studies)
+#alcohol
+summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
+# supplements
+summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
+# eintake
+summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
+# meat
+summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
+summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
+# fruit
+summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
+# veg
+summary_veg = summaryContExp('D$VEG', study_names, num_studies)
+# dairy
+summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
+# fiber
+summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
+# sugary drinks
+summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
 
 
 # ###############################################################################
