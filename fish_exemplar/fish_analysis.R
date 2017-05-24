@@ -51,6 +51,17 @@ rm(temp)
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
+summaryContinousExp <- function(column, study_names, num_studies) {
+	# given a table name and column as a string, return the summary table for the continous variable
+	summary_column_temp = ds.summary(column)
+	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+	rownames(summary_column) = study_names
+	colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+	summary_column = summary_column[,c(2,6,5,7)]
+	rm(summary_column_temp)
+	return(summary_column)
+}
+
 # Exposures Missing Checker
 fullNum = ds.length('D$AGE_BASE', type = 'split') 
 fattyMissing =  ds.numNA('D$FATTY')
