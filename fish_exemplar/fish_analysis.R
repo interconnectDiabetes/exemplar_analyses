@@ -51,7 +51,7 @@ rm(temp)
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
-summaryContinousExp <- function(column, study_names, num_studies) {
+summaryContExp <- function(column, study_names, num_studies) {
 	# given a table name and column as a string, return the summary table for the continous variable
 	summary_column_temp = ds.summary(column)
 	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
@@ -88,44 +88,15 @@ colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 
 #---------------------------------------------------------
 # Summaries for exposures
 # fatty fish
-summary_fatty_temp <- ds.summary('D$FATTY')
-summary_fatty <- data.frame(matrix(unlist(summary_fatty_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_fatty) <- study_names
-colnames(summary_fatty) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_fatty <- summary_fatty[,c(2,6,5,7)]
-rm(summary_fatty_temp)
-
+summary_fatty = summmaryContExp('D$FATTY', study_names, num_studies)
 # fresh fish
-summary_fresh_temp <- ds.summary('D$NONFISH')
-summary_fresh <- data.frame(matrix(unlist(summary_fresh_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_fresh) <- study_names
-colnames(summary_fresh) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_fresh <- summary_fresh[,c(2,6,5,7)]
-rm(summary_fresh_temp)
-
+summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
 # lean fish
-summary_lean_temp <- ds.summary('D$NONFISH')
-sumamry_lean <- data.frame(matrix(unlist(summary_lean_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(sumamry_lean) <- study_names
-colnames(sumamry_lean) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-sumamry_lean <- sumamry_lean[,c(2,6,5,7)]
-rm(summary_lean_temp)
-
+summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
 # nonfish
-summary_non_fish_temp <- ds.summary('D$NONFISH')
-summary_nonfish <- data.frame(matrix(unlist(summary_non_fish_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_nonfish) <- study_names
-colnames(summary_nonfish) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_nonfish <- summary_nonfish[,c(2,6,5,7)]
-rm(summary_non_fish_temp)
-
+summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
 # total fish
-summary_total_temp <- ds.summary('D$TOTAL')
-summary_total <- data.frame(matrix(unlist(summary_total_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-rownames(summary_total) <- study_names
-colnames(summary_total) <- c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-summary_total <- summary_total[,c(2,6,5,7)]
-rm(summary_total_temp)
+summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
 
 #---------------------------------------------------------
