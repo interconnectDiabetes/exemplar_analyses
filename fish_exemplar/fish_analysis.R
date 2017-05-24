@@ -26,11 +26,9 @@ source("creds/fish_exemplar_creds.R")
 setwd("~")
 
 datashield.logout(opals)
-
 myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
               'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
-
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
@@ -112,7 +110,6 @@ summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
 # total fish
 summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
-
 #---------------------------------------------------------
 # Summaries for outcomes
 
@@ -153,17 +150,61 @@ summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
 # sugary drinks
 summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
 
-
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
+do_reg <- function(my_fmla, study_names, outcome, out_family){
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100)
+	model_coeffs <- as.data.frame(model$coefficients)
+	model_coeffs$study = study
+	model_coeffs$outcome = outcome
+	model_coeffs$cov = rownames(model_coeffs)
+	for (x in 1:3){ model_coeffs <- model_coeffs[,c(ncol(model_coeffs),1:(ncol(model_coeffs)-1))]}
+	rownames(model_coeffs) = NULL
+	return(model_coeffs)
+}
+
+
+do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){  
+  res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
+  
+  #add the weights to the labels
+  res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+  
+  #forest plots
+  if (out_family == 'gaussian') {
+    forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+                                  .(round(res$QEp,3)),')')),
+           xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
+                             .(round(res$pval,3)))))
+    usr <- par("usr")
+    text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+    text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+    
+  }
+  else if (out_family == 'binomial'){
+    forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+                                            .(round(res$QEp,3)),')')),
+           xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
+                             .(round(res$pval,3)))), atransf = exp)
+    usr <- par("usr")
+    text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
+    text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+    text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+  }
+  
+  return(res)
+}
+
+
+
 # repeat for each exposure
 my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
 my_outcome = c('CASE_OBJ', "CASE_OBJ_SELF")
 my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
 	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST",
 	"SUPPLEMENTS")
-
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |1|
