@@ -50,13 +50,14 @@ rm(temp)
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
 summaryContExp <- function(column, study_names, num_studies) {
-	# given a table name and column as a string, return the summary table for the continous variable
-	summary_column_temp = ds.summary(column)
-sutyd	rownames(summary_column) = study_names
-	colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-	summary_column = summary_column[,c(2,6,5,7)]
-	rm(summary_column_temp)
-	return(summary_column)
+  # given a table name and column as a string, return the summary table for the continous variable
+  summary_column_temp = ds.summary(column)
+  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+  rownames(summary_column) = study_names
+  colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+  summary_column = summary_column[,c(2,6,5,7)]
+  rm(summary_column_temp)
+  return(summary_column)
 }
 
 summaryBinExp <- function(column, study_names, num_studies) {
@@ -101,7 +102,7 @@ colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 
 # fatty fish
 summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
 # fresh fish
-summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
+# summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
 # fried fish
 summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
 # lean fish
@@ -109,9 +110,9 @@ summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
 # nonfish
 summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
 # salt fish
-summary_salt = summaryContExp('D$SALT', study_names, num_studies)
+# summary_salt = summaryContExp('D$SALT', study_names, num_studies)
 # ssd fish
-summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
+# summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
 # total fish
 summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
@@ -128,24 +129,24 @@ summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
 # smoking
 
-# mi, stroke, cancer, hypertension
-summaryBinExp('D$MI', study_names, num_studies)
-summaryBinExp('D$STROKE', study_names, num_studies)
-summaryBinExp('D$CANCER', study_names, num_studies)
-summaryBinExp('D$HYPERTENSION', study_names, num_studies)
-
-# Continous covariates
-summary_pa = summaryContExp('D$PA', study_names, num_studies)
-summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
-summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
-summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
-summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
-summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
-summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
-summary_veg = summaryContExp('D$VEG', study_names, num_studies)
-summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
-summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
-summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
+# # mi, stroke, cancer, hypertension
+# summaryBinExp('D$MI', study_names, num_studies)
+# summaryBinExp('D$STROKE', study_names, num_studies)
+# summaryBinExp('D$CANCER', study_names, num_studies)
+# summaryBinExp('D$HYPERTENSION', study_names, num_studies)
+# 
+# # Continous covariates
+# summary_pa = summaryContExp('D$PA', study_names, num_studies)
+# summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
+# summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
+# summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
+# summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
+# summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
+# summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
+# summary_veg = summaryContExp('D$VEG', study_names, num_studies)
+# summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
+# summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
+# summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
 
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
@@ -273,7 +274,7 @@ model_1_REM <- REM_results
 
 
 ## attempt with ds.lexis, ie the poisson piecewise regression
-ds.lexis('D', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END',variables=c('age','drug'), statusCol='censor')
+ds.lexis('D', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ')
 
 
 # +-+-+-+-+-+ +-+
