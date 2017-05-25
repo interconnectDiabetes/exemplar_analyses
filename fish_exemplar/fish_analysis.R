@@ -52,8 +52,7 @@ rm(temp)
 summaryContExp <- function(column, study_names, num_studies) {
 	# given a table name and column as a string, return the summary table for the continous variable
 	summary_column_temp = ds.summary(column)
-	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-	rownames(summary_column) = study_names
+sutyd	rownames(summary_column) = study_names
 	colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
 	summary_column = summary_column[,c(2,6,5,7)]
 	rm(summary_column_temp)
@@ -103,13 +102,20 @@ colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 
 summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
 # fresh fish
 summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
+# fried fish
+summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
 # lean fish
 summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
 # nonfish
 summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
+# salt fish
+summary_salt = summaryContExp('D$SALT', study_names, num_studies)
+# ssd fish
+summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
 # total fish
 summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
+                               
 #---------------------------------------------------------
 # Summaries for outcomes
 
@@ -207,7 +213,7 @@ my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "B
 # To assess the impact of each confounder we will also run models including each confounder separately. 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 
 REM_results = list()
 study_regs = data.frame()
@@ -322,7 +328,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 # Stratified analyses by sex (men, women) if positive interaction 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
 # +-+-+-+-+-+ +-+
