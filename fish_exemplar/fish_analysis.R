@@ -128,26 +128,17 @@ summaryBinExp('D$STROKE', study_names, num_studies)
 summaryBinExp('D$CANCER', study_names, num_studies)
 summaryBinExp('D$HYPERTENSION', study_names, num_studies)
 
-# pa
+# Continous covariates
 summary_pa = summaryContExp('D$PA', study_names, num_studies)
-#alcohol
 summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
-# supplements
 summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
-# eintake
 summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
-# meat
 summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
 summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
-# fruit
 summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
-# veg
 summary_veg = summaryContExp('D$VEG', study_names, num_studies)
-# dairy
 summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
-# fiber
 summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
-# sugary drinks
 summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
 
 # ###############################################################################
@@ -275,6 +266,9 @@ model_1_all <- study_regs
 model_1_REM <- REM_results
 
 
+## attempt with ds.lexis, ie the poisson piecewise regression
+ds.lexis('D', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END',variables=c('age','drug'), statusCol='censor')
+
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |2|
@@ -285,13 +279,13 @@ model_1_REM <- REM_results
 # model2a
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
 
 # model2b
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE")
 
 # +-+-+-+-+-+ +-+
@@ -303,19 +297,19 @@ my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 # Models to test Interaction 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
 
 # interaction with waist
 my_exposure = c('TOTAL')
 my_outcome = c('WAIST')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
 
 
 my_exposure = c('WAIST')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
 
 # +-+-+-+-+-+ +-+
@@ -343,7 +337,7 @@ my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # medication is new here
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
 				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
 # +-+-+-+-+-+ +-+
@@ -357,7 +351,7 @@ my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE". "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
 				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
 # GEOGRAPHIC AREA (BUT MIGHT NOT DO THIS ONE ANYWAY)
