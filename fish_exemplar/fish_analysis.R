@@ -275,7 +275,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 	model_1_all <- study_regs
 	model_1_REM <- REM_results
 
-	return list(model_1_all, model_1_REM)
+	return (list(model_1_all, model_1_REM))
 }
 
 # runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath) {
