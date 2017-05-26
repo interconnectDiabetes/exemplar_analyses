@@ -216,6 +216,10 @@ my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE")
+
 REM_results = list()
 study_regs = data.frame()
 ref_table = 'D'
