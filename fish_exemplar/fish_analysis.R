@@ -243,10 +243,19 @@ REM_results = list()
 study_regs = data.frame()
 ref_table = 'D'
 
-mypath <- file.path('~','plots','model_1.png')
-png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+# mypath <- file.path('~','plots','model_1.png')
+# png(file=mypath, width = 1260*length(my_exposure), height = 940*length(my_outcome), res = 300)
+# par(mar=c(5,3,2,2)+0.1)
+# par(mfrow=c(length(my_outcome),length(my_exposure)))
+
+mypath <- file.path('~','plots','model_1.svg')
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 for (k in 1:length(my_outcome)){
 	outcome_family = findOutcomeFamily(ref_table, my_outcome[k])
