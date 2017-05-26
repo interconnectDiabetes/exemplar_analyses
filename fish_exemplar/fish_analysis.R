@@ -178,6 +178,17 @@ do_reg <- function(my_fmla, study, outcome, out_family){
 	return(model_coeffs)
 }
 
+do_reg_survival <- function(my_fmla, study, outcome, out_family, offset_column){
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], offset = offset_column,  maxit=100)
+	model_coeffs <- as.data.frame(model$coefficients)
+	model_coeffs$study = study
+	model_coeffs$outcome = outcome
+	model_coeffs$cov = rownames(model_coeffs)
+	for (x in 1:3){ model_coeffs <- model_coeffs[,c(ncol(model_coeffs),1:(ncol(model_coeffs)-1))]}
+	rownames(model_coeffs) = NULL
+	return(model_coeffs)
+}
+
 
 do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){  
   res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
@@ -278,9 +289,60 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 	return (list(model_1_all, model_1_REM))
 }
 
-# runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath) {
+runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath) {
+	REM_results = list()
+	study_regs = data.frame()
 
-# }
+	svg(filename=mypath, 
+		width=4 * length(my_exposure), 
+		height=3 * length(my_outcome), 
+		pointsize=10)
+	par(mar=c(5,3,2,2)+0.1)
+	par(mfrow=c(length(my_outcome),length(my_exposure)))
+	par(ps=10)
+
+	## attempt with ds.lexis, ie the poisson piecewise regression
+	ds.lexis(data='ref_table', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "ref_table_expanded", datasources = opals)
+	ds.assign(toAssign='log(ref_table_expanded$SURVIVALTIME)', newobj='logSurvival')
+
+	ref_table = "ref_table_expanded"
+
+	for (k in 1:length(my_outcome)){
+		outcome_family = 'poisson'
+
+		# for each exposure and
+		for (j in 1:length(my_exposure)){
+			estimates = vector()
+			s_errors = vector()
+			labels = vector()
+
+			for(i in 1:length(opals)) {
+				reg_data <- data.frame()
+
+				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(ref_table, '$','TIMEID'), '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+				reg_data <- do_reg_survival(fmla, names(opals[i]), my_outcome[k], outcome_family, "logSurvival")
+
+				study_regs = rbind(study_regs,reg_data)
+				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+				labels = rbind(labels, reg_data[2,1])      
+				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+			}
+
+			#meta analysis here
+			for (n in 1:length(variables)){
+				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+			}
+		}
+	}
+
+	#Store results
+	dev.off()
+	model_1_all <- study_regs
+	model_1_REM <- REM_results
+
+	return (list(model_1_all, model_1_REM))
+}
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |1|
@@ -307,7 +369,8 @@ model_1_REM = model_1_results[[2]]
 
 ## attempt with ds.lexis, ie the poisson piecewise regression
 ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "d1_expanded", datasources = opals)
-
+ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
+ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |2|
