@@ -35,6 +35,7 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ###############################################################################
 # all participants
 all_participants <- ds.length('D$TOTAL')
+all_participants_split = ds.length('D$TOTAL',type = 'split')
 
 # Filter out missing values
 temp <- ds.summary('D$TOTAL')
@@ -45,6 +46,14 @@ rm(temp)
 # # Only Complete Cases
 # ds.subset(x = 'D', subset = 'D1', completeCases = TRUE)
 # complete_participants <- ds.length('D1$TOTAL')
+
+# Setup an additional proxy ID column for each Study for use in survival analysis
+for(i in 1:length(opals)){
+  work1 <- all_participants_split[[i]]
+  work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
+  eval(parse(text=work2))
+}
+ds.cbind(x=c('ID','D'), newobj='D1')
 
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
@@ -151,7 +160,7 @@ summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
-do_reg <- function(my_fmla, study_names, outcome, out_family){
+do_reg <- function(my_fmla, study, outcome, out_family){
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -281,7 +290,7 @@ model_1_REM <- REM_results
 
 
 ## attempt with ds.lexis, ie the poisson piecewise regression
-ds.lexis('D', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ')
+ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "d1_expanded", datasources = opals)
 
 
 # +-+-+-+-+-+ +-+
