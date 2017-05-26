@@ -195,7 +195,17 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
   return(res)
 }
 
-
+findOutcomeFamily <- function(ref_table, outcome){
+	# Find outcome family for regression
+	out_class = ds.class(paste0(ref_table, '$', outcome))[[1]]
+	if (out_class == 'factor') {
+		outcome_family = 'binomial'
+	}
+	else if (out_class == 'numeric' | out_class == 'integer') {
+		outcome_family = 'gaussian'
+	}
+	return(outcome_family)
+}
 
 # repeat for each exposure
 my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
@@ -230,14 +240,7 @@ par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
 
 for (k in 1:length(my_outcome)){
-	# Find outcome family for regression
-	out_class = ds.class(paste0(ref_table, '$', my_outcome[k]))[[1]]
-	if (out_class == 'factor') {
-		outcome_family = 'binomial'
-	}
-	else if (out_class == 'numeric' | out_class == 'integer') {
-		outcome_family = 'gaussian'
-	}
+	outcome_family = findOutcomeFamily(ref_table, my_outcome[k])
 
 	# for each exposure and
 	for (j in 1:length(my_exposure)){
