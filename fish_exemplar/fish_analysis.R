@@ -302,7 +302,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	par(ps=10)
 
 	## attempt with ds.lexis, ie the poisson piecewise regression
-	ds.lexis(data='ref_table', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "ref_table_expanded", datasources = opals)
+	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "ref_table_expanded", datasources = opals)
 	ds.assign(toAssign='log(ref_table_expanded$SURVIVALTIME)', newobj='logSurvival')
 
 	ref_table = "ref_table_expanded"
@@ -319,7 +319,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
 
-				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(ref_table, '$','TIMEID'), '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(ref_table, '$','TIMEID'), '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
 				reg_data <- do_reg_survival(fmla, names(opals[i]), my_outcome[k], outcome_family, "logSurvival")
 
 				study_regs = rbind(study_regs,reg_data)
@@ -371,6 +371,26 @@ model_1_REM = model_1_results[[2]]
 ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "d1_expanded", datasources = opals)
 ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
 ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
+
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE")
+
+ref_table = 'D1'
+mypath = file.path('~', 'plots', 'model_1_surv.svg')
+model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+
+
+REM_results = list()
+study_regs = data.frame()
+
+svg(filename=mypath, 
+    width=4 * length(my_exposure), 
+    height=3 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |2|
