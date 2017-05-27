@@ -35,7 +35,7 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ###############################################################################
 # all participants
 all_participants <- ds.length('D$TOTAL')
-all_participants_split = ds.length('D$TOTAL',type = 'split')
+all_participants_split <- ds.length('D$TOTAL',type = 'split')
 
 # Filter out missing values
 temp <- ds.summary('D$TOTAL')
@@ -160,13 +160,6 @@ summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
-# repeat for each exposure
-my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
-my_outcome = c('CASE_OBJ', "CASE_OBJ_SELF")
-my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST",
-	"SUPPLEMENTS")
-
 do_reg <- function(my_fmla, study, outcome, out_family){
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100)
 	model_coeffs <- as.data.frame(model$coefficients)
@@ -372,25 +365,13 @@ ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCo
 ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
 ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
 
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE")
 
+# survival version short (case usage)
 ref_table = 'D1'
 mypath = file.path('~', 'plots', 'model_1_surv.svg')
 model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 
-
-REM_results = list()
-study_regs = data.frame()
-
-svg(filename=mypath, 
-    width=4 * length(my_exposure), 
-    height=3 * length(my_outcome), 
-    pointsize=10)
-par(mar=c(5,3,2,2)+0.1)
-par(mfrow=c(length(my_outcome),length(my_exposure)))
-par(ps=10)
+# survival testcase for function
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |2|
@@ -478,4 +459,10 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 
 # GEOGRAPHIC AREA (BUT MIGHT NOT DO THIS ONE ANYWAY)
 
+# repeat for each exposure
+my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
+my_outcome = c('CASE_OBJ', "CASE_OBJ_SELF")
+my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST",
+	"SUPPLEMENTS")
 
