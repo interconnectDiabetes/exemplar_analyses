@@ -161,7 +161,7 @@ summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(my_fmla, study, outcome, out_family){
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100)
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -171,8 +171,8 @@ do_reg <- function(my_fmla, study, outcome, out_family){
 	return(model_coeffs)
 }
 
-do_reg_survival <- function(my_fmla, study, outcome, out_family, offset_column){
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], offset = offset_column,  maxit=100)
+do_reg_survival <- function(my_fmla, study, outcome, out_family, offset_column, lexisTable){
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[i], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -306,7 +306,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "ref_table_expanded", datasources = opals)
 	ds.assign(toAssign='log(ref_table_expanded$SURVIVALTIME)', newobj='logSurvival')
 
-	ref_table = "ref_table_expanded"
+	lexised_table = "ref_table_expanded"
 
 	for (k in 1:length(my_outcome)){
 		outcome_family = 'poisson'
@@ -320,8 +320,8 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
 
-				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(ref_table, '$','TIMEID'), '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(fmla, names(opals[i]), my_outcome[k], outcome_family, "logSurvival")
+				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(lexised_table, '$','TIMEID'), '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvival", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -352,27 +352,22 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension
 # 
-# # To assess the impact of each confounder we will also run models including each confounder separately. 
-# my_exposure = c('TOTAL')
-# my_outcome = c('CASE_OBJ')
-# my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-
+# To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 
-ref_table = 'D'
-mypath = file.path('~', 'plots', 'model_1.svg')
+# ref_table = 'D1'
+# mypath = file.path('~', 'plots', 'model_1.svg')
+# 
+# model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+# model_1_all = model_1_results[[1]]
+# model_1_REM = model_1_results[[2]]
 
-model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1_all = model_1_results[[1]]
-model_1_REM = model_1_results[[2]]
-
-## attempt with ds.lexis, ie the poisson piecewise regression
-ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "d1_expanded", datasources = opals)
-ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
-ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
-
+# ## attempt with ds.lexis, ie the poisson piecewise regression
+# ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "d1_expanded", datasources = opals)
+# ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
+# ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
 
 # survival version short (case usage)
 ref_table = 'D1'
