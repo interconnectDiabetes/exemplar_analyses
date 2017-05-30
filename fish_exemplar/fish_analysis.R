@@ -304,9 +304,12 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 
 	## attempt with ds.lexis, ie the poisson piecewise regression
 	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "ref_table_expanded", datasources = opals)
-	ds.assign(toAssign='log(ref_table_expanded$SURVIVALTIME)', newobj='logSurvival')
+	# set TIMEID as a factor as its not done automatically
+	ds.asFactor(x = 'ref_table_expanded$TIMEID', newobj = 'TIMEIDFACT')
+	ds.cbind(x=c('TIMEIDFACT', 'ref_table_expanded'), newobj = 'factoredTimesLexis')
+	ds.assign(toAssign='log(factoredTimesLexis$SURVIVALTIME)', newobj='logSurvival')
 
-	lexised_table = "ref_table_expanded"
+	lexised_table = "factoredTimesLexis"
 
 	for (k in 1:length(my_outcome)){
 		outcome_family = 'poisson'
@@ -356,7 +359,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-
+my_covariate =  c("AGE_BASE", "MI", "STROKE", "HYPERTENSION")
 # ref_table = 'D1'
 # mypath = file.path('~', 'plots', 'model_1.svg')
 # 
