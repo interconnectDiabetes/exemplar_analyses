@@ -203,7 +203,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	else if (out_family == 'poisson'){
 		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
 			.(round(res$QEp,3)),')')),
-			xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
+			xlab=bquote(paste('Test of H'[0]*': true hazard ratio = 1, p = ',
 			.(round(res$pval,3)))))
 		usr <- par("usr")
 		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
