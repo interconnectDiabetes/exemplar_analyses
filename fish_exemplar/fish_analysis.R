@@ -46,17 +46,18 @@ num_studies <- length(temp)
 study_names <- names(temp)
 rm(temp)
 
-# # Only Complete Cases
-# ds.subset(x = 'D', subset = 'D1', completeCases = TRUE)
-# complete_participants <- ds.length('D1$TOTAL')
+# Only Complete Cases
+ds.subset(x = 'D', subset = 'D1', completeCases = TRUE)
+complete_participants <- ds.length('D1$TOTAL')
+complete_participants_split <- ds.length('D1$TOTAL',type = 'split')
 
 # Setup an additional proxy ID column for each Study for use in survival analysis
 for(i in 1:length(opals)){
-  work1 <- all_participants_split[[i]]
+  work1 <- complete_participants_split[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
   eval(parse(text=work2))
 }
-ds.cbind(x=c('ID','D'), newobj='D1')
+ds.cbind(x=c('ID','D1'), newobj='D2')
 
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
@@ -364,7 +365,7 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 my_covariate =  c("AGE_BASE", "STROKE", "HYPERTENSION")
 
-ref_table = 'D1'
+ref_table = 'D2'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
 model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
@@ -378,8 +379,8 @@ model_1_REM = model_1_results[[2]]
 
 
 
-ds.lexis.b(data='D1', intervalWidth=5, idCol='D1$ID', entryCol='D1$AGE_BASE', exitCol='D1$AGE_END', statusCol='D$CASE_OBJ', expandDF = 'A')
-ds.assign(toAssign='log(D1_expanded$SURVTIME)', newobj='logSurvival')
+ds.lexis.b(data='D2', intervalWidth=5, idCol='D2$ID', entryCol='D2$AGE_BASE', exitCol='D2$AGE_END', statusCol='D2$CASE_OBJ', expandDF = 'A')
+ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvival')
 
 
 
@@ -388,7 +389,7 @@ ds.assign(toAssign='log(D1_expanded$SURVTIME)', newobj='logSurvival')
 
 
 # survival version short (case usage)
-ref_table = 'D1'
+ref_table = 'D2'
 mypath = file.path('~', 'plots', 'model_1_surv.svg')
 model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 
