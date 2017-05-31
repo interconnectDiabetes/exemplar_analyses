@@ -26,9 +26,12 @@ source("creds/fish_exemplar_creds.R")
 setwd("~")
 
 datashield.logout(opals)
-myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
-              'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
-opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
+
+# myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
+#               'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
+# opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
+
+opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish')
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
@@ -359,18 +362,30 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-my_covariate =  c("AGE_BASE", "MI", "STROKE", "HYPERTENSION")
-# ref_table = 'D1'
-# mypath = file.path('~', 'plots', 'model_1.svg')
-# 
-# model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-# model_1_all = model_1_results[[1]]
-# model_1_REM = model_1_results[[2]]
+my_covariate =  c("AGE_BASE", "STROKE", "HYPERTENSION")
+
+ref_table = 'D1'
+mypath = file.path('~', 'plots', 'model_1.svg')
+
+model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_1_all = model_1_results[[1]]
+model_1_REM = model_1_results[[2]]
 
 # ## attempt with ds.lexis, ie the poisson piecewise regression
 # ds.lexis(data='D1', idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "d1_expanded", datasources = opals)
 # ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
 # ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
+
+
+
+ds.lexis.b(data='D1', intervalWidth=5, idCol='D1$ID', entryCol='D1$AGE_BASE', exitCol='D1$AGE_END', statusCol='D$CASE_OBJ', expandDF = 'A')
+ds.assign(toAssign='log(D1_expanded$SURVTIME)', newobj='logSurvival')
+
+
+
+
+
+
 
 # survival version short (case usage)
 ref_table = 'D1'
