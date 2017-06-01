@@ -92,6 +92,12 @@ summaryBinExp <- function(column, study_names, num_studies) {
 summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 	# given a table$column combination as a string, return the overall summary for categorical
 	# variables set in the levels parameter.
+	summary_column_temp = ds.summary(column)
+	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow=num_studies, ncol=(2+(2*levels)), byrow = TRUE))
+	rownames(summary_column_temp) <- study_names
+	colnames(summary_column) = c('type', 'n')
+	rm(summary_column_temp)
+	return(summary_column)
 }
 
 # Exposures Missing Checker
@@ -120,21 +126,21 @@ colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 
 #---------------------------------------------------------
 # Summaries for exposures
 # fatty fish
-summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
+# summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
 # fresh fish
 # summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
 # fried fish
-summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
+# summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
 # lean fish
-summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
+# summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
 # nonfish
-summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
+# summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
 # salt fish
 # summary_salt = summaryContExp('D$SALT', study_names, num_studies)
 # ssd fish
 # summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
 # total fish
-summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
+# summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
                                
 #---------------------------------------------------------
