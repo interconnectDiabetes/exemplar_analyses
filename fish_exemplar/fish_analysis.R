@@ -299,10 +299,10 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 
 	#Store results
 	dev.off()
-	model_1_all <- study_regs
-	model_1_REM <- REM_results
+	model_all <- study_regs
+	model_rem <- REM_results
 
-	return (list(model_1_all, model_1_REM))
+	return (list(model_all, model_rem))
 }
 
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath) {
@@ -318,13 +318,13 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	par(ps=10)
 
 	## attempt with ds.lexis, ie the poisson piecewise regression
-	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "ref_table_expanded", datasources = opals)
+	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "A", datasources = opals)
 	# set TIMEID as a factor as its not done automatically
-	ds.asFactor(x = 'ref_table_expanded$TIMEID', newobj = 'TIMEIDFACT')
-	ds.cbind(x=c('TIMEIDFACT', 'ref_table_expanded'), newobj = 'factoredTimesLexis')
-	ds.assign(toAssign='log(factoredTimesLexis$SURVIVALTIME)', newobj='logSurvival')
+	ds.asFactor(x = 'A$TIMEID', newobj = 'TIMEIDFACT')
+	ds.cbind(x=c('TIMEIDFACT', 'A'), newobj = 'Afact')
+	ds.assign(toAssign='log(Afact$SURVIVALTIME)', newobj='logSurvival')
 
-	lexised_table = "factoredTimesLexis"
+	lexised_table = "Afact"
 
 	for (k in 1:length(my_outcome)){
 		outcome_family = 'poisson'
@@ -357,10 +357,77 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 
 	#Store results
 	dev.off()
-	model_1_all <- study_regs
-	model_1_REM <- REM_results
+	model_all <- study_regs
+	model_rem <- REM_results
 
-	return (list(model_1_all, model_1_REM))
+	return (list(model_all, model_rem))
+}
+
+runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width = c(1,2,3)) {
+	REM_results = list()
+	study_regs = data.frame()
+
+	svg(filename=mypath, 
+		width=4 * length(my_exposure), 
+		height=3 * length(my_outcome), 
+		pointsize=10)
+	par(mar=c(5,3,2,2)+0.1)
+	par(mfrow=c(length(my_outcome),length(my_exposure)))
+	par(ps=10)
+
+	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
+	# and expand the dataset using the ds.lexis b command
+	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
+	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
+	idColString = paste0(ref_table, '$', 'ID')
+	entryColString = paste0(ref_table, '$', 'AGE_BASE')
+	exitColString = paste0(ref_table, '$', 'AGE_END')
+	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
+	ds.lexis.b(data=ref_table, intervalWidth=interval_width, idCol=,idColString entryCol=entryColString, exitCol=exitColString, statusCol=statusColString, expandDF = 'A')
+	
+	ds.asNumeric('A$CENSOR','censor')
+	ds.asFactor('A$TIME.PERIOD','tid.f')
+	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
+	ds.cbind(x=c('TIMEIDFACT', 'A'), newobj = 'Afact')
+
+	lexised_table = "Afact"
+
+	for (k in 1:length(my_outcome)){
+		outcome_family = 'poisson'
+
+		# for each exposure and
+		for (j in 1:length(my_exposure)){
+			estimates = vector()
+			s_errors = vector()
+			labels = vector()
+
+			for(i in 1:length(opals)) {
+				reg_data <- data.frame()
+
+				# need to check this formula for correctness
+				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvival", lexisTable = lexised_table)
+
+				study_regs = rbind(study_regs,reg_data)
+				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+				labels = rbind(labels, reg_data[2,1])      
+				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+			}
+
+			#meta analysis here
+			for (n in 1:length(variables)){
+				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+			}
+		}
+	}
+
+	#Store results
+	dev.off()
+	model_all <- study_regs
+	model_rem <- REM_results
+
+	return (list(model_all, model_rem))
 }
 
 # +-+-+-+-+-+ +-+
@@ -374,7 +441,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-my_covariate =  c("AGE_BASE", "STROKE", "HYPERTENSION")
+my_covariate =  c("STROKE", "HYPERTENSION")
 
 ref_table = 'D2'
 mypath = file.path('~', 'plots', 'model_1.svg')
