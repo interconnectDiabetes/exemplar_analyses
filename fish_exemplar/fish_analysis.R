@@ -27,11 +27,11 @@ setwd("~")
 
 datashield.logout(opals)
 
-# myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
-#               'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
-# opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
-
-opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish')
+myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
+              'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
+opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
+# 
+# opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish')
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
@@ -42,8 +42,8 @@ all_participants_split <- ds.length('D$TOTAL',type = 'split')
 
 # Filter out missing values
 temp <- ds.summary('D$TOTAL')
-num_studies <- length(temp)
 study_names <- names(temp)
+num_studies <- length(temp)
 rm(temp)
 
 # Only Complete Cases
@@ -53,11 +53,11 @@ complete_participants_split <- ds.length('D1$TOTAL',type = 'split')
 
 # Setup an additional proxy ID column for each Study for use in survival analysis
 for(i in 1:length(opals)){
-  work1 <- complete_participants_split[[i]]
+  work1 <- all_participants_split[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
   eval(parse(text=work2))
 }
-ds.cbind(x=c('ID','D1'), newobj='D2')
+ds.cbind(x=c('ID','D'), newobj='D2')
 
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
@@ -378,13 +378,15 @@ model_1_REM = model_1_results[[2]]
 # ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
 
 
-
-ds.lexis.b(data='D2', intervalWidth=5, idCol='D2$ID', entryCol='D2$AGE_BASE', exitCol='D2$AGE_END', statusCol='D2$CASE_OBJ', expandDF = 'A')
+ds.lexis.b(data='D2', intervalWidth=c(1,2,3), idCol='D2$ID', entryCol='D2$AGE_BASE', exitCol='D2$AGE_END', statusCol='D2$CASE_OBJ', expandDF = 'A')
 ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvival')
 
 
 
 
+# test purposes
+ds.lexis.b(data='D', intervalWidth=c(1,2,3), idCol='D$ID', entryCol='D$entdate', exitCol='D$enddate', statusCol='D$censor', expandDF = 'A')
+ds.lexis(data='D', idCol='ID', entryCol='entdate', exitCol='enddate', statusCol='censor', newobj = "d1_expanded", datasources = opals)
 
 
 
