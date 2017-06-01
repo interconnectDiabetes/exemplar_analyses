@@ -78,13 +78,10 @@ summaryContExp <- function(column, study_names, num_studies) {
 summaryBinExp <- function(column, study_names, num_studies) {
     # given a table$column combination as a string, return the summary
     # table for the binary variable
-    binary_df = data.frame()
     summary_column_temp = ds.summary(column)
     summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=6, byrow=TRUE))
-    rownames(summary_column_temp) <- paste0(study_names,'_',bin)
-    binary_df <- rbind(binary_df, summary_temp)
-    colnames(binary_df) <- c('type', 'n', '0', '1', 'No', 'Yes')
-    binary_df <- binary_df[,c(5,6)]
+    rownames(summary_column) <- study_names
+    colnames(summary_column) <- c('type', 'n', '0', '1', 'No', 'Yes')
     rm(summary_column_temp)
     return(summary_column)
 }
@@ -94,7 +91,7 @@ summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 	# variables set in the levels parameter.
 	summary_column_temp = ds.summary(column)
 	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow=num_studies, ncol=(2+(2*levels)), byrow = TRUE))
-	rownames(summary_column_temp) <- study_names
+	rownames(summary_column) <- study_names
 	colnames(summary_column) = c('type', 'n')
 	rm(summary_column_temp)
 	return(summary_column)
