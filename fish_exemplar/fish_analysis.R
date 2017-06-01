@@ -363,7 +363,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	return (list(model_all, model_rem))
 }
 
-runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width = c(1,2,3)) {
+runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width) {
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -383,14 +383,13 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 	entryColString = paste0(ref_table, '$', 'AGE_BASE')
 	exitColString = paste0(ref_table, '$', 'AGE_END')
 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
-	ds.lexis.b(data=ref_table, intervalWidth=interval_width, idCol=,idColString entryCol=entryColString, exitCol=exitColString, statusCol=statusColString, expandDF = 'A')
+	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
+	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A')
 	
 	ds.asNumeric('A$CENSOR','censor')
 	ds.asFactor('A$TIME.PERIOD','tid.f')
 	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
-	ds.cbind(x=c('TIMEIDFACT', 'A'), newobj = 'Afact')
-
-	lexised_table = "Afact"
+	lexised_table = 'A'
 
 	for (k in 1:length(my_outcome)){
 		outcome_family = 'poisson'
@@ -405,7 +404,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				reg_data <- data.frame()
 
 				# need to check this formula for correctness
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvival", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
@@ -440,7 +439,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
+# my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 my_covariate =  c("STROKE", "HYPERTENSION")
 
 ref_table = 'D2'
@@ -455,21 +454,19 @@ model_1_REM = model_1_results[[2]]
 # ds.assign(toAssign='log(d1_expanded$SURVIVALTIME)', newobj='logSurvival')
 # ds.glm(formula='d1_expanded$CASE_OBJ~1+ d1_expanded$TIMEID+d1_expanded$AGE_END+d1_expanded$TOTAL', data='d1_expanded',family='poisson',offset='logSurvival')
 
-
-
-datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
-datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
-
-
-ds.lexis.b(data='D2', intervalWidth=c(1,2,3), idCol='D2$ID', entryCol='D2$AGE_BASE', exitCol='D2$AGE_END', statusCol='D2$CASE_OBJ', expandDF = 'A')
-ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
-
-ds.asNumeric('A$AGE_BASE','age')
-ds.asNumeric('A$CENSOR','censor')
-ds.asNumeric('A$TOTAL', 'total')
-ds.asFactor('A$TIME.PERIOD','tid.f')
-
-ds.glm(formula='censor~1+tid.f+age+total',family='poisson',offset='logSurvival')
+# datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
+# datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
+# 
+# 
+# ds.lexis.b(data='D2', intervalWidth=c(1,2,3), idCol='D2$ID', entryCol='D2$AGE_BASE', exitCol='D2$AGE_END', statusCol='D2$CASE_OBJ', expandDF = 'A')
+# ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
+# 
+# ds.asNumeric('A$AGE_BASE','age')
+# ds.asNumeric('A$CENSOR','censor')
+# ds.asNumeric('A$TOTAL', 'total')
+# ds.asFactor('A$TIME.PERIOD','tid.f')
+# 
+# ds.glm(formula='censor~1+tid.f+age+total',family='poisson',offset='logSurvival')
 
 # # test purposes
 # ds.lexis.b(data='D', intervalWidth=c(1,2,3), idCol='D$ID', entryCol='D$entdate', exitCol='D$enddate', statusCol='D$censor', expandDF = 'A')
@@ -481,8 +478,15 @@ ds.glm(formula='censor~1+tid.f+age+total',family='poisson',offset='logSurvival')
 ref_table = 'D2'
 mypath = file.path('~', 'plots', 'model_1_surv.svg')
 model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_1_surv_all = model_1_surv[[1]]
+model_1_surv_all = model_1_surv[[2]]
 
-# survival testcase for function
+# survival version with lexis b (case usage)
+ref_table = 'D2'
+mypath = file.path('~', 'plots', 'model_1b_surv.svg')
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1,2,3))
+model_1_b_all = model_1_b[[1]]
+model_1_b_all = model_1_b[[2]]
 
 # +-+-+-+-+-+ +-+
 #   |m|o|d|e|l| |2|
