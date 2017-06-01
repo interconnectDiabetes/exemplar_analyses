@@ -405,7 +405,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 				# need to check this formula for correctness
 				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvival", lexisTable = lexised_table)
+				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvivalA", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -440,7 +440,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-my_covariate =  c("STROKE", "HYPERTENSION")
+my_covariate =  c("STROKE", "MI")
 
 ref_table = 'D2'
 mypath = file.path('~', 'plots', 'model_1.svg')
