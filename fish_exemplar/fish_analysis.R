@@ -30,7 +30,8 @@ datashield.logout(opals)
 myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
               'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
-# 
+
+# # To include all possible variables uncomment this line and and comment out previus line
 # opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish')
 
 ###############################################################################
@@ -51,7 +52,7 @@ ds.subset(x = 'D', subset = 'D1', completeCases = TRUE)
 complete_participants <- ds.length('D1$TOTAL')
 complete_participants_split <- ds.length('D1$TOTAL',type = 'split')
 
-# Setup an additional proxy ID column for each Study for use in survival analysis
+# Setup an additional proxy ID column for each study
 for(i in 1:length(opals)){
   work1 <- all_participants_split[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
@@ -63,7 +64,8 @@ ds.cbind(x=c('ID','D'), newobj='D2')
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
 summaryContExp <- function(column, study_names, num_studies) {
-    # given a table name and column as a string, return the summary table for the continous variable
+    # given a table$column combination as a string, return the summary table 
+    # for the continous variable
     summary_column_temp = ds.summary(column)
     summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
     rownames(summary_column) = study_names
@@ -74,7 +76,7 @@ summaryContExp <- function(column, study_names, num_studies) {
 }
 
 summaryBinExp <- function(column, study_names, num_studies) {
-    # given a table name and binary valued column as a struing, return the summary
+    # given a table$column combination as a string, return the summary
     # table for the binary variable
     binary_df = data.frame()
     summary_column_temp = ds.summary(column)
@@ -85,6 +87,11 @@ summaryBinExp <- function(column, study_names, num_studies) {
     binary_df <- binary_df[,c(5,6)]
     rm(summary_column_temp)
     return(summary_column)
+}
+
+summaryCatExp <- function (column, study_names, num_studies, levels = 2){
+	# given a table$column combination as a string, return the overall summary for categorical
+	# variables set in the levels parameter.
 }
 
 # Exposures Missing Checker
@@ -140,14 +147,15 @@ summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
 
 # ses
 
-# smoking
+# # smoking
+# summaryBinExp('D$SMOKING', study_names, num_studies)
 
 # # mi, stroke, cancer, hypertension
 # summaryBinExp('D$MI', study_names, num_studies)
 # summaryBinExp('D$STROKE', study_names, num_studies)
 # summaryBinExp('D$CANCER', study_names, num_studies)
 # summaryBinExp('D$HYPERTENSION', study_names, num_studies)
-# 
+
 # # Continous covariates
 # summary_pa = summaryContExp('D$PA', study_names, num_studies)
 # summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
