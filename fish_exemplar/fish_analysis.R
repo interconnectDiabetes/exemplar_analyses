@@ -27,10 +27,6 @@ setwd("~")
 
 datashield.logout(opals)
 
-myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-	"AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-
 myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
               'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
 
@@ -64,13 +60,30 @@ under3500cal <- ds.length('D2a$SEX', type = 'split')
 ds.subset(x = 'D2a', subset = 'D2b', logicalOperator = 'E_INTAKE<=', threshold = 500)
 afterIntake <- ds.length('D2b$SEX', type = 'split')
 
+
+# Loop to produce E4 and model_all_len for descriptive stats
+my_vars_all = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
+	"AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+model_all_len <- data.frame()
+
+for (i in 2:length(my_vars_all)){
+  ds.subset(x = 'D2b', subset = 'E3', cols =  c(my_vars_all[1:i]))
+  ds.subset(x = 'E3', subset = 'E4', completeCases = TRUE)
+  model_all_len <- rbind(model_all_len,ds.length('E4$temp', type = 'split'))
+}
+
+row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
+
+
 # Only Complete Cases (currently not in use for testing behaviour with nulls and the fact that complete 
 # cases knock out every available participant at the moment)
-ds.subset(x = 'D', subset = 'D1', completeCases = TRUE)
-complete_participants <- ds.length('D1$TOTAL')
-complete_participants_split <- ds.length('D1$TOTAL',type = 'split')
+ds.subset(x = 'D2b', subset = 'D3', completeCases = TRUE)
+complete_participants <- ds.length('D3$TOTAL')
+complete_participants_split <- ds.length('D3$TOTAL',type = 'split')
 
-# Setup an additional proxy ID column for each study
+## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
+# Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
   work1 <- all_participants_split[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
