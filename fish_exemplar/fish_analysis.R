@@ -27,8 +27,13 @@ setwd("~")
 
 datashield.logout(opals)
 
+myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
+	"AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+
 myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
               'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
+
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
 # # To include all possible variables uncomment this line and and comment out previus line
@@ -41,13 +46,26 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 all_participants <- ds.length('D$TOTAL')
 all_participants_split <- ds.length('D$TOTAL',type = 'split')
 
-# Filter out missing values
+# Set studynames and numstudies
 temp <- ds.summary('D$TOTAL')
 study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
-# Only Complete Cases
+# remove participants with prevalent diabetes and type 1
+ds.subset(x = 'D', subset = 'D1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
+noPrevalence <- ds.length('D1$SEX', type = 'split')
+ds.subset(x = 'D1', subset = 'D2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
+noPrevalence <- ds.length('D2$SEX', type = 'split')
+
+# remove participants with too little and excessive consumption of calories
+ds.subset(x = 'D2', subset = 'D2a', logicalOperator = 'E_INTAKE>=', threshold = 3500)
+under3500cal <- ds.length('D2a$SEX', type = 'split')
+ds.subset(x = 'D2a', subset = 'D2b', logicalOperator = 'E_INTAKE<=', threshold = 500)
+afterIntake <- ds.length('D2b$SEX', type = 'split')
+
+# Only Complete Cases (currently not in use for testing behaviour with nulls and the fact that complete 
+# cases knock out every available participant at the moment)
 ds.subset(x = 'D', subset = 'D1', completeCases = TRUE)
 complete_participants <- ds.length('D1$TOTAL')
 complete_participants_split <- ds.length('D1$TOTAL',type = 'split')
