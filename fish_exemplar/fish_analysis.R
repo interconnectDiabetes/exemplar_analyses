@@ -173,7 +173,8 @@ colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 
                                
 #---------------------------------------------------------
 # Summaries for outcomes
-
+summary_objective_case = summaryBinExp('D$CASE_OBJ', study_names, num_studies)
+summary_self_case = summaryBinExp("D$CASE_OBJ_SELF", study_names, num_studies)
 
 #---------------------------------------------------------
 # Summaries for covariates and confounders
