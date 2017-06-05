@@ -53,12 +53,17 @@ ds.glm(formula='censor3~1+tid.f3+age3+drug3',family='poisson',offset='logSurviva
 
 ## Lexis o
 # Working with cox cox data to test local against datashield.
+findLoginObjects <- function(){
+	return (opals)
+}
+
+setwd("exemplar_analyses/fish_exemplar")
 source(ds.lexis.o.R)
 datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
 datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
 
-ds.lexis.o(data='D', intervalWidth=c(90,90,90,500,500), idCol='D$ID', entryCol='D$entdate', exitCol='D$enddate', statusCol='D$censor', expandDF = 'A')
-ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
+ds.lexis.o(data='D', intervalWidth=c(90,90,90,500,500), idCol='D$ID', entryCol='D$entdate', exitCol='D$enddate', statusCol='D$censor', expandDF = 'C')
+ds.assign(toAssign='log(C$SURVTIME)', newobj='logSurvivalC')
 
 ds.asNumeric('A$age','age')
 ds.asNumeric('A$CENSOR','censor')
