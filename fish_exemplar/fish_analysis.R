@@ -461,9 +461,14 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 	return (list(model_all, model_rem))
 }
 
-# +-+-+-+-+-+ +-+
-#   |m|o|d|e|l| |1|
-#   +-+-+-+-+-+ +-+
+
+# ___  ___          _      _   __  
+# |  \/  |         | |    | | /  | 
+# | .  . | ___   __| | ___| | `| | 
+# | |\/| |/ _ \ / _` |/ _ \ |  | | 
+# | |  | | (_) | (_| |  __/ | _| |_
+# \_|  |_/\___/ \__,_|\___|_| \___/
+                                 
 # Exposure: total fish (g/d) at baseline
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension
@@ -495,9 +500,13 @@ model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate
 model_1_b_all = model_1_b[[1]]
 model_1_b_all = model_1_b[[2]]
 
-# +-+-+-+-+-+ +-+
-#   |m|o|d|e|l| |2|
-#   +-+-+-+-+-+ +-+
+
+# ___  ___          _      _   _____ 
+# |  \/  |         | |    | | / __  \
+# | .  . | ___   __| | ___| | `' / /'
+# | |\/| |/ _ \ / _` |/ _ \ |   / /  
+# | |  | | (_) | (_| |  __/ | ./ /___
+# \_|  |_/\___/ \__,_|\___|_| \_____/
 # Model 2a: As model 1 + adj for alcohol intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
 # Model 2b: As model 2a + adj for energy intake
 
@@ -513,9 +522,13 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE")
 
-# +-+-+-+-+-+ +-+
-#   |m|o|d|e|l| |3|
-#   +-+-+-+-+-+ +-+
+
+# ___  ___          _      _   _____ 
+# |  \/  |         | |    | | |____ |
+# | .  . | ___   __| | ___| |     / /
+# | |\/| |/ _ \ / _` |/ _ \ |     \ \
+# | |  | | (_) | (_| |  __/ | .___/ /
+# \_|  |_/\___/ \__,_|\___|_| \____/ 
 # Model 3: As model 2b + adj for BMI,  
 # Sensitivity analyses: include waist circumference or waist to hip ratio
 # 
@@ -537,9 +550,13 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
 
-# +-+-+-+-+-+ +-+
-#   |m|o|d|e|l| |4|
-#   +-+-+-+-+-+ +-+
+
+# ___  ___          _      _     ___ 
+# |  \/  |         | |    | |   /   |
+# | .  . | ___   __| | ___| |  / /| |
+# | |\/| |/ _ \ / _` |/ _ \ | / /_| |
+# | |  | | (_) | (_| |  __/ | \___  |
+# \_|  |_/\___/ \__,_|\___|_|     |_/
 # Exposure: total fish (g/d) at baseline*sex
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension,  energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
@@ -550,9 +567,13 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
 				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
-# +-+-+-+-+-+ +-+
-#   |m|o|d|e|l| |5|
-#   +-+-+-+-+-+ +-+
+
+# ___  ___          _      _   _____ 
+# |  \/  |         | |    | | |  ___|
+# | .  . | ___   __| | ___| | |___ \ 
+# | |\/| |/ _ \ / _` |/ _ \ |     \ \
+# | |  | | (_) | (_| |  __/ | /\__/ /
+# \_|  |_/\___/ \__,_|\___|_| \____/ 
 # Exposure: total fish (g/d) at baseline*BMI
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
@@ -565,9 +586,13 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
 				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
-# +-+-+-+-+-+ +-+
-#   |m|o|d|e|l| |6|
-#   +-+-+-+-+-+ +-+
+
+# ___  ___          _      _    ____ 
+# |  \/  |         | |    | |  / ___|
+# | .  . | ___   __| | ___| | / /___ 
+# | |\/| |/ _ \ / _` |/ _ \ | | ___ \
+# | |  | | (_) | (_| |  __/ | | \_/ |
+# \_|  |_/\___/ \__,_|\___|_| \_____/
 # Exposure: total fish (g/d) at baseline*geographical area
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
