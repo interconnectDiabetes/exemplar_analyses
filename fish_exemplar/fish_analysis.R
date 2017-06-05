@@ -91,6 +91,18 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('ID','D'), newobj='D2')
 
+# adding in zero columns to the studies
+for(i in 1:length(opals)){
+  work1 <- all_participants_split[[i]]
+  work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
+  eval(parse(text=work2))
+}
+ds.cbind(x=c('newStartDate','D2'), newobj='D3')
+
+ds.assign(toAssign = 'D$AGE_BASE-D$AGE_END', newobj = 'newEndDate')
+ds.cbind(x=c('newEndDate','D3'), newobj='D4')
+
+
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
@@ -370,7 +382,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
 
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(lexised_table, '$','TIMEID'), '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(lexised_table, '$','TIMEID'), '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvival", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
@@ -436,7 +448,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				reg_data <- data.frame()
 
 				# need to check this formula for correctness
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '1', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvivalA", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
@@ -479,7 +491,7 @@ my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
 my_covariate =  c("STROKE", "MI")
 
-ref_table = 'D2'
+ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
 model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
@@ -487,14 +499,14 @@ model_1_all = model_1_results[[1]]
 model_1_REM = model_1_results[[2]]
 
 # survival version short running normal lexis
-ref_table = 'D2'
+ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1_surv.svg')
 model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 model_1_surv_all = model_1_surv[[1]]
 model_1_surv_all = model_1_surv[[2]]
 
 # survival version with lexis b 
-ref_table = 'D2'
+ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_surv.svg')
 model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1,2,3))
 model_1_b_all = model_1_b[[1]]
