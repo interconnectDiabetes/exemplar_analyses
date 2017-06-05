@@ -423,8 +423,8 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
 	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
 	idColString = paste0(ref_table, '$', 'ID')
-	entryColString = paste0(ref_table, '$', 'AGE_BASE')
-	exitColString = paste0(ref_table, '$', 'AGE_END')
+	entryColString = paste0(ref_table, '$', 'newStartDate')
+	exitColString = paste0(ref_table, '$', 'newEndDate')
 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A')
