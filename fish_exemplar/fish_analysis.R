@@ -140,24 +140,24 @@ summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 }
 
 # Exposures Missing Checker
-fullNum = ds.length('D$AGE_BASE', type = 'split') 
-fattyMissing =  ds.numNA('D$FATTY')
-freshMissing = ds.numNA('D$FRESH')
-friedMissing = ds.numNA('D$FRIED')
-leanMissing = ds.numNA('D$LEAN')
-nonfishMissing = ds.numNA('D$NONFISH')
-saltMissing = ds.numNA('D$SALT')
-ssdMissing = ds.numNA('D$SSD')
-totalMissing = ds.numNA('D$TOTAL')
+fullNum = ds.length('D4$AGE_BASE', type = 'split') 
+fattyMissing =  ds.numNA('D$4FATTY')
+freshMissing = ds.numNA('D4$FRESH')
+friedMissing = ds.numNA('D4$FRIED')
+leanMissing = ds.numNA('D4$LEAN')
+nonfishMissing = ds.numNA('D4$NONFISH')
+saltMissing = ds.numNA('D4$SALT')
+ssdMissing = ds.numNA('D4$SSD')
+totalMissing = ds.numNA('D4$TOTAL')
 
 exposure_missings_table = data.frame(cbind(study_names,fullNum, fattyMissing, freshMissing, friedMissing, leanMissing, nonfishMissing, saltMissing, ssdMissing, totalMissing))
 colnames(exposure_missings_table) <- c('Study Name', 'Total in Study', 'fattyMissing', 'freshMissing', 'friedMissing', 'leanMissing', 'nonfishMissing', 'saltMissing', 'ssdMissing', 'totalMissing')
 
 # Confounders Missing Checker
-miMissing = ds.numNA('D$MI')
-strokeMissing = ds.numNA('D$STROKE')
-cancerMissing = ds.numNA('D$CANCER')
-hypertensionMissing = ds.numNA('D$HYPERTENSION')
+miMissing = ds.numNA('D4$MI')
+strokeMissing = ds.numNA('D4$STROKE')
+cancerMissing = ds.numNA('D4$CANCER')
+hypertensionMissing = ds.numNA('D4$HYPERTENSION')
 
 conf_missings_table = data.frame(cbind(study_names, fullNum, miMissing, cancerMissing, strokeMissing, hypertensionMissing))
 colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 'cancerMissing', 'strokeMissing', 'hypertensionMissing')
