@@ -27,8 +27,9 @@ setwd("~")
 
 datashield.logout(opals)
 
-myvars = list('AGE_BASE', 'FATTY', 'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'MI', 'CANCER', 'STROKE', 'HYPERTENSION',
-              'TYPE_DIAB', 'PREV_DIAB','CASE_OBJ', "CASE_OBJ_SELF", "AGE_END")
+myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
+           	"AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -98,7 +99,7 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
-ds.assign(toAssign = 'D$AGE_BASE-D$AGE_END', newobj = 'newEndDate')
+ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 
 
@@ -141,7 +142,7 @@ summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 
 # Exposures Missing Checker
 fullNum = ds.length('D4$AGE_BASE', type = 'split') 
-fattyMissing =  ds.numNA('D$4FATTY')
+fattyMissing =  ds.numNA('D4$FATTY')
 freshMissing = ds.numNA('D4$FRESH')
 friedMissing = ds.numNA('D4$FRIED')
 leanMissing = ds.numNA('D4$LEAN')
@@ -228,6 +229,8 @@ do_reg <- function(my_fmla, study, outcome, out_family){
 	rownames(model_coeffs) = NULL
 	return(model_coeffs)
 }
+# 
+# reg_data <- do_reg_survival(my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvivalA", lexisTable = lexised_table)
 
 do_reg_survival <- function(my_fmla, study, outcome, out_family, offset_column, lexisTable){
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[i], offset = offset_column,  maxit=100, checks=TRUE)
@@ -382,7 +385,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 				reg_data <- data.frame()
 
 				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(lexised_table, '$','TIMEID'), '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvival", lexisTable = lexised_table)
+				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvival", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -435,8 +438,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 	lexised_table = 'A'
 
 	for (k in 1:length(my_outcome)){
-		outcome_family = 'poisson'
-
+	  
 		# for each exposure and
 		for (j in 1:length(my_exposure)){
 			estimates = vector()
@@ -448,7 +450,8 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 				# need to check this formula for correctness
 				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvivalA", lexisTable = lexised_table)
+				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				reg_data <- do_reg_survival(my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -507,7 +510,7 @@ model_1_surv_all = model_1_surv[[2]]
 # survival version with lexis b 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1,2,3))
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(5,5,10, 30, 500))
 model_1_b_all = model_1_b[[1]]
 model_1_b_all = model_1_b[[2]]
 
