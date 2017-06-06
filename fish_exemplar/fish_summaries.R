@@ -118,3 +118,120 @@ ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 
+
+
+
+###############################################################################
+########################### DATA SUMMARIES ####################################
+###############################################################################
+summaryContExp <- function(column, study_names, num_studies) {
+    # given a table$column combination as a string, return the summary table 
+    # for the continous variable
+    summary_column_temp = ds.summary(column)
+    summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+    rownames(summary_column) = study_names
+    colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+    summary_column = summary_column[,c(2,6,5,7)]
+    rm(summary_column_temp)
+    return(summary_column)
+}
+
+summaryBinExp <- function(column, study_names, num_studies) {
+    # given a table$column combination as a string, return the summary
+    # table for the binary variable
+    summary_column_temp = ds.summary(column)
+    summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+    rownames(summary_column) <- study_names
+    colnames(summary_column) <- c('type', 'n', '0', '1', 'No', 'Yes')
+    rm(summary_column_temp)
+    return(summary_column)
+}
+
+summaryCatExp <- function (column, study_names, num_studies, levels = 2){
+	# given a table$column combination as a string, return the overall summary for categorical
+	# variables set in the levels parameter.
+	summary_column_temp = ds.summary(column)
+	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow=num_studies, ncol=(2+(2*levels)), byrow = TRUE))
+	rownames(summary_column) <- study_names
+	colnames(summary_column) = c('type', 'n')
+	rm(summary_column_temp)
+	return(summary_column)
+}
+
+# Exposures Missing Checker
+fullNum = ds.length('D4$AGE_BASE', type = 'split') 
+fattyMissing =  ds.numNA('D4$FATTY')
+freshMissing = ds.numNA('D4$FRESH')
+friedMissing = ds.numNA('D4$FRIED')
+leanMissing = ds.numNA('D4$LEAN')
+nonfishMissing = ds.numNA('D4$NONFISH')
+saltMissing = ds.numNA('D4$SALT')
+ssdMissing = ds.numNA('D4$SSD')
+totalMissing = ds.numNA('D4$TOTAL')
+
+exposure_missings_table = data.frame(cbind(study_names,fullNum, fattyMissing, freshMissing, friedMissing, leanMissing, nonfishMissing, saltMissing, ssdMissing, totalMissing))
+colnames(exposure_missings_table) <- c('Study Name', 'Total in Study', 'fattyMissing', 'freshMissing', 'friedMissing', 'leanMissing', 'nonfishMissing', 'saltMissing', 'ssdMissing', 'totalMissing')
+
+# Confounders Missing Checker
+miMissing = ds.numNA('D4$MI')
+strokeMissing = ds.numNA('D4$STROKE')
+cancerMissing = ds.numNA('D4$CANCER')
+hypertensionMissing = ds.numNA('D4$HYPERTENSION')
+
+conf_missings_table = data.frame(cbind(study_names, fullNum, miMissing, cancerMissing, strokeMissing, hypertensionMissing))
+colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 'cancerMissing', 'strokeMissing', 'hypertensionMissing')
+
+
+
+#---------------------------------------------------------
+# Summaries for exposures
+# fatty fish
+# summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
+# fresh fish
+# summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
+# fried fish
+# summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
+# lean fish
+# summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
+# nonfish
+# summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
+# salt fish
+# summary_salt = summaryContExp('D$SALT', study_names, num_studies)
+# ssd fish
+# summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
+# total fish
+# summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
+
+                               
+#---------------------------------------------------------
+# Summaries for outcomes
+summary_objective_case = summaryBinExp('D$CASE_OBJ', study_names, num_studies)
+summary_self_case = summaryBinExp("D$CASE_OBJ_SELF", study_names, num_studies)
+
+#---------------------------------------------------------
+# Summaries for covariates and confounders
+# education
+
+# ses
+
+# # smoking
+# summaryBinExp('D$SMOKING', study_names, num_studies)
+
+# # mi, stroke, cancer, hypertension
+# summaryBinExp('D$MI', study_names, num_studies)
+# summaryBinExp('D$STROKE', study_names, num_studies)
+# summaryBinExp('D$CANCER', study_names, num_studies)
+# summaryBinExp('D$HYPERTENSION', study_names, num_studies)
+
+# # Continous covariates
+# summary_pa = summaryContExp('D$PA', study_names, num_studies)
+# summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
+# summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
+# summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
+# summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
+# summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
+# summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
+# summary_veg = summaryContExp('D$VEG', study_names, num_studies)
+# summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
+# summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
+# summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
