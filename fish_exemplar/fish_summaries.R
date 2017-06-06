@@ -89,7 +89,7 @@ for (i in 2:length(my_vars_all)){
   ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i], completeCases = TRUE)
   model_all_len <- rbind(model_all_len, ds.length('E6$newStartDate', type = 'split'))
 }
-rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[1:length(my_vars_all)])
+rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames
 
 # Only Complete Cases (currently not in use for testing behaviour with nulls and the fact that complete 
