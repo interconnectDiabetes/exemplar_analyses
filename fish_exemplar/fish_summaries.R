@@ -48,6 +48,7 @@ model_all_len <- data.frame()
 all_participants <- ds.length('D$TOTAL')
 all_participants_split <- ds.length('D$TOTAL',type = 'split')
 
+
 # Set studynames and numstudies
 temp <- ds.summary('D$TOTAL')
 study_names <- names(temp)
@@ -58,13 +59,15 @@ rm(temp)
 ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
-noPrevalence <- ds.length('E2$SEX', type = 'split')
+noType1 <- ds.length('E2$SEX', type = 'split')
 
 # remove participants with too little and excessive consumption of calories
 ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE>=', threshold = 3500)
 under3500cal <- ds.length('E3$SEX', type = 'split')
 ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE<=', threshold = 500)
 afterIntake <- ds.length('E4$SEX', type = 'split')
+
+model_all_len <- rbind(model_all_len, list(all_participants_split, noPrevalence, noType1, under3500cal, afterIntake))
 
 # adding in zero columns to the studies
 for(i in 1:length(opals)){
