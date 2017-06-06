@@ -41,6 +41,9 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ###############################################################################
 ########################### SET UP DATA  ######################################
 ###############################################################################
+# Dataframe to hold length figures
+model_all_len <- data.frame()
+
 # all participants
 all_participants <- ds.length('D$TOTAL')
 all_participants_split <- ds.length('D$TOTAL',type = 'split')
@@ -63,25 +66,37 @@ under3500cal <- ds.length('E3$SEX', type = 'split')
 ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE<=', threshold = 500)
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
+# adding in zero columns to the studies
+for(i in 1:length(opals)){
+  work1 <- afterIntake[[i]]
+  work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
+  eval(parse(text=work2))
+}
+ds.cbind(x=c('newStartDate','E4'), newobj='E5')
+
 # Loop to produce E4 and model_all_len for descriptive stats
 my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ", "AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
 	"SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-model_all_len <- data.frame()
+my_vars_all <- c('newStartDate', my_vars_all) #because datashield doesnt like single column subsets
 
 for (i in 2:length(my_vars_all)){
-  ds.subset(x = 'E4', subset = 'E5', cols =  c(my_vars_all[1:i]))
-  ds.subset(x = 'E5', subset = 'E6', completeCases = TRUE)
-  model_all_len <- rbind(model_all_len,ds.length('E6$temp', type = 'split'))
+  ds.subset(x = 'E5', subset = 'E6', cols =  c(my_vars_all[1:i]), completeCases = TRUE)
+  model_all_len <- rbind(model_all_len, ds.length('E6$temp', type = 'split'))
 }
-
-row.names(model_all_len) <- my_vars_all[2:length(my_vars_all)]
+row.names(model_all_len) <- my_vars_all[1:length(my_vars_all)]
 
 # Only Complete Cases (currently not in use for testing behaviour with nulls and the fact that complete 
 # cases knock out every available participant at the moment)
-ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+ds.subset(x = 'E7', subset = 'E8', completeCases = TRUE)
 complete_participants <- ds.length('E7$TOTAL')
 complete_participants_split <- ds.length('E7$TOTAL',type = 'split')
+
+
+
+
+
+
 
 ## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
 # Setup an additional proxy ID column for each study 
@@ -102,3 +117,4 @@ ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
 ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
+
