@@ -219,8 +219,6 @@ colnames(conf_missing_table) <- c('Study Name', 'Total in Study', 'agebaseMissin
   'famdiabMissing', 'eintakeMissing', 'fruitMissing', 'vegMissing', 'dairyMissing', 'fiberMissing', 'redmeatMissing', 'procmeatMissing', 'sugbevsMissing', 'medsMissing', 
   'waistMissing', 'supplementsMissing')
 
-
-
 #---------------------------------------------------------
 # Outcomes Missing Checker
 caseobjMissing = ds.numNA('D$CASE_OBJ')
@@ -251,27 +249,24 @@ summary_self_case = summaryBinExp("D$CASE_OBJ_SELF", study_names, num_studies)
 #---------------------------------------------------------
 # Summaries for covariates and confounders
 # education
-
-# ses
-
-# # smoking
-# summaryBinExp('D$SMOKING', study_names, num_studies)
+summary_education = summaryCatExp('D$EDUCATION', study_names, numstudies)
+summary_smoking = summaryBinExp('D$SMOKING', study_names, num_studies)
 
 # # mi, stroke, cancer, hypertension
-# summaryBinExp('D$MI', study_names, num_studies)
-# summaryBinExp('D$STROKE', study_names, num_studies)
-# summaryBinExp('D$CANCER', study_names, num_studies)
-# summaryBinExp('D$HYPERTENSION', study_names, num_studies)
+summary_mi = summaryBinExp('D$MI', study_names, num_studies)
+summary_stroke = summaryBinExp('D$STROKE', study_names, num_studies)
+summary_cancer = summaryBinExp('D$CANCER', study_names, num_studies)
+summary_hypertension = summaryBinExp('D$HYPERTENSION', study_names, num_studies)
 
 # # Continous covariates
-# summary_pa = summaryContExp('D$PA', study_names, num_studies)
-# summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
-# summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
-# summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
-# summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
-# summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
-# summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
-# summary_veg = summaryContExp('D$VEG', study_names, num_studies)
-# summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
-# summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
-# summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
+summary_pa = summaryContExp('D$PA', study_names, num_studies)
+summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
+summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
+summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
+summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
+summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
+summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
+summary_veg = summaryContExp('D$VEG', study_names, num_studies)
+summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
+summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
+summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
