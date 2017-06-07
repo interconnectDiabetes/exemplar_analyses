@@ -190,8 +190,6 @@ colnames(alt_case_missing_table) <- c('Study Name', 'Total in Study', 'miMissing
 
 #---------------------------------------------------------
 # Confounders Missing Checker
-"AGE_BASE", "AGE_END", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL" "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", 
-"RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS"
 agebaseMissing = ds.numNA('D$AGE_BASE')
 ageendMissing = ds.numNA('D$AGE_END')
 sexMissing = ds.numNA('D$SEX')
@@ -212,10 +210,10 @@ sugbevsMissing = ds.numNA('D$SUG_BEVS')
 medsMissing = ds.numNA('D$MEDS')
 waistMissing = ds.numNA('D$WAIST')
 supplementsMissing = ds.numNA('D$SUPPLEMENTS')
-conf_missing_table = data.frame(cbind(study_names, fullNum, agebaseMissing, ageendMissing, sexMissing, bmiMissing, educationMissing, smokingMissing, paMissing, alcoholMissing
+conf_missing_table = data.frame(cbind(study_names, fullNum, agebaseMissing, ageendMissing, sexMissing, bmiMissing, educationMissing, smokingMissing, paMissing, alcoholMissing,
   famdiabMissing, eintakeMissing, fruitMissing, vegMissing, dairyMissing, fiberMissing, redmeatMissing, procmeatMissing, sugbevsMissing, medsMissing, 
   waistMissing, supplementsMissing))
-colnames(conf_missing_table) <- c('Study Name', 'Total in Study', 'agebaseMissing', 'ageendMissing', 'sexMissing', 'bmiMissing', 'educationMissing', 'smokingMissing', 'paMissing', 'alcoholMissing'
+colnames(conf_missing_table) <- c('Study Name', 'Total in Study', 'agebaseMissing', 'ageendMissing', 'sexMissing', 'bmiMissing', 'educationMissing', 'smokingMissing', 'paMissing', 'alcoholMissing',
   'famdiabMissing', 'eintakeMissing', 'fruitMissing', 'vegMissing', 'dairyMissing', 'fiberMissing', 'redmeatMissing', 'procmeatMissing', 'sugbevsMissing', 'medsMissing', 
   'waistMissing', 'supplementsMissing')
 
@@ -249,7 +247,7 @@ summary_self_case = summaryBinExp("D$CASE_OBJ_SELF", study_names, num_studies)
 #---------------------------------------------------------
 # Summaries for covariates and confounders
 # education
-summary_education = summaryCatExp('D$EDUCATION', study_names, numstudies)
+summary_education = summaryCatExp('D$EDUCATION', study_names, num_studies)
 summary_smoking = summaryBinExp('D$SMOKING', study_names, num_studies)
 
 # # mi, stroke, cancer, hypertension
