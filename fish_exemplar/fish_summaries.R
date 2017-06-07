@@ -30,7 +30,7 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           	"AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           	"AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
@@ -62,9 +62,9 @@ ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 
 noType1 <- ds.length('E2$SEX', type = 'split')
 
 # remove participants with too little and excessive consumption of calories
-ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE>=', threshold = 3500)
+ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
 under3500cal <- ds.length('E3$SEX', type = 'split')
-ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE<=', threshold = 500)
+ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
 model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
@@ -77,16 +77,24 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('newStartDate','E4'), newobj='E5')
 
+# Setup an additional proxy ID column for each study 
+for(i in 1:length(opals)){
+  work1 <- afterIntake[[i]]
+  work2 <- paste0("datashield.assign(opals[",i,"],'fakeIds', quote(c(1:",work1,")))")
+  eval(parse(text=work2))
+}
+ds.cbind(x=c('fakeIds','E5'), newobj='E6')
+
 # Loop to produce E4 and model_all_len for descriptive stats
-my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END") 
-cammy = c("FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
-	"SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
+my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
+	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-my_vars_all <- c('newStartDate', my_vars_all) #because datashield doesnt like single column subsets
+my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
 
 for (i in 2:length(my_vars_all)){
-  ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i], completeCases = TRUE)
-  model_all_len <- rbind(model_all_len, ds.length('E6$newStartDate', type = 'split'))
+  ds.subset(x = 'E6', subset = 'E7', cols =  my_vars_all[1:i])
+  ds.subset(x = 'E7', subset = 'E8', completeCases = TRUE)
+  model_all_len <- rbind(model_all_len, ds.length('E8$fakeIds', type = 'split'))
 }
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames

@@ -512,7 +512,7 @@ ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_surv.svg')
 model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(5,5,10, 30, 500))
 model_1_b_all = model_1_b[[1]]
-model_1_b_all = model_1_b[[2]]
+model_1_b_rem = model_1_b[[2]]
 
 
 # ___  ___          _      _   _____ 
