@@ -165,51 +165,83 @@ summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 	return(summary_column)
 }
 
+#---------------------------------------------------------
 # Exposures Missing Checker
-fullNum = ds.length('D4$AGE_BASE', type = 'split') 
-fattyMissing =  ds.numNA('D4$FATTY')
-freshMissing = ds.numNA('D4$FRESH')
-friedMissing = ds.numNA('D4$FRIED')
-leanMissing = ds.numNA('D4$LEAN')
-nonfishMissing = ds.numNA('D4$NONFISH')
-saltMissing = ds.numNA('D4$SALT')
-ssdMissing = ds.numNA('D4$SSD')
-totalMissing = ds.numNA('D4$TOTAL')
-
+fullNum = ds.length('D$AGE_BASE', type = 'split') 
+fattyMissing =  ds.numNA('D$FATTY')
+freshMissing = ds.numNA('D$FRESH')
+friedMissing = ds.numNA('D$FRIED')
+leanMissing = ds.numNA('D$LEAN')
+nonfishMissing = ds.numNA('D$NONFISH')
+saltMissing = ds.numNA('D$SALT')
+ssdMissing = ds.numNA('D$SSD')
+totalMissing = ds.numNA('D$TOTAL')
 exposure_missings_table = data.frame(cbind(study_names,fullNum, fattyMissing, freshMissing, friedMissing, leanMissing, nonfishMissing, saltMissing, ssdMissing, totalMissing))
 colnames(exposure_missings_table) <- c('Study Name', 'Total in Study', 'fattyMissing', 'freshMissing', 'friedMissing', 'leanMissing', 'nonfishMissing', 'saltMissing', 'ssdMissing', 'totalMissing')
 
-# Confounders Missing Checker
-miMissing = ds.numNA('D4$MI')
-strokeMissing = ds.numNA('D4$STROKE')
-cancerMissing = ds.numNA('D4$CANCER')
-hypertensionMissing = ds.numNA('D4$HYPERTENSION')
+#---------------------------------------------------------
+# Previous alt Case Missing Checker
+miMissing = ds.numNA('D$MI')
+strokeMissing = ds.numNA('D$STROKE')
+cancerMissing = ds.numNA('D$CANCER')
+hypertensionMissing = ds.numNA('D$HYPERTENSION')
+alt_case_missing_table = data.frame(cbind(study_names, fullNum, miMissing, cancerMissing, strokeMissing, hypertensionMissing))
+colnames(alt_case_missing_table) <- c('Study Name', 'Total in Study', 'miMissing', 'cancerMissing', 'strokeMissing', 'hypertensionMissing')
 
-conf_missings_table = data.frame(cbind(study_names, fullNum, miMissing, cancerMissing, strokeMissing, hypertensionMissing))
-colnames(conf_missings_table) <- c('Study Name', 'Total in Study', 'miMissing', 'cancerMissing', 'strokeMissing', 'hypertensionMissing')
+#---------------------------------------------------------
+# Confounders Missing Checker
+"AGE_BASE", "AGE_END", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL" "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", 
+"RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS"
+agebaseMissing = ds.numNA('D$AGE_BASE')
+ageendMissing = ds.numNA('D$AGE_END')
+sexMissing = ds.numNA('D$SEX')
+bmiMissing = ds.numNA('D$BMI')
+educationMissing = ds.numNA('D$EDUCATION')
+smokingMissing = ds.numNA('D$SMOKING')
+paMissing = ds.numNA('D$PA')
+alcoholMissing  = ds.numNA('D$ALCOHOL')
+famdiabMissing  = ds.numNA('D$FAM_DIAB')
+eintakeMissing = ds.numNA('D$E_INTAKE')
+fruitMissing = ds.numNA('D$FRUIT')
+vegMissing = ds.numNA('D$VEG')
+dairyMissing  = ds.numNA('D$DAIRY')
+fiberMissing = ds.numNA('D$FIBER')
+redmeatMissing = ds.numNA('D$RED_MEAT')
+procmeatMissing = ds.numNA('D$PROC_MEAT')
+sugbevsMissing = ds.numNA('D$SUG_BEVS')
+medsMissing = ds.numNA('D$MEDS')
+waistMissing = ds.numNA('D$WAIST')
+supplementsMissing = ds.numNA('D$SUPPLEMENTS')
+conf_missing_table = data.frame(cbind(study_names, fullNum, agebaseMissing, ageendMissing, sexMissing, bmiMissing, educationMissing, smokingMissing, paMissing, alcoholMissing
+  famdiabMissing, eintakeMissing, fruitMissing, vegMissing, dairyMissing, fiberMissing, redmeatMissing, procmeatMissing, sugbevsMissing, medsMissing, 
+  waistMissing, supplementsMissing))
+colnames(conf_missing_table) <- c('Study Name', 'Total in Study', 'agebaseMissing', 'ageendMissing', 'sexMissing', 'bmiMissing', 'educationMissing', 'smokingMissing', 'paMissing', 'alcoholMissing'
+  'famdiabMissing', 'eintakeMissing', 'fruitMissing', 'vegMissing', 'dairyMissing', 'fiberMissing', 'redmeatMissing', 'procmeatMissing', 'sugbevsMissing', 'medsMissing', 
+  'waistMissing', 'supplementsMissing')
+
+
+
+#---------------------------------------------------------
+# Outcomes Missing Checker
+caseobjMissing = ds.numNA('D$CASE_OBJ')
+caseobjselfMissing = ds.numNA('D$CASE_OBJ_SELF')
+prevdiabMissing = ds.numNA('D$PREV_DIAB')
+typediabMissing = ds.numNA('D$TYPE_DIAB')
+outcomes_missings_table = data.frame(cbind(study_names, fullNum, caseobjMissing, caseobjselfMissing, prevdiabMissing, typediabMissing))
+colnames(outcomes_missings_table) <- c('Study Name', 'Total in Study', 'caseobjMissing', 'caseobjselfMissing', 'prevdiabMissing', 'typediabMissing')
 
 
 
 #---------------------------------------------------------
 # Summaries for exposures
-# fatty fish
 summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
-# fresh fish
 summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
-# fried fish
 summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
-# lean fish
 summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
-# nonfish
 summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
-# salt fish
 summary_salt = summaryContExp('D$SALT', study_names, num_studies)
-# ssd fish
 summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
-# total fish
 summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
-
-
                                
 #---------------------------------------------------------
 # Summaries for outcomes
