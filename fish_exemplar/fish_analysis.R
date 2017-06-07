@@ -49,17 +49,17 @@ study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
-# # remove participants with prevalent diabetes and type 1
-# ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
-# noPrevalence <- ds.length('E1$SEX', type = 'split')
-# ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
-# noPrevalence <- ds.length('E2$SEX', type = 'split')
+# remove participants with prevalent diabetes and type 1
+ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
+noPrevalence <- ds.length('E1$SEX', type = 'split')
+ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
+noType1 <- ds.length('E2$SEX', type = 'split')
 
-# # remove participants with too little and excessive consumption of calories
-# ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE>=', threshold = 3500)
-# under3500cal <- ds.length('E3$SEX', type = 'split')
-# ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE<=', threshold = 500)
-# afterIntake <- ds.length('E4$SEX', type = 'split')
+# remove participants with too little and excessive consumption of calories
+ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
+under3500cal <- ds.length('E3$SEX', type = 'split')
+ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
+afterIntake <- ds.length('E4$SEX', type = 'split')
 
 
 # # Loop to produce E4 and model_all_len for descriptive stats
@@ -462,7 +462,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			#meta analysis here
 			for (n in 1:length(variables)){
-				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
+				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
 			}
 		}
 	}
@@ -491,7 +491,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-my_covariate =  c("STROKE", "MI")
+my_covariate =  c("AGE_BASE", "STROKE", "MI")
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
