@@ -55,8 +55,16 @@ study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
+# adding in zero columns to the studies
+for(i in 1:length(opals)){
+  work1 <- all_participants_split[[i]]
+  work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
+  eval(parse(text=work2))
+}
+ds.cbind(x=c('newStartDate','D'), newobj='D1')
+
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
+ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
@@ -69,21 +77,13 @@ afterIntake <- ds.length('E4$SEX', type = 'split')
 
 model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
 
-# adding in zero columns to the studies
-for(i in 1:length(opals)){
-  work1 <- afterIntake[[i]]
-  work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
-  eval(parse(text=work2))
-}
-ds.cbind(x=c('newStartDate','E4'), newobj='E5')
-
 # Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
   work1 <- afterIntake[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'fakeIds', quote(c(1:",work1,")))")
   eval(parse(text=work2))
 }
-ds.cbind(x=c('fakeIds','E5'), newobj='E6')
+ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 
 # Loop to produce E4 and model_all_len for descriptive stats
 my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
@@ -92,8 +92,8 @@ my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRE
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
 
 for (i in 2:length(my_vars_all)){
-  ds.subset(x = 'E6', subset = 'E7', cols =  my_vars_all[1:i])
-  ds.subset(x = 'E7', subset = 'E8', completeCases = TRUE)
+  ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])
+  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
   model_all_len <- rbind(model_all_len, ds.length('E8$fakeIds', type = 'split'))
 }
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
