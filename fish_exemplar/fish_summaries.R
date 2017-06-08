@@ -99,11 +99,9 @@ for (i in 2:length(my_vars_all)){
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames
 
-# # Only Complete Cases (currently not in use for testing behaviour with nulls and the fact that complete 
-# # cases knock out every available participant at the moment)
-# ds.subset(x = 'E7', subset = 'E8', completeCases = TRUE)
-# complete_participants <- ds.length('E7$TOTAL')
-# complete_participants_split <- ds.length('E7$TOTAL',type = 'split')
+
+
+
 
 ## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
 # Setup an additional proxy ID column for each study 
