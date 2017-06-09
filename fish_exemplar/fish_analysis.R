@@ -28,8 +28,8 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           	"AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+           "AGE_BASE", "AGE_END_OBJ","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -49,18 +49,6 @@ study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
-# # remove participants with prevalent diabetes and type 1
-# ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
-# noPrevalence <- ds.length('E1$SEX', type = 'split')
-# ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
-# noType1 <- ds.length('E2$SEX', type = 'split')
-
-# # remove participants with too little and excessive consumption of calories
-# ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
-# under3500cal <- ds.length('E3$SEX', type = 'split')
-# ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
-# afterIntake <- ds.length('E4$SEX', type = 'split')
-
 ## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
 # Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
@@ -78,7 +66,7 @@ for(i in 1:length(opals)){
 }
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
-ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
+ds.assign(toAssign = 'D$AGE_END_OBJ-D$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 
 
@@ -123,6 +111,7 @@ summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(my_fmla, study, outcome, out_family){
+  print(opals[i])
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -136,6 +125,7 @@ do_reg <- function(my_fmla, study, outcome, out_family){
 # reg_data <- do_reg_survival(my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvivalA", lexisTable = lexised_table)
 
 do_reg_survival <- function(my_fmla, study, outcome, out_family, offset_column, lexisTable){
+  print(opals[i])
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[i], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -224,6 +214,8 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				reg_data <- data.frame()
 
 				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+			  print("this is my current i")
+			  print(i)
 				reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
 
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
@@ -267,7 +259,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	par(ps=10)
 
 	## attempt with ds.lexis, ie the poisson piecewise regression
-	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END', statusCol='CASE_OBJ', newobj = "A", datasources = opals)
+	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END_OBJ', statusCol='CASE_OBJ', newobj = "A", datasources = opals)
 	# set TIMEID as a factor as its not done automatically
 	ds.asFactor(x = 'A$TIMEID', newobj = 'TIMEIDFACT')
 	ds.cbind(x=c('TIMEIDFACT', 'A'), newobj = 'Afact')
@@ -354,8 +346,10 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				# need to check this formula for correctness
 				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				print("this is my current i")
+				print(i)
 				reg_data <- do_reg_survival(my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
-
+        print(names(opals[i]))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
@@ -393,9 +387,9 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-# my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION")
-my_covariate =  c("AGE_BASE", "STROKE", "MI")
-
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
+my_covariate =  c("AGE_BASE","SEX", "EDUCATION", "SMOKING", "PA", "STROKE", "MI","HYPERTENSION")
+my_covariate =  c("AGE_BASE","SEX", "EDUCATION")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
@@ -403,12 +397,12 @@ model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, 
 model_1_all = model_1_results[[1]]
 model_1_REM = model_1_results[[2]]
 
-# survival version short running normal lexis
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1_surv.svg')
-model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1_surv_all = model_1_surv[[1]]
-model_1_surv_all = model_1_surv[[2]]
+# # survival version short running normal lexis
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1_surv.svg')
+# model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+# model_1_surv_all = model_1_surv[[1]]
+# model_1_surv_all = model_1_surv[[2]]
 
 # survival version with lexis b 
 ref_table = 'D4'
