@@ -41,9 +41,6 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ###############################################################################
 ########################### SET UP DATA  ######################################
 ###############################################################################
-# Dataframe to hold length figures
-model_all_len <- data.frame()
-
 # all participants
 all_participants <- ds.length('D$TOTAL')
 all_participants_split <- ds.length('D$TOTAL',type = 'split')
@@ -64,9 +61,9 @@ for(i in 1:length(opals)){
 ds.cbind(x=c('newStartDate','D'), newobj='D1')
 
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB<=', threshold = 1)
+ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
-ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>=', threshold = 1)
+ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
 # remove participants with too little and excessive consumption of calories
@@ -75,7 +72,6 @@ under3500cal <- ds.length('E3$SEX', type = 'split')
 ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
-model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
 
 # Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
@@ -90,35 +86,52 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
 	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+
+# my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ", "AGE_END", "FATTY", "FRESH", "FRIED")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
+
+
+
+# Dataframe to hold length figures
+model_all_len <- data.frame()
+model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+
 
 for (i in 2:length(my_vars_all)){
   ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])
   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-  model_all_len <- rbind(model_all_len, ds.length('E8$fakeIds', type = 'split'))
+  # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
+  thingToBind = vector("numeric")
+  for (k in 1:num_studies){
+    lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
+    thingToBind = c(thingToBind, lengthNum)
+  }
+  thingToBind = unlist(unname(thingToBind))
+  rbind(model_all_len, thingToBind)
 }
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames
 
-## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
-# Setup an additional proxy ID column for each study 
-for(i in 1:length(opals)){
-  work1 <- all_participants_split[[i]]
-  work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
-  eval(parse(text=work2))
-}
-ds.cbind(x=c('ID','D'), newobj='D2')
 
-# adding in zero columns to the studies
-for(i in 1:length(opals)){
-  work1 <- all_participants_split[[i]]
-  work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
-  eval(parse(text=work2))
-}
-ds.cbind(x=c('newStartDate','D2'), newobj='D3')
-
-ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
-ds.cbind(x=c('newEndDate','D3'), newobj='D4')
+# ## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
+# # Setup an additional proxy ID column for each study 
+# for(i in 1:length(opals)){
+#   work1 <- all_participants_split[[i]]
+#   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
+#   eval(parse(text=work2))
+# }
+# ds.cbind(x=c('ID','D'), newobj='D2')
+# 
+# # adding in zero columns to the studies
+# for(i in 1:length(opals)){
+#   work1 <- all_participants_split[[i]]
+#   work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
+#   eval(parse(text=work2))
+# }
+# ds.cbind(x=c('newStartDate','D2'), newobj='D3')
+# 
+# ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
+# ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 
 
 ###############################################################################
