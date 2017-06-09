@@ -56,6 +56,7 @@ for(i in 1:length(opals)){
   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
   eval(parse(text=work2))
 }
+rm(i)
 ds.cbind(x=c('ID','D'), newobj='D2')
 
 # adding in zero columns to the studies
@@ -64,6 +65,7 @@ for(i in 1:length(opals)){
   work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
   eval(parse(text=work2))
 }
+rm(i)
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
 ds.assign(toAssign = 'D$AGE_END_OBJ-D$AGE_BASE', newobj = 'newEndDate')
@@ -110,9 +112,9 @@ summaryCatExp <- function (column, study_names, num_studies, levels = 2){
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
-do_reg <- function(my_fmla, study, outcome, out_family){
-  print(opals[i])
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[i], maxit=100, checks=TRUE)
+do_reg <- function(counter, my_fmla, study, outcome, out_family){
+  print(opals[counter])
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -121,12 +123,10 @@ do_reg <- function(my_fmla, study, outcome, out_family){
 	rownames(model_coeffs) = NULL
 	return(model_coeffs)
 }
-# 
-# reg_data <- do_reg_survival(my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = outcome_family, offset_column = "logSurvivalA", lexisTable = lexised_table)
 
-do_reg_survival <- function(my_fmla, study, outcome, out_family, offset_column, lexisTable){
-  print(opals[i])
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[i], offset = offset_column,  maxit=100, checks=TRUE)
+do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable){
+  print(opals[counter])
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -155,10 +155,10 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
 	}
 	else if (out_family == 'poisson'){
-		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-			.(round(res$QEp,3)),')')),
-			xlab=bquote(paste('Test of H'[0]*': true hazard ratio = 1, p = ',
-			.(round(res$pval,3)))))
+	  forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+	         .(round(res$QEp,3)),')')),
+	         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+	         .(round(res$pval,3)))), atransf = exp)
 		usr <- par("usr")
 		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
 		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
@@ -216,7 +216,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
 			  print("this is my current i")
 			  print(i)
-				reg_data <- do_reg(fmla, names(opals[i]), my_outcome[k], outcome_family)
+				reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
 					reg_data = reg_data[1:9]
@@ -280,7 +280,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 				reg_data <- data.frame()
 
 				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(lexised_table, '$','TIMEID'), '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvival", lexisTable = lexised_table)
+				reg_data <- do_reg_survival(i, my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvival", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -348,7 +348,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				print("this is my current i")
 				print(i)
-				reg_data <- do_reg_survival(my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
         print(names(opals[i]))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -387,9 +387,9 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE","SEX", "EDUCATION", "SMOKING", "PA", "STROKE", "MI","HYPERTENSION")
-my_covariate =  c("AGE_BASE","SEX", "EDUCATION")
+# my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
+# my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "STROKE", "MI","HYPERTENSION")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
@@ -407,7 +407,7 @@ model_1_REM = model_1_results[[2]]
 # survival version with lexis b 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(5,5,10, 30, 500))
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 model_1_b_all = model_1_b[[1]]
 model_1_b_rem = model_1_b[[2]]
 
