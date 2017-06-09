@@ -86,6 +86,7 @@ for(i in 1:length(opals)){
 ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 
 # Loop to produce E4 and model_all_len for descriptive stats
+# Note that this doesnt actually handle well if a study has lost all its participants before this section
 my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
 	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
@@ -98,10 +99,6 @@ for (i in 2:length(my_vars_all)){
 }
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames
-
-
-
-
 
 ## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
 # Setup an additional proxy ID column for each study 
@@ -122,8 +119,6 @@ ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
 ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
-
-
 
 
 ###############################################################################
