@@ -168,6 +168,7 @@ findOutcomeFamily <- function(ref_table, outcome){
 	return(outcome_family)
 }
 
+
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath){
 	# main function that runs, fits, and stores the results of a regression model using the 
 	# datashield process 
@@ -353,6 +354,19 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 	return (list(model_all, model_rem))
 }
 
+runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width){
+	REM_results = list()
+	study_regs = data.frame()
+	overall_df = data.frame()
+	for (i in 1:length(my_covariate)){
+		mypath_func = paste0(mypath_prefix, "_", i, "/", length(my_covariate), ".svg")
+		sub_covariate_list = my_covariate[1:i]
+		runResults = runSurvival_B_Model(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2))
+		runCoeffs = runResults[[1]]
+		overall_df = rbind(overall_df, runCoeffs)
+	}
+	return(overall_df)
+}
 
 # ___  ___          _      _   __  
 # |  \/  |         | |    | | /  | 
@@ -391,6 +405,11 @@ mypath = file.path('~', 'plots', 'model_1b_surv.svg')
 model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 model_1_b_all = model_1_b[[1]]
 model_1_b_rem = model_1_b[[2]]
+
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1b_inc')
+model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 
 
 # ___  ___          _      _   _____ 
