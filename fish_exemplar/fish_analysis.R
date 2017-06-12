@@ -359,7 +359,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	study_regs = data.frame()
 	overall_df = data.frame()
 	for (i in 1:length(my_covariate)){
-		mypath_func = paste0(mypath_prefix, "_", i, "/", length(my_covariate), ".svg")
+		mypath_func = file.path(mypath_prefix, "_", i, "/", length(my_covariate), ".svg")
 		sub_covariate_list = my_covariate[1:i]
 		runResults = runSurvival_B_Model(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2))
 		runCoeffs = runResults[[1]]
