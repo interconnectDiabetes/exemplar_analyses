@@ -161,6 +161,8 @@ findOutcomeFamily <- function(ref_table, outcome){
 }
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath){
+	# main function that runs, fits, and stores the results of a regression model using the 
+	# datashield process 
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -218,7 +220,10 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 }
 
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath) {
-	REM_results = list()
+	# main function that runs, fits, and stores the results of a survival model using the 
+	# normal lexis function to expand the dataframe. Note that this model is not recommended for the 
+	# fish analysis and used to test the functionality of lexis against that of lexisB
+	# There is no rebase of start and end times in this function
 	study_regs = data.frame()
 
 	svg(filename=mypath, 
@@ -276,6 +281,8 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 }
 
 runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width) {
+	# main function that runs, fits, and stores the results of a survival model using the 
+	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
 	REM_results = list()
 	study_regs = data.frame()
 
