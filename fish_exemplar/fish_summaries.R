@@ -98,11 +98,12 @@ for (i in 2:length(my_vars_all)){
   ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])
   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
   # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
-  trowhingToBind = vector("numeric")
+  thingToBind = vector("numeric")
+  print(i)
   for (k in 1:num_studies){
     lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
     thingToBind = c(thingToBind, lengthNum)
-    thingToBind
+    print(thingToBind)
   }
   thingToBind = unlist(unname(thingToBind))
   print("this is thingtobind unlistedunnamed")
