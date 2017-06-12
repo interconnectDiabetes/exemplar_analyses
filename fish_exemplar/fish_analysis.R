@@ -1,4 +1,4 @@
-## Analysis script for first trimester PAIP analysis
+## Analysis script for Fish Exemplar Analysis
 ## Author: Paul Scherer
 ##		   Tom Bishop
 ## Date: 31/03/2017
@@ -49,14 +49,15 @@ study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
-## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
+# Need to set up the data cleaning
+
 # Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
   work1 <- all_participants_split[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
   eval(parse(text=work2))
 }
-rm(i)
+rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('ID','D'), newobj='D2')
 
 # adding in zero columns to the studies
@@ -65,49 +66,11 @@ for(i in 1:length(opals)){
   work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
   eval(parse(text=work2))
 }
-rm(i)
+rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
 ds.assign(toAssign = 'D$AGE_END_OBJ-D$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
-
-
-###############################################################################
-########################### DATA SUMMARIES ####################################
-###############################################################################
-summaryContExp <- function(column, study_names, num_studies) {
-    # given a table$column combination as a string, return the summary table 
-    # for the continous variable
-    summary_column_temp = ds.summary(column)
-    summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-    rownames(summary_column) = study_names
-    colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-    summary_column = summary_column[,c(2,6,5,7)]
-    rm(summary_column_temp)
-    return(summary_column)
-}
-
-summaryBinExp <- function(column, study_names, num_studies) {
-    # given a table$column combination as a string, return the summary
-    # table for the binary variable
-    summary_column_temp = ds.summary(column)
-    summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=6, byrow=TRUE))
-    rownames(summary_column) <- study_names
-    colnames(summary_column) <- c('type', 'n', '0', '1', 'No', 'Yes')
-    rm(summary_column_temp)
-    return(summary_column)
-}
-
-summaryCatExp <- function (column, study_names, num_studies, levels = 2){
-	# given a table$column combination as a string, return the overall summary for categorical
-	# variables set in the levels parameter.
-	summary_column_temp = ds.summary(column)
-	summary_column = data.frame(matrix(unlist(summary_column_temp), nrow=num_studies, ncol=(2+(2*levels)), byrow = TRUE))
-	rownames(summary_column) <- study_names
-	colnames(summary_column) = c('type', 'n')
-	rm(summary_column_temp)
-	return(summary_column)
-}
 
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
