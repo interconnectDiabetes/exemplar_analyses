@@ -86,10 +86,7 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
 	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-
-# my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ", "AGE_END", "FATTY", "FRESH", "FRIED")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
-
 
 
 # Dataframe to hold length figures
@@ -101,13 +98,17 @@ for (i in 2:length(my_vars_all)){
   ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])
   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
   # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
-  thingToBind = vector("numeric")
+  trowhingToBind = vector("numeric")
   for (k in 1:num_studies){
     lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
     thingToBind = c(thingToBind, lengthNum)
+    thingToBind
   }
   thingToBind = unlist(unname(thingToBind))
-  rbind(model_all_len, thingToBind)
+  print("this is thingtobind unlistedunnamed")
+  print(k)
+  print(thingToBind)
+  model_all_len = rbind(model_all_len, thingToBind)
 }
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames
