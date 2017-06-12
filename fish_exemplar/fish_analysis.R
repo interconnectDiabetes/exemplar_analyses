@@ -105,7 +105,9 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 }
 
 
-do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){  
+do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
+	# takes a dataframe of coefficients and creates an appropiate random effects model whose results are stored as an
+	# image of a forest plot and returns the random effects model 
 	res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
 
 	#add the weights to the labels
@@ -147,6 +149,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 
 findOutcomeFamily <- function(ref_table, outcome){
 	# Find outcome family for regression
+	# used in the do_reg function
 	out_class = ds.class(paste0(ref_table, '$', outcome))[[1]]
 	if (out_class == 'factor') {
 		outcome_family = 'binomial'
