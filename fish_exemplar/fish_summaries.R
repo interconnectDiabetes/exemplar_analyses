@@ -63,7 +63,7 @@ ds.cbind(x=c('newStartDate','D'), newobj='D1')
 # remove participants with prevalent diabetes and type 1
 ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
-ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB>', threshold = 1)
+ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
 # remove participants with too little and excessive consumption of calories
