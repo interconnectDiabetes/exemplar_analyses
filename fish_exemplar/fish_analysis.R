@@ -76,7 +76,8 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
-  print(opals[counter])
+	# performs a regular regression and returns the coefficients of the fitted model as a dataframe 
+  	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -87,8 +88,12 @@ do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	return(model_coeffs)
 }
 
+
 do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable){
-  print(opals[counter])
+	# performs a survival analysis using the formula on the appropiately lexised table
+	# note that the coefficients returned as a dataframe are not exponentiated. this is done
+	# as part of the do_rem process
+  	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
