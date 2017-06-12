@@ -77,7 +77,6 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe 
-  	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -93,7 +92,6 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
-  	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -187,8 +185,6 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				reg_data <- data.frame()
 
 				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-			  print("this is my current i")
-			  print(i)
 				reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
@@ -324,10 +320,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				# need to check this formula for correctness
 				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				print("this is my current i")
-				print(i)
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
-        print(names(opals[i]))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
