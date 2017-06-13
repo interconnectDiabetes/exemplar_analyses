@@ -378,22 +378,26 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 	# 2. it runs the relationship mediator~exposure + covariates
 	# 3. it runs the relationship outcome~mediator + covariates
 	# 4. it runs the relationship outcome~exposure + covariates + mediator
+	# make sure my_mediation is a vector with the string mediator
 
 	# outcome~exposure + covariates
 	mypath_1 = file.path(paste0(mypath_prefix, "_", "part_1", ".svg"))
-	
+	mediate1 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath_1, interval_width)
+
 	# mediator~exposure + covariates
 	mypath_2 = file.path(paste0(mypath_prefix, "_", "part_2", ".svg"))
+	mediate2 = runSurvival_B_Model(ref_table, my_exposure, my_mediation, my_covariate, mypath_1, interval_width)
 	
 	# outcome~mediator + covariates
 	mypath_3 = file.path(paste0(mypath_prefix, "_", "part_3", ".svg"))
-	
+	mediate3 = runSurvival_B_Model(ref_table, my_mediation, my_mediation, my_covariate, mypath_1, interval_width)
+
 	# outcome~exposure + covariates + mediator
 	my_covariate = c(my_covariate, my_mediation)
 	mypath_4 = file.path(paste0(mypath_prefix, "_", "part_4", ".svg"))
-	model4 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width)
+	mediate4 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width)
 
-	return(NULL)
+	return(list(mediate1, mediate2, mediate3, mediate4))
 }
 
 runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, stratified_var) {
