@@ -439,8 +439,8 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-# my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "STROKE", "MI","HYPERTENSION")
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI", "HYPERTENSION")
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
@@ -462,15 +462,20 @@ model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate
 model_1_b_all = model_1_b[[1]]
 model_1_b_rem = model_1_b[[2]]
 
-
+# incremental model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_inc')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 
+# mediation model with PA
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_mediate')
 model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
 
+# # example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1')
+# model_1_stratified = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "TYPE_DIAB")
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
