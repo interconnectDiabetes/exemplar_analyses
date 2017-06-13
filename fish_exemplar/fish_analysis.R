@@ -400,11 +400,28 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 	return(list(mediate1, mediate2, mediate3, mediate4))
 }
 
-runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, stratified_var) {
-	# Runs a stratified survival model given the factored variable to be stratified
+runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, stratified_var) {
+	# Runs a stratified set of survival models given the categorical variable to be stratified
 	# could possibly be better implemented as a simple survival model where the input dataframe "ref_table" is
-	# instead just subset before hand
-	return(NULL)
+	# instead just subset before hand, makes it easier to see in the analysis code when reading
+	# this function does the stratification automatically and runs a survival model on the newly stratified dataframe 
+
+	# elicit categories
+	cats = ds.summary(paste0('D$', stratified_var))[[1]]$categories # assumes that the categories of first study is shared
+	list_of_models = vector("list", length(cats))
+
+	for (category in 1:length(cats)){
+		newTable = paste0(ref_table, '_S_', category)
+		logicalOperatorString = paste0(stratified_var, '==')
+		ds.subset(x = ref_table, subset = newTable, logicalOperator = logicalOperatorString, threshold = cats[category])
+
+		# run the model on the stratified dataframe and append to list of models
+		mypath_func = file.path(paste0(mypath_prefix, "_",stratified_var,"==", cats(category), ".svg"))
+		stratified_model = runSurvival_B_Model(newTable, my_exposure, my_outcome, my_covariate, mypath_1, interval_width)
+		list_of_models[category] = stratified_model
+	}
+
+	return(list_of_models)
 }
 
 # ___  ___          _      _   __  
