@@ -355,6 +355,8 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 }
 
 runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width){
+	# Runs survival models incrementally through a list of provided covariates, producing randomeffectmodels and therein
+	# forest plots along the way. Mainly used for exploratory purposes.
 	REM_results = list()
 	study_regs = data.frame()
 	overall_df = data.frame()
@@ -367,6 +369,18 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 		print(mypath_func)
 	}
 	return(overall_df)
+}
+
+runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, my_mediation) {
+	# Runs a mediation survival model, with the provided extra mediations.
+	return(NULL)
+}
+
+runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, stratified_var) {
+	# Runs a stratified survival model given the factored variable to be stratified
+	# could possibly be better implemented as a simple survival model where the input dataframe "ref_table" is
+	# instead just subset before hand
+	return(NULL)
 }
 
 # ___  ___          _      _   __  
