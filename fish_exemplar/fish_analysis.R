@@ -450,6 +450,10 @@ ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_inc')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1b_mediate')
+model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
+
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
