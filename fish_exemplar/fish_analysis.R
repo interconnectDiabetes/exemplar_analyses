@@ -371,8 +371,28 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	return(overall_df)
 }
 
-runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, my_mediation) {
+runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, my_mediation) {
 	# Runs a mediation survival model, with the provided extra mediations.
+	# ie. it does the following:
+	# 1. it runs the simple relationship outcome~exposure + covariates
+	# 2. it runs the relationship mediator~exposure + covariates
+	# 3. it runs the relationship outcome~mediator + covariates
+	# 4. it runs the relationship outcome~exposure + covariates + mediator
+
+	# outcome~exposure + covariates
+	mypath_1 = file.path(paste0(mypath_prefix, "_", "part_1", ".svg"))
+	
+	# mediator~exposure + covariates
+	mypath_2 = file.path(paste0(mypath_prefix, "_", "part_2", ".svg"))
+	
+	# outcome~mediator + covariates
+	mypath_3 = file.path(paste0(mypath_prefix, "_", "part_3", ".svg"))
+	
+	# outcome~exposure + covariates + mediator
+	my_covariate = c(my_covariate, my_mediation)
+	mypath_4 = file.path(paste0(mypath_prefix, "_", "part_4", ".svg"))
+	model4 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width)
+
 	return(NULL)
 }
 
