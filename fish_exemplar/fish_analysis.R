@@ -386,11 +386,11 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 
 	# mediator~exposure + covariates
 	mypath_2 = file.path(paste0(mypath_prefix, "_", "part_2", ".svg"))
-	mediate2 = runSurvival_B_Model(ref_table, my_exposure, my_mediation, my_covariate, mypath_1, interval_width)
+	mediate2 = runSurvival_B_Model(ref_table, my_exposure, my_mediation, my_covariate, mypath_2, interval_width)
 	
 	# outcome~mediator + covariates
 	mypath_3 = file.path(paste0(mypath_prefix, "_", "part_3", ".svg"))
-	mediate3 = runSurvival_B_Model(ref_table, my_mediation, my_mediation, my_covariate, mypath_1, interval_width)
+	mediate3 = runSurvival_B_Model(ref_table, my_mediation, my_mediation, my_covariate, mypath_3, interval_width)
 
 	# outcome~exposure + covariates + mediator
 	my_covariate = c(my_covariate, my_mediation)
