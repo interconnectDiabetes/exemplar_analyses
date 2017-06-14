@@ -1,0 +1,61 @@
+# helper functions from betaTestClient that somehow didn't make it in
+isDefined <- function(datasources=NULL, obj=NULL){
+  
+  stdnames <- names(datasources)
+
+  inputnames <- c()
+  inputobj <- unlist(obj)
+  for(i in 1:length(inputobj )){
+    chnames <- extract(inputobj[i])
+    if(is.na(chnames[[1]])){
+      inputnames <- append(inputnames, chnames[[2]])
+    }else{
+      inputnames <- append(inputnames, chnames[[1]])
+    }
+  }
+  
+  myObjects <- inputnames
+  results <- c()
+  for(i in 1:length(myObjects)){
+    cally <- call('exists', myObjects[i])
+    x <- opal::datashield.aggregate(datasources, cally)
+    results <- append(results, mean(unlist(x)))
+  }
+  if(mean(results) != 1){
+    idx <- which(results == FALSE)
+    stop("The input object(s) ", paste(myObjects[idx],collapse=", ")," is(are) not defined on one or more of the studies!", call.=FALSE)
+  }else{
+    return(TRUE)
+  }
+
+}
+
+
+
+#' 
+#' @title Splits character by '$' and returns the single characters
+#' @description This is an internal function.
+#' @details Not required
+#' @param input a vector or a list of characters
+#' @keywords internal
+#' @return a vector of characters
+#'
+extract <- function(input){
+  input <- unlist(input)
+  output1 <- c()
+  output2 <- c()
+  for (i in 1:length(input)){
+    inputterms <- unlist(strsplit(input[i], "\\$", perl=TRUE))
+    if(length(inputterms) > 1){
+      obj1 <- strsplit(input[i], "\\$", perl=TRUE)[[1]][1]
+      obj2 <- strsplit(input[i], "\\$", perl=TRUE)[[1]][2]
+    }else{
+      obj1 <- NA
+      obj2 <- strsplit(input[i], "\\$", perl=TRUE)[[1]][1]
+    }
+    output1 <- append(output1, obj1)
+    output2 <- append(output2, obj2)
+  }
+  output <- list('holders'=output1, 'elements'=output2)
+  return(output)
+}
