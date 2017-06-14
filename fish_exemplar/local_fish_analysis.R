@@ -51,6 +51,7 @@ intake2$MI = as.factor(intake2$MI)
 intake2$HYPERTENSION = as.factor(intake2$HYPERTENSION)
 intake2$CASE_OBJ = as.factor(intake2$CASE_OBJ)
 
+# take columns that are factors and decide whether they only have one value in them or not
 (l <- sapply(intake2, function(x) is.factor(x)))
 m <- intake2[, l]
 ifelse(n <- sapply(m, function(x) length(levels(x))) == 1, "DROP", "NODROP")
@@ -60,14 +61,16 @@ m = cbind(m, intake2$TOTAL)
 
 
 
-fmla = as.formula("CASE_OBJ~intake2$TOTAL + intake2$AGE_BASE + EDUCATION + SMOKING + STROKE + MI + HYPERTENSION")
-glm(formula = fmla, family = "binomial", data = m)
+fmla = as.formula("CASE_OBJ~intake2$TOTAL + intake2$AGE_BASE + EDUCATION + STROKE + MI + HYPERTENSION")
+a = glm(formula = fmla, family = "binomial", data = m)
 
 
+strokePeople = subset(x = m, STROKE == 1)
+hyperPeople = subset(x = m, HYPERTENSION == 1)
 
-
-
-
+# shows that people with stroke all had hypertension. hence the glm fails as there is not more than 
+# two levels in the factor to use for comparison, failing the contrasts() subfunction of  
+summary(strokePeople$HYPERTENSION)
 
 
 
