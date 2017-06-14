@@ -14,7 +14,7 @@ library(dsModellingClient)
 library(dsBetaTestClient)
 library(metafor)
 
-source("helperFunctions.R")
+
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
@@ -22,6 +22,8 @@ source("helperFunctions.R")
 setwd("/home/l_pms69/exemplar_analyses/")
 #setwd("/home/l_trpb2/git/exemplar_analyses/")
 
+# get extra functions from betaTestClient that didnt make it
+source("fish_exemplar/helperFunctions.R")
 # Retrieve Credential Details
 source("creds/fish_exemplar_creds.R")
 setwd("~")
@@ -88,7 +90,7 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe 
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
+	model <- ds.glm.b(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -440,7 +442,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI", "HYPERTENSION")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI")
 #my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
