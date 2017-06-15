@@ -90,7 +90,7 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe 
-	model <- ds.glm.b(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -206,67 +206,6 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 					colnames(reg_data)[8] <- "low0.95CI"
 					colnames(reg_data)[9] <- "high0.95CI"    
 				}
-
-				study_regs = rbind(study_regs,reg_data)
-				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-				labels = rbind(labels, reg_data[2,1])      
-				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-			}
-
-			#meta analysis here
-			for (n in 1:length(variables)){
-				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = outcome_family, variable = variables[n])
-			}
-		}
-	}
-
-	#Store results
-	dev.off()
-	model_all <- study_regs
-	model_rem <- REM_results
-
-	return (list(model_all, model_rem))
-}
-
-runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath) {
-	# main function that runs, fits, and stores the results of a survival model using the 
-	# normal lexis function to expand the dataframe. Note that this model is not recommended for the 
-	# fish analysis and used to test the functionality of lexis against that of lexisB
-	# There is no rebase of start and end times in this function
-	study_regs = data.frame()
-
-	svg(filename=mypath, 
-		width=4 * length(my_exposure), 
-		height=3 * length(my_outcome), 
-		pointsize=10)
-	par(mar=c(5,3,2,2)+0.1)
-	par(mfrow=c(length(my_outcome),length(my_exposure)))
-	par(ps=10)
-
-	## attempt with ds.lexis, ie the poisson piecewise regression
-	ds.lexis(data=ref_table, idCol='ID', entryCol='AGE_BASE', exitCol='AGE_END_OBJ', statusCol='CASE_OBJ', newobj = "A", datasources = opals)
-	# set TIMEID as a factor as its not done automatically
-	ds.asFactor(x = 'A$TIMEID', newobj = 'TIMEIDFACT')
-	ds.cbind(x=c('TIMEIDFACT', 'A'), newobj = 'Afact')
-	ds.assign(toAssign='log(Afact$SURVIVALTIME)', newobj='logSurvival')
-
-	lexised_table = "Afact"
-
-	for (k in 1:length(my_outcome)){
-		outcome_family = 'poisson'
-
-		# for each exposure and
-		for (j in 1:length(my_exposure)){
-			estimates = vector()
-			s_errors = vector()
-			labels = vector()
-
-			for(i in 1:length(opals)) {
-				reg_data <- data.frame()
-
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(lexised_table, '$','TIMEID'), '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(i, my_fmla = fmla, study =  names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvival", lexisTable = lexised_table)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -443,7 +382,7 @@ my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI")
-#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
