@@ -114,28 +114,6 @@ for (i in 2:length(my_vars_all)){
 rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 row.names(model_all_len) <- rownames
 
-
-# ## TODO CHANGE ACCORDING TO TOP WHEN IT RUNS
-# # Setup an additional proxy ID column for each study 
-# for(i in 1:length(opals)){
-#   work1 <- all_participants_split[[i]]
-#   work2 <- paste0("datashield.assign(opals[",i,"],'ID', quote(c(1:",work1,")))")
-#   eval(parse(text=work2))
-# }
-# ds.cbind(x=c('ID','D'), newobj='D2')
-# 
-# # adding in zero columns to the studies
-# for(i in 1:length(opals)){
-#   work1 <- all_participants_split[[i]]
-#   work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
-#   eval(parse(text=work2))
-# }
-# ds.cbind(x=c('newStartDate','D2'), newobj='D3')
-# 
-# ds.assign(toAssign = 'D$AGE_END-D$AGE_BASE', newobj = 'newEndDate')
-# ds.cbind(x=c('newEndDate','D3'), newobj='D4')
-
-
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
@@ -238,41 +216,41 @@ colnames(outcomes_missings_table) <- c('Study Name', 'Total in Study', 'caseobjM
 
 #---------------------------------------------------------
 # Summaries for exposures
-summary_fatty = summaryContExp('D$FATTY', study_names, num_studies)
-summary_fresh = summaryContExp('D$FRESH', study_names, num_studies)
-summary_fried = summaryContExp('D$FRIED', study_names, num_studies)
-summary_lean = summaryContExp('D$LEAN', study_names, num_studies)
-summary_nonfish = summaryContExp('D$NONFISH', study_names, num_studies)
-summary_salt = summaryContExp('D$SALT', study_names, num_studies)
-summary_ssd = summaryContExp('D$SSD', study_names, num_studies)
-summary_total = summaryContExp('D$TOTAL', study_names, num_studies)
+summary_fatty = summaryContExp('E7$FATTY', study_names, num_studies)
+summary_fresh = summaryContExp('E7$FRESH', study_names, num_studies)
+summary_fried = summaryContExp('E7$FRIED', study_names, num_studies)
+summary_lean = summaryContExp('E7$LEAN', study_names, num_studies)
+summary_nonfish = summaryContExp('E7$NONFISH', study_names, num_studies)
+summary_salt = summaryContExp('E7$SALT', study_names, num_studies)
+summary_ssd = summaryContExp('E7$SSD', study_names, num_studies)
+summary_total = summaryContExp('E7$TOTAL', study_names, num_studies)
                                
 #---------------------------------------------------------
 # Summaries for outcomes
-summary_objective_case = summaryBinExp('D$CASE_OBJ', study_names, num_studies)
-summary_self_case = summaryBinExp("D$CASE_OBJ_SELF", study_names, num_studies)
+summary_objective_case = summaryBinExp('E7$CASE_OBJ', study_names, num_studies)
+summary_self_case = summaryBinExp("E7$CASE_OBJ_SELF", study_names, num_studies)
 
 #---------------------------------------------------------
 # Summaries for covariates and confounders
 # education
-summary_education = summaryCatExp('D$EDUCATION', study_names, num_studies)
-summary_smoking = summaryBinExp('D$SMOKING', study_names, num_studies)
+summary_education = summaryCatExp('E7$EDUCATION', study_names, num_studies)
+summary_smoking = summaryBinExp('E7$SMOKING', study_names, num_studies)
 
 # # mi, stroke, cancer, hypertension
-summary_mi = summaryBinExp('D$MI', study_names, num_studies)
-summary_stroke = summaryBinExp('D$STROKE', study_names, num_studies)
-summary_cancer = summaryBinExp('D$CANCER', study_names, num_studies)
-summary_hypertension = summaryBinExp('D$HYPERTENSION', study_names, num_studies)
+summary_mi = summaryBinExp('E7$MI', study_names, num_studies)
+summary_stroke = summaryBinExp('E7$STROKE', study_names, num_studies)
+summary_cancer = summaryBinExp('E7$CANCER', study_names, num_studies)
+summary_hypertension = summaryBinExp('E7$HYPERTENSION', study_names, num_studies)
 
 # # Continous covariates
-summary_pa = summaryContExp('D$PA', study_names, num_studies)
-summary_alc = summaryContExp('D$ALCOHOL', study_names, num_studies)
-summary_supplements = summaryContExp('D$SUPPLEMENTS', study_names, num_studies)
-summary_eintake = summaryContExp('D$E_INTAKE', study_names, num_studies)
-summary_red_meat = summaryContExp('D$RED_MEAT', study_names, num_studies)
-summary_proc_meat = summaryContExp('D$PROC_MEAT', study_names, num_studies)
-summary_fruit = summaryContExp('D$FRUIT', study_names, num_studies)
-summary_veg = summaryContExp('D$VEG', study_names, num_studies)
-summary_dairy = summaryContExp('D$DAIRY', study_names, num_studies)
-summary_fiber = summaryContExp('D$FIBER', study_names, num_studies)
-summary_sugardrinks = summaryContExp('D$SUG_BEVS', study_names, num_studies)
+summary_pa = summaryContExp('E7$PA', study_names, num_studies)
+summary_alc = summaryContExp('E7$ALCOHOL', study_names, num_studies)
+summary_supplements = summaryContExp('E7$SUPPLEMENTS', study_names, num_studies)
+summary_eintake = summaryContExp('E7$E_INTAKE', study_names, num_studies)
+summary_red_meat = summaryContExp('E7$RED_MEAT', study_names, num_studies)
+summary_proc_meat = summaryContExp('E7$PROC_MEAT', study_names, num_studies)
+summary_fruit = summaryContExp('E7$FRUIT', study_names, num_studies)
+summary_veg = summaryContExp('E7$VEG', study_names, num_studies)
+summary_dairy = summaryContExp('E7$DAIRY', study_names, num_studies)
+summary_fiber = summaryContExp('E7$FIBER', study_names, num_studies)
+summary_sugardrinks = summaryContExp('E7$SUG_BEVS', study_names, num_studies)
