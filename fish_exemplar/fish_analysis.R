@@ -358,8 +358,8 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 		ds.subset(x = ref_table, subset = newTable, logicalOperator = logicalOperatorString, threshold = cats[category])
 
 		# run the model on the stratified dataframe and append to list of models
-		mypath_func = file.path(paste0(mypath_prefix, "_",stratified_var,"==", cats(category), ".svg"))
-		stratified_model = runSurvival_B_Model(newTable, my_exposure, my_outcome, my_covariate, mypath_1, interval_width)
+		mypath_func = file.path(paste0(mypath_prefix, "_",stratified_var,"==", cats[category], ".svg"))
+		stratified_model = runSurvival_B_Model(newTable, my_exposure, my_outcome, my_covariate, mypath_func, interval_width)
 		list_of_models[category] = stratified_model
 	}
 
@@ -382,20 +382,13 @@ my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI")
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
+my_covariate =  c("AGE_BASE")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
 model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 model_1_all = model_1_results[[1]]
 model_1_REM = model_1_results[[2]]
-
-# # survival version short running normal lexis
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1_surv.svg')
-# model_1_surv = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-# model_1_surv_all = model_1_surv[[1]]
-# model_1_surv_all = model_1_surv[[2]]
 
 # survival version with lexis b 
 ref_table = 'D4'
@@ -414,10 +407,10 @@ ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_mediate')
 model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
 
-# # example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1')
-# model_1_stratified = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "TYPE_DIAB")
+# example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1')
+model_1_stratified = runStratificationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "EDUCATION")
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
