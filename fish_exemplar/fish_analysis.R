@@ -31,8 +31,10 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           "AGE_BASE", "AGE_END_OBJ","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+           "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ")
+
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -198,9 +200,16 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
 
-				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-
+				# need to check this formula for correctness
+				if(study_names[i]=='InterAct_france'){
+				  #omit sex
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				} else {
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				}
+				
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
 					reg_data = reg_data[1:9]
 					colnames(reg_data)[8] <- "low0.95CI"
@@ -387,19 +396,19 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE","SEX", "EDUCATION", "SMOKING", "PA")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA")
 
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1.svg')
-# 
-# model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-# model_1_all = model_1_results[[1]]
-# model_1_REM = model_1_results[[2]]
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1.svg')
+
+model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_1_all = model_1_results[[1]]
+model_1_REM = model_1_results[[2]]
 
 # survival version with lexis b 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1))
 model_1_b_all = model_1_b[[1]]
 model_1_b_rem = model_1_b[[2]]
 
