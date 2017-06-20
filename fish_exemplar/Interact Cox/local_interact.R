@@ -1,29 +1,25 @@
 library('survival')
 
+# List files in the directory by full path
 files <- dir('/home/l_trpb2/interact', full.names=TRUE)
 
+# read each file and assign names
 df.list <- lapply(files, read.csv)
 names(df.list) = c("denmark","france","germany","italy","netherlands","spain","sweden","uk")
 
 remove_age <- function(DF) {
-  
+  # function that rebases the age groups
   new_df = data.frame(DF, start = 0, end = DF$AGE_END_OBJ - DF$AGE_BASE)
   return(new_df)
 }
-
-
 df.list2 <- lapply(df.list, remove_age)
 
 
-
-
-fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+fmla <- as.formula(paste("censor"," ~ ", "TOTAL", "+", "AGE_BASE", "+", "EDUCATION", "+", "SMOKING"))
 
 cox_list <- function(DF) {
-  
   model <- summary(coxph(Surv(start, end, CASE_OBJ)~TOTAL+AGE_BASE+EDUCATION+SMOKING, DF))
   return(model)
-  
 }
 
 cox_out <- lapply(df.list2, cox_list)
@@ -37,8 +33,7 @@ res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
 #add the weights to the labels
 res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
 
-dev.off()
-svg(filename='/home/l_trpb2/interact/test.svg', 
+svg(filename='/home/l_pms69/exemplar_analyses/fish_exemplar/test.svg', 
     width=4 * 1, 
     height=3 * 1, 
     pointsize=10)
@@ -52,6 +47,6 @@ par(ps=10)
                            .(round(res$pval,3)))), atransf = exp)
   usr <- par("usr")
   text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
-  text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-  text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+  text(usr[1], usr[4], paste0(gsub(paste0('ref_table',"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+  text(usr[1], usr[3], 'TOTAL', adj = c( 0, 0),cex=0.75)
   dev.off()
