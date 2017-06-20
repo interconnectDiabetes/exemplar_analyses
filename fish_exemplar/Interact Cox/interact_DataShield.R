@@ -361,3 +361,28 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 
 	return(list_of_models)
 }
+
+
+
+# ___  ___          _      _   __  
+# |  \/  |         | |    | | /  | 
+# | .  . | ___   __| | ___| | `| | 
+# | |\/| |/ _ \ / _` |/ _ \ |  | | 
+# | |  | | (_) | (_| |  __/ | _| |_
+# \_|  |_/\___/ \__,_|\___|_| \___/
+                                 
+# Exposure: total fish (g/d) at baseline
+# Outcome: Type 2 diabetes incidence
+# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension
+# 
+# To assess the impact of each confounder we will also run models including each confounder separately.
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
+
+# survival version with lexis b 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1b_surv.svg')
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, 2)
+model_1_b_all = model_1_b[[1]]
+model_1_b_rem = model_1_b[[2]]
