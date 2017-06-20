@@ -172,8 +172,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				reg_data <- data.frame()
 
 				# need to check this formula for correctness
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -218,6 +217,6 @@ my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING")
 # survival version with lexis b 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, 2)
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, 10)
 model_1_b_all = model_1_b[[1]]
 model_1_b_rem = model_1_b[[2]]

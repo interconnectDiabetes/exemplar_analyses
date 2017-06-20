@@ -15,15 +15,15 @@ remove_age <- function(DF) {
 df.list2 <- lapply(df.list, remove_age)
 
 cox_list <- function(DF) {
-  model <- summary(coxph(Surv(start, end, CASE_OBJ)~TOTAL+AGE_BASE+EDUCATION+SMOKING, DF))
+  model <- summary(coxph(Surv(start, end, CASE_OBJ)~TOTAL+AGE_BASE+EDUCATION+SMOKING, DF, robust = TRUE, ties = "breslow"))
   return(model)
 }
 
 df.list2 <- lapply(df.list, remove_age)
 cox_out <- lapply(df.list2, cox_list)
 
-coeffs = unlist(lapply(cox_out, function (x) x['coefficients'][[1]][1]))
-s_err = unlist(lapply(cox_out, function (x) x['coefficients'][[1]][3]))
+coeffs = unlist(lapply(cox_out, function (x) x['coefficients'][[1]][1,1]))
+s_err = unlist(lapply(cox_out, function (x) x['coefficients'][[1]][1,3]))
 labels = names(cox_out)
 res <- rma(yi = coeffs, sei = s_err, method='DL', slab = labels)
 
