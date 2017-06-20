@@ -48,18 +48,6 @@ study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
-# remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
-noPrevalence <- ds.length('E1$SEX', type = 'split')
-ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
-noType1 <- ds.length('E2$SEX', type = 'split')
-
-# remove participants with too little and excessive consumption of calories
-ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
-under3500cal <- ds.length('E3$SEX', type = 'split')
-ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
-afterIntake <- ds.length('E4$SEX', type = 'split')
-
 # Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
   work1 <- afterIntake[[i]]
@@ -67,7 +55,7 @@ for(i in 1:length(opals)){
   eval(parse(text=work2))
 }
 rm(i) # removal of i as it is not scoped within the loop
-ds.cbind(x=c('ID','E4'), newobj='D2')
+ds.cbind(x=c('ID','D'), newobj='D2')
 
 # adding in zero columns to the studies
 for(i in 1:length(opals)){
