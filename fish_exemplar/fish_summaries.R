@@ -31,7 +31,8 @@ datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
            	"AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+           	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -61,7 +62,7 @@ for(i in 1:length(opals)){
 ds.cbind(x=c('newStartDate','D'), newobj='D1')
 
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
+ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
@@ -73,46 +74,46 @@ ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 5
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
 
-# Setup an additional proxy ID column for each study 
-for(i in 1:length(opals)){
-  work1 <- afterIntake[[i]]
-  work2 <- paste0("datashield.assign(opals[",i,"],'fakeIds', quote(c(1:",work1,")))")
-  eval(parse(text=work2))
-}
-ds.cbind(x=c('fakeIds','E4'), newobj='E5')
-
-# Loop to produce E4 and model_all_len for descriptive stats
-# Note that this doesnt actually handle well if a study has lost all its participants before this section
-my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
-	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
-	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
-
-
-# Dataframe to hold length figures
-model_all_len <- data.frame()
-model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-
-
-for (i in 2:length(my_vars_all)){
-  ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])
-  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-  # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
-  thingToBind = vector("numeric")
-  print(i)
-  for (k in 1:num_studies){
-    lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
-    thingToBind = c(thingToBind, lengthNum)
-    print(thingToBind)
-  }
-  thingToBind = unlist(unname(thingToBind))
-  print("this is thingtobind unlistedunnamed")
-  print(k)
-  print(thingToBind)
-  model_all_len = rbind(model_all_len, thingToBind)
-}
-rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-row.names(model_all_len) <- rownames
+# # Setup an additional proxy ID column for each study 
+# for(i in 1:length(opals)){
+#   work1 <- afterIntake[[i]]
+#   work2 <- paste0("datashield.assign(opals[",i,"],'fakeIds', quote(c(1:",work1,")))")
+#   eval(parse(text=work2))
+# }
+# ds.cbind(x=c('fakeIds','E4'), newobj='E5')
+# 
+# # Loop to produce E4 and model_all_len for descriptive stats
+# # Note that this doesnt actually handle well if a study has lost all its participants before this section
+# my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
+# 	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
+# 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+# my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
+# 
+# 
+# # Dataframe to hold length figures
+# model_all_len <- data.frame()
+# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+# 
+# 
+# for (i in 2:length(my_vars_all)){
+#   ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])+
+#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+#   # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
+#   thingToBind = vector("numeric")
+#   print(i)
+#   for (k in 1:num_studies){
+#     lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
+#     thingToBind = c(thingToBind, lengthNum)
+#     print(thingToBind)
+#   }
+#   thingToBind = unlist(unname(thingToBind))
+#   print("this is thingtobind unlistedunnamed")
+#   print(k)
+#   print(thingToBind)
+#   model_all_len = rbind(model_all_len, thingToBind)
+# }
+# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+# row.names(model_all_len) <- rownames
 
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
@@ -232,10 +233,9 @@ summary_self_case = summaryBinExp("E4$CASE_OBJ_SELF", study_names, num_studies)
 
 summary_self_age = summaryContExp("E4$AGE_END_OBJ_SELF", study_names, num_studies)
 summary_obj_age = summaryContExp("E4$AGE_END_OBJ", study_names, num_studies)
-
-summary_prevalence = summaryBinExp("D$PREV_DIAB", study_names, num_studies)
 summary_age_base = summaryContExp("E4$AGE_BASE", study_names, num_studies)
 
+summary_prevalence = summaryBinExp("D$PREV_DIAB", study_names, num_studies)
 summary_type_diab = summaryBinExp("D$TYPE_DIAB", study_names, num_studies)
 
 
