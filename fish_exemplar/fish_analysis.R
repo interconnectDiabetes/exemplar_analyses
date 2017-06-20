@@ -53,7 +53,7 @@ num_studies <- length(temp)
 rm(temp)
 
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
+ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
@@ -269,11 +269,17 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-
-				# need to check this formula for correctness
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				
+        # need to check this formula for correctness
+				if(study_names[i]=='InterAct_france'){
+				  #omit sex
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				} else {
+				  fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				}
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
@@ -381,14 +387,14 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI")
-my_covariate =  c("AGE_BASE")
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1.svg')
+my_covariate =  c("AGE_BASE","SEX", "EDUCATION", "SMOKING", "PA")
 
-model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1_all = model_1_results[[1]]
-model_1_REM = model_1_results[[2]]
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1.svg')
+# 
+# model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+# model_1_all = model_1_results[[1]]
+# model_1_REM = model_1_results[[2]]
 
 # survival version with lexis b 
 ref_table = 'D4'
