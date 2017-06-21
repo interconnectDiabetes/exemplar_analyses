@@ -33,7 +33,7 @@ datashield.logout(opals)
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
            "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
-           "AGE_END_OBJ_SELF", "AGE_END_OBJ")
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
 
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
@@ -207,7 +207,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 				}
-				else if(study_names[i]=='NOWAC'){
+				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
 				  #omit sex
 				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
@@ -292,7 +292,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
 				}
-				else if(study_names[i]=='NOWAC'){
+				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
 				  #omit sex
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
@@ -409,7 +409,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING")
 
 # ref_table = 'D4'
 # mypath = file.path('~', 'plots', 'model_1.svg')
