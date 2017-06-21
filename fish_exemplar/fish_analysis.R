@@ -108,6 +108,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
+  print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -409,7 +410,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA")
 
 # ref_table = 'D4'
 # mypath = file.path('~', 'plots', 'model_1.svg')
