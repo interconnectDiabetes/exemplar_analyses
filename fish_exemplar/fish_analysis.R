@@ -91,7 +91,8 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
-	# performs a regular regression and returns the coefficients of the fitted model as a dataframe 
+	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
+  print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -205,7 +206,13 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				  #omit sex
 				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-				} else {
+				}
+				else if(study_names[i]=='NOWAC'){
+				  #omit sex
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				}
+				else {
 				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
 				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 				}
@@ -284,7 +291,13 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				  #omit sex
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
-				} else {
+				}
+				else if(study_names[i]=='NOWAC'){
+				  #omit sex
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				}
+				else {
 				  fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
@@ -396,36 +409,38 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA")
 
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1.svg')
-
-model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1_all = model_1_results[[1]]
-model_1_REM = model_1_results[[2]]
-
-# survival version with lexis b 
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1))
-model_1_b_all = model_1_b[[1]]
-model_1_b_rem = model_1_b[[2]]
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1.svg')
+# 
+# model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+# model_1_all = model_1_results[[1]]
+# model_1_REM = model_1_results[[2]]
+# 
+# # survival version with lexis b 
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1b_surv.svg')
+# model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1))
+# model_1_b_all = model_1_b[[1]]
+# model_1_b_rem = model_1_b[[2]]
 
 # incremental model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_inc')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 
-# mediation model with PA
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1b_mediate')
-model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
+# # mediation model with PA
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1b_mediate')
+# model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
+# 
+# # example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1')
+# model_1_stratified = runStratificationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "EDUCATION")
 
-# example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1')
-model_1_stratified = runStratificationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "EDUCATION")
+datashield.aggregate(opals = opals[10], expr=quote("lexisDS1.b(D4$newEndDate)"))
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
