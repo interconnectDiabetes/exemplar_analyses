@@ -70,8 +70,8 @@ noType1 <- ds.length('E2$SEX', type = 'split')
 # In order to deal with the intake subsets stratified by sex we will have to create subsets of sex,
 # do the intake subset and then rbind the groups back together. What follows is DataSHIELD magic
 ds.asNumeric("E2$SEX", newobj = "sexNumbers")
-ds.assign(toAssign="sexNumbers*300+E2$E_INTAKE", newobj = "adjustedLowerBound")
-ds.assign(toAssign="sexNumbers*700+E2$E_INTAKE", newobj = "adjustedUpperBound")
+ds.assign(toAssign="(sexNumbers*300)+E2$E_INTAKE", newobj = "adjustedLowerBound")
+ds.assign(toAssign="(sexNumbers*700)+E2$E_INTAKE", newobj = "adjustedUpperBound")
 ds.cbind(x=c("adjustedLowerBound", "E2"), newobj = "L1")
 ds.cbind(x=c("adjustedUpperBound", "L1"), newobj = "L2")
 # remove participants with too little and excessive consumption of calories
