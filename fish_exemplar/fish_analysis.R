@@ -564,11 +564,30 @@ model_3d_rem = model_3d[[2]]
 # Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
 
 # Stratified analyses by sex (men, women) if positive interaction 
-
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+# Men
+ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
+men <- ds.length('D4_men$SEX', type = 'split')
+
+ref_table = 'D4_men'
+mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
+model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4men_all = model_4men[[1]]
+model_4men_rem = model_4men[[2]]
+
+# Women
+ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'SEX==', threshold = 1)
+women <- ds.length('D4_women$SEX', type = 'split')
+
+ref_table = 'D4_women'
+mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
+model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4women_all = model_4women[[1]]
+model_4women_rem = model_4women[[2]]
 
 
 # ___  ___          _      _   _____ 
