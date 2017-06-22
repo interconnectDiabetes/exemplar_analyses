@@ -416,7 +416,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "COMORBID")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
@@ -436,15 +436,6 @@ ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_inc')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 
-# # mediation model with PA
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1b_mediate')
-# model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
-# 
-# # example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1')
-# model_1_stratified = runStratificationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "EDUCATION")
 
 datashield.aggregate(opals = opals[10], expr=quote("lexisDS1.b(D4$newEndDate)"))
 
@@ -460,14 +451,26 @@ datashield.aggregate(opals = opals[10], expr=quote("lexisDS1.b(D4$newEndDate)"))
 # model2a
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2a_surv.svg')
+model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2a_all = model_2a[[1]]
+model_2a_rem = model_2a[[2]]
 
 # model2b
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2a_surv.svg')
+model_2b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2b_all = model_2b[[1]]
+model_2b_rem = model_2b[[2]]
 
 
 # ___  ___          _      _   _____ 
