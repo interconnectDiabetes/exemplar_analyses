@@ -467,7 +467,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_2a_surv.svg')
+mypath = file.path('~', 'plots', 'model_2b_surv.svg')
 model_2b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2b_all = model_2b[[1]]
 model_2b_rem = model_2b[[2]]
@@ -491,14 +491,47 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 # interaction with waist
 my_exposure = c('TOTAL')
 my_outcome = c('WAIST')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3a_surv.svg')
+model_3a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3a_all = model_3a[[1]]
+model_3a_rem = model_3a[[2]]
 
 my_exposure = c('WAIST')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
+
+mypath = file.path('~', 'plots', 'model_3b_surv.svg')
+model_3b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3b_all = model_3b[[1]]
+model_3b_rem = model_3b[[2]]
+
+
+# interaction with fish oil
+my_exposure = c('TOTAL')
+my_outcome = c('SUPPLEMENTS')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE", "FAM_DIAB")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3c_surv.svg')
+model_3c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3c_all = model_3c[[1]]
+model_3c_rem = model_3c[[2]]
+
+my_exposure = c('SUPPLEMENTS')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE", "FAM_DIAB")
+
+mypath = file.path('~', 'plots', 'model_3d_surv.svg')
+model_3d = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3d_all = model_3d[[1]]
+model_3d_rem = model_3d[[2]]
 
 
 # ___  ___          _      _     ___ 
