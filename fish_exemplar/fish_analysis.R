@@ -94,6 +94,28 @@ ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 ds.assign(toAssign = 'D3$AGE_END_OBJ-D3$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 
+# Adding in the weights
+ds.asNumeric('D4$CASE_OBJ', newobj = "caseNums")
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
+
+
+
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
@@ -598,15 +620,34 @@ model_4women_rem = model_4women[[2]]
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 # Exposure: total fish (g/d) at baseline*BMI
 # Outcome: Type 2 diabetes incidence
-# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
+# Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
 # 
-# Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction
+# Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction 
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-# medication is new here
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
-				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+# BMI < 25
+ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI<', threshold = 25)
+men <- ds.length('D4_men$SEX', type = 'split')
+
+ref_table = 'D4_men'
+mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
+model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4men_all = model_4men[[1]]
+model_4men_rem = model_4men[[2]]
+
+# BMI >= 25
+ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'BMI>=', threshold = 25)
+women <- ds.length('D4_women$SEX', type = 'split')
+
+ref_table = 'D4_women'
+mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
+model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4women_all = model_4women[[1]]
+model_4women_rem = model_4women[[2]]
 
 
 # ___  ___          _      _    ____ 
@@ -628,10 +669,4 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 
 # GEOGRAPHIC AREA (BUT MIGHT NOT DO THIS ONE ANYWAY)
 
-# repeat for each exposure
-my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
-my_outcome = c('CASE_OBJ', "CASE_OBJ_SELF")
-my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST",
-	"SUPPLEMENTS")
 
