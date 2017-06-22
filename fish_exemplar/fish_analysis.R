@@ -60,10 +60,17 @@ noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
+# In order to deal with the intake subsets stratified by sex we will have to create subsets of sex,
+# do the intake subset and then rbind the groups back together. What follows is DataSHIELD magic
+ds.asNumeric("E2$SEX", newobj = "sexNumbers")
+ds.assign(toAssign="sexNumbers*300+E2$E_INTAKE", newobj = "adjustedLowerBound")
+ds.assign(toAssign="sexNumbers*700+E2$E_INTAKE", newobj = "adjustedUpperBound")
+ds.cbind(x=c("adjustedLowerBound", "E2"), newobj = "L1")
+ds.cbind(x=c("adjustedUpperBound", "L1"), newobj = "L2")
 # remove participants with too little and excessive consumption of calories
-ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
+ds.subset(x = 'L2', subset = 'E3', logicalOperator = 'adjustedUpperBound<=', threshold = 4200)
 under3500cal <- ds.length('E3$SEX', type = 'split')
-ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
+ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800)
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
 # Setup an additional proxy ID column for each study 
@@ -410,21 +417,21 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 # my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "COMORBID")
 
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1.svg')
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1.svg')
+
+model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_1_all = model_1_results[[1]]
+model_1_REM = model_1_results[[2]]
 # 
-# model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-# model_1_all = model_1_results[[1]]
-# model_1_REM = model_1_results[[2]]
-# 
-# # survival version with lexis b 
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-# model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(1))
-# model_1_b_all = model_1_b[[1]]
-# model_1_b_rem = model_1_b[[2]]
+# survival version with lexis b
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1b_surv.svg')
+model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_1_b_all = model_1_b[[1]]
+model_1_b_rem = model_1_b[[2]]
 
 # incremental model
 ref_table = 'D4'

@@ -67,12 +67,18 @@ noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
+# In order to deal with the intake subsets stratified by sex we will have to create subsets of sex,
+# do the intake subset and then rbind the groups back together. What follows is DataSHIELD magic
+ds.asNumeric("E2$SEX", newobj = "sexNumbers")
+ds.assign(toAssign="sexNumbers*300+E2$E_INTAKE", newobj = "adjustedLowerBound")
+ds.assign(toAssign="sexNumbers*700+E2$E_INTAKE", newobj = "adjustedUpperBound")
+ds.cbind(x=c("adjustedLowerBound", "E2"), newobj = "L1")
+ds.cbind(x=c("adjustedUpperBound", "L1"), newobj = "L2")
 # remove participants with too little and excessive consumption of calories
-ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
+ds.subset(x = 'L2', subset = 'E3', logicalOperator = 'adjustedUpperBound<=', threshold = 4200)
 under3500cal <- ds.length('E3$SEX', type = 'split')
-ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
+ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800)
 afterIntake <- ds.length('E4$SEX', type = 'split')
-
 
 # # Setup an additional proxy ID column for each study 
 # for(i in 1:length(opals)){
