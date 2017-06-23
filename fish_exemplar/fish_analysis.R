@@ -96,21 +96,21 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D4')
 
 # Adding in the weights
 ds.asNumeric('D4$CASE_OBJ', newobj = "caseNums")
-ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_france)
-ds.assign(toAssign="((caseNums-1)*23.55086)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_italy)
-ds.assign(toAssign="((caseNums-1)*11.0115)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_spain)
-ds.assign(toAssign="((caseNums-1)*27.87205)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_uk)
-ds.assign(toAssign="((caseNums-1)*24.27497)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_netherlands)
-ds.assign(toAssign="((caseNums-1)*24.62187)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_germany)
-ds.assign(toAssign="((caseNums-1)*17.68276)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_sweden)
-ds.assign(toAssign="((caseNums-1)*27.28305)*-1",  newobj = "burtonWeights", datasources = opals$InterAct_denmark)
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_france'])
+ds.assign(toAssign="((caseNums-1)*23.55086)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_italy'])
+ds.assign(toAssign="((caseNums-1)*11.0115)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_spain'])
+ds.assign(toAssign="((caseNums-1)*27.87205)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_uk'])
+ds.assign(toAssign="((caseNums-1)*24.27497)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_netherlands'])
+ds.assign(toAssign="((caseNums-1)*24.62187)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_germany'])
+ds.assign(toAssign="((caseNums-1)*17.68276)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_sweden'])
+ds.assign(toAssign="((caseNums-1)*27.28305)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
 
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals$HOORN)
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals$NHAPC)
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals$NOWAC)
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals$SMC)
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals$Whitehall)
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals$Zutphen)
+ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['HOORN'])
+ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
+ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
+ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['SMC'])
+ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
+ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 
 
 
@@ -119,7 +119,7 @@ ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
-  print(opals[counter])
+	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -135,7 +135,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
-  print(opals[counter])
+	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
