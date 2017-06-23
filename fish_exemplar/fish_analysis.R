@@ -105,14 +105,15 @@ ds.assign(toAssign="((caseNums-1)*24.62187)*-1",  newobj = "burtonWeights", data
 ds.assign(toAssign="((caseNums-1)*17.68276)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_sweden'])
 ds.assign(toAssign="((caseNums-1)*27.28305)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
 
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['HOORN'])
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['SMC'])
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
-ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
+# Non InterAct studies get a weighting of 1 in either case or noncase
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 
-ds.cbind(x = ('burtonWeights', 'D5'), newobj = 'D4')
+ds.cbind(x=c('burtonWeights','D5'), newobj='D4')
 
 
 
@@ -133,12 +134,12 @@ do_reg <- function(counter, my_fmla, study, outcome, out_family){
 }
 
 
-do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable){
+do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable, burtonWeights){
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
 	print(opals[counter])
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -320,17 +321,17 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				if(study_names[i]=='InterAct_france'){
 				  #omit sex
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
-				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
 				  #omit sex
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
-				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				else {
 				  fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -338,7 +339,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
-
+			fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 			#meta analysis here
 			for (n in 1:length(variables)){
 				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
@@ -447,11 +448,11 @@ model_1_all = model_1_results[[1]]
 model_1_REM = model_1_results[[2]]
 # 
 # survival version with lexis b
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_1_b_all = model_1_b[[1]]
-model_1_b_rem = model_1_b[[2]]
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1b_surv.svg')
+# model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+# model_1_b_all = model_1_b[[1]]
+# model_1_b_rem = model_1_b[[2]]
 
 # incremental model
 ref_table = 'D4'
