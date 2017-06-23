@@ -92,10 +92,10 @@ rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
 ds.assign(toAssign = 'D3$AGE_END_OBJ-D3$AGE_BASE', newobj = 'newEndDate')
-ds.cbind(x=c('newEndDate','D3'), newobj='D4')
+ds.cbind(x=c('newEndDate','D3'), newobj='D5')
 
 # Adding in the weights
-ds.asNumeric('D4$CASE_OBJ', newobj = "caseNums")
+ds.asNumeric('D5$CASE_OBJ', newobj = "caseNums")
 ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_france'])
 ds.assign(toAssign="((caseNums-1)*23.55086)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_italy'])
 ds.assign(toAssign="((caseNums-1)*11.0115)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_spain'])
@@ -111,6 +111,8 @@ ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources
 ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['SMC'])
 ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
 ds.assign(toAssign="((caseNums-1)*1)*-1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
+
+ds.cbind(x = ('burtonWeights', 'D5'), newobj = 'D4')
 
 
 
