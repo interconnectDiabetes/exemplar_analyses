@@ -31,8 +31,10 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           "AGE_BASE", "AGE_END_OBJ","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+           "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
+
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -53,15 +55,22 @@ num_studies <- length(temp)
 rm(temp)
 
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
+ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
+# In order to deal with the intake subsets stratified by sex we will have to create subsets of sex,
+# do the intake subset and then rbind the groups back together. What follows is DataSHIELD magic
+ds.asNumeric("E2$SEX", newobj = "sexNumbers")
+ds.assign(toAssign="(sexNumbers*300)+E2$E_INTAKE", newobj = "adjustedLowerBound")
+ds.assign(toAssign="(sexNumbers*700)+E2$E_INTAKE", newobj = "adjustedUpperBound")
+ds.cbind(x=c("adjustedLowerBound", "E2"), newobj = "L1")
+ds.cbind(x=c("adjustedUpperBound", "L1"), newobj = "L2")
 # remove participants with too little and excessive consumption of calories
-ds.subset(x = 'E2', subset = 'E3', logicalOperator = 'E_INTAKE<=', threshold = 3500)
+ds.subset(x = 'L2', subset = 'E3', logicalOperator = 'adjustedUpperBound<=', threshold = 4200)
 under3500cal <- ds.length('E3$SEX', type = 'split')
-ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'E_INTAKE>=', threshold = 500)
+ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800)
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
 # Setup an additional proxy ID column for each study 
@@ -83,13 +92,37 @@ rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
 ds.assign(toAssign = 'D3$AGE_END_OBJ-D3$AGE_BASE', newobj = 'newEndDate')
-ds.cbind(x=c('newEndDate','D3'), newobj='D4')
+ds.cbind(x=c('newEndDate','D3'), newobj='D5')
+
+# Adding in the weights
+ds.asNumeric('D5$CASE_OBJ', newobj = "caseNums")
+ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_france'])
+ds.assign(toAssign="((caseNums-1)*23.55086)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_italy'])
+ds.assign(toAssign="((caseNums-1)*11.0115)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_spain'])
+ds.assign(toAssign="((caseNums-1)*27.87205)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_uk'])
+ds.assign(toAssign="((caseNums-1)*24.27497)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_netherlands'])
+ds.assign(toAssign="((caseNums-1)*24.62187)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_germany'])
+ds.assign(toAssign="((caseNums-1)*17.68276)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_sweden'])
+ds.assign(toAssign="((caseNums-1)*27.28305)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
+
+# Non InterAct studies get a weighting of 1 in either case or noncase
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
+
+ds.cbind(x=c('burtonWeights','D5'), newobj='D4')
+
+
 
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
-	# performs a regular regression and returns the coefficients of the fitted model as a dataframe 
+	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
+	print(opals[counter])
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -101,11 +134,12 @@ do_reg <- function(counter, my_fmla, study, outcome, out_family){
 }
 
 
-do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable){
+do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable, burtonWeights){
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column,  maxit=100, checks=TRUE)
+	print(opals[counter])
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -198,9 +232,22 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
 
-				fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-
+				# need to check this formula for correctness
+				if(study_names[i]=='InterAct_france'){
+				  #omit sex
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				}
+				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
+				  #omit sex
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				}
+				else {
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				}
+				
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
 					reg_data = reg_data[1:9]
 					colnames(reg_data)[8] <- "low0.95CI"
@@ -269,18 +316,30 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-
-				# need to check this formula for correctness
-				fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table)
+				
+        # need to check this formula for correctness
+				if(study_names[i]=='InterAct_france'){
+				  #omit sex
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
+				  #omit sex
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else {
+				  fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
-
+			fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 			#meta analysis here
 			for (n in 1:length(variables)){
 				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
@@ -380,37 +439,28 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-# my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "HYPERTENSION")  
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "STROKE", "MI")
-my_covariate =  c("AGE_BASE")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID")
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1.svg')
 
 model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 model_1_all = model_1_results[[1]]
 model_1_REM = model_1_results[[2]]
-
-# survival version with lexis b 
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
-model_1_b_all = model_1_b[[1]]
-model_1_b_rem = model_1_b[[2]]
+# 
+# survival version with lexis b
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_1b_surv.svg')
+# model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+# model_1_b_all = model_1_b[[1]]
+# model_1_b_rem = model_1_b[[2]]
 
 # incremental model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1b_inc')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
 
-# mediation model with PA
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1b_mediate')
-model_1_mediated = runMediationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), c("PA"))
 
-# example stratified model on type diab (doesnt work cause we dont have enough categories at the moment anyway)
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1')
-model_1_stratified = runStratificationModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2), "EDUCATION")
+datashield.aggregate(opals = opals[10], expr=quote("lexisDS1.b(D4$newEndDate)"))
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
@@ -424,14 +474,26 @@ model_1_stratified = runStratificationModel(ref_table, my_exposure, my_outcome, 
 # model2a
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2a_surv.svg')
+model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2a_all = model_2a[[1]]
+model_2a_rem = model_2a[[2]]
 
 # model2b
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2b_surv.svg')
+model_2b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2b_all = model_2b[[1]]
+model_2b_rem = model_2b[[2]]
 
 
 # ___  ___          _      _   _____ 
@@ -443,23 +505,75 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 # Model 3: As model 2b + adj for BMI,  
 # Sensitivity analyses: include waist circumference or waist to hip ratio
 # 
-# Models to test Interaction 
+# Models to test Sensitivity (interaction)
+
+# interaction with fam_diab
 my_exposure = c('TOTAL')
+my_outcome = c('FAM_DIAB')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3c_surv.svg')
+model_2c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2c_all = model_2c[[1]]
+model_2c_rem = model_2c[[2]]
+
+my_exposure = c('FAM_DIAB')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE")
+
+mypath = file.path('~', 'plots', 'model_3d_surv.svg')
+model_2d = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2d_all = model_2d[[1]]
+model_2d_rem = model_2d[[2]]
+
 
 # interaction with waist
 my_exposure = c('TOTAL')
 my_outcome = c('WAIST')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3a_surv.svg')
+model_3a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3a_all = model_3a[[1]]
+model_3a_rem = model_3a[[2]]
 
 my_exposure = c('WAIST')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
+
+mypath = file.path('~', 'plots', 'model_3b_surv.svg')
+model_3b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3b_all = model_3b[[1]]
+model_3b_rem = model_3b[[2]]
+
+
+# interaction with fish oil
+my_exposure = c('TOTAL')
+my_outcome = c('SUPPLEMENTS')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE", "FAM_DIAB")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3c_surv.svg')
+model_3c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3c_all = model_3c[[1]]
+model_3c_rem = model_3c[[2]]
+
+my_exposure = c('SUPPLEMENTS')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE", "FAM_DIAB")
+
+mypath = file.path('~', 'plots', 'model_3d_surv.svg')
+model_3d = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3d_all = model_3d[[1]]
+model_3d_rem = model_3d[[2]]
 
 
 # ___  ___          _      _     ___ 
@@ -470,13 +584,33 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 # \_|  |_/\___/ \__,_|\___|_|     |_/
 # Exposure: total fish (g/d) at baseline*sex
 # Outcome: Type 2 diabetes incidence
-# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension,  energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
-# 
+# Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
+
 # Stratified analyses by sex (men, women) if positive interaction 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION",
-				"ALCOHOL", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+# Men
+ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
+men <- ds.length('D4_men$SEX', type = 'split')
+
+ref_table = 'D4_men'
+mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
+model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4men_all = model_4men[[1]]
+model_4men_rem = model_4men[[2]]
+
+# Women
+ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'SEX==', threshold = 1)
+women <- ds.length('D4_women$SEX', type = 'split')
+
+ref_table = 'D4_women'
+mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
+model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4women_all = model_4women[[1]]
+model_4women_rem = model_4women[[2]]
 
 
 # ___  ___          _      _   _____ 
@@ -487,15 +621,34 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 # Exposure: total fish (g/d) at baseline*BMI
 # Outcome: Type 2 diabetes incidence
-# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
+# Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
 # 
-# Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction
+# Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction 
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-# medication is new here
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
-				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+# BMI < 25
+ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI<', threshold = 25)
+men <- ds.length('D4_men$SEX', type = 'split')
+
+ref_table = 'D4_men'
+mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
+model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4men_all = model_4men[[1]]
+model_4men_rem = model_4men[[2]]
+
+# BMI >= 25
+ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'BMI>=', threshold = 25)
+women <- ds.length('D4_women$SEX', type = 'split')
+
+ref_table = 'D4_women'
+mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
+model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4women_all = model_4women[[1]]
+model_4women_rem = model_4women[[2]]
 
 
 # ___  ___          _      _    ____ 
@@ -517,10 +670,4 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "
 
 # GEOGRAPHIC AREA (BUT MIGHT NOT DO THIS ONE ANYWAY)
 
-# repeat for each exposure
-my_exposure = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED")
-my_outcome = c('CASE_OBJ', "CASE_OBJ_SELF")
-my_covariate = c("AGE_BASE", "AGE_END","MI", "STROKE", "HYPERTENSION", "SEX", "BMI", "GEOG_AREA", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST",
-	"SUPPLEMENTS")
 
