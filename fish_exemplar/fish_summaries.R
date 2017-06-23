@@ -20,8 +20,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
+#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Retrieve Credential Details
 source("creds/fish_exemplar_creds.R")
@@ -30,7 +30,7 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           	"AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           	"AGE_BASE", "AGE_END_OBJ", "AGE_END_OBJ_SELF", "MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
@@ -58,10 +58,14 @@ for(i in 1:length(opals)){
   work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
   eval(parse(text=work2))
 }
-ds.cbind(x=c('newStartDate','D'), newobj='D1')
+
+ds.assign(toAssign = 'D$AGE_END_OBJ-D$AGE_BASE', newobj = 'FUP_OBJ')
+ds.assign(toAssign = 'D$AGE_END_OBJ_SELF-D$AGE_BASE', newobj = 'FUP_OBJ_SELF')
+
+ds.cbind(x=c('newStartDate','FUP_OBJ', 'FUP_OBJ_SELF','D'), newobj='D1')
 
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB<', threshold = 1)
+ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
@@ -83,10 +87,14 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
-my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
-	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
-	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+#my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "AGE_END_OBJ_SELF", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", 
+#	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
+#	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
+#my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
+
+my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "AGE_END_OBJ_SELF", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
+                
 
 
 # Dataframe to hold length figures
@@ -238,6 +246,8 @@ summary_age_base = summaryContExp("E4$AGE_BASE", study_names, num_studies)
 
 summary_type_diab = summaryBinExp("D$TYPE_DIAB", study_names, num_studies)
 
+summary_fup_self = summaryContExp("E4$FUP_OBJ_SELF", study_names, num_studies)
+summary_fup_obj = summaryContExp("E4$FUP_OBJ", study_names, num_studies)
 
 #---------------------------------------------------------
 # Summaries for covariates and confounders
