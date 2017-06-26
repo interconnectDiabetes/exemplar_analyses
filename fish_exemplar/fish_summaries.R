@@ -106,7 +106,7 @@ model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noTy
 
 
 for (i in 2:length(my_vars_all)){
-  ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])+
+  ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])
   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
   # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
   thingToBind = vector("numeric")
@@ -276,3 +276,6 @@ summary_veg = summaryContExp('E4$VEG', study_names, num_studies)
 summary_dairy = summaryContExp('E4$DAIRY', study_names, num_studies)
 summary_fiber = summaryContExp('E4$FIBER', study_names, num_studies)
 summary_sugardrinks = summaryContExp('E4$SUG_BEVS', study_names, num_studies)
+
+# Other covariates
+summary_bmi = summaryBinExp('E4$BMI', study_names, num_studies)
