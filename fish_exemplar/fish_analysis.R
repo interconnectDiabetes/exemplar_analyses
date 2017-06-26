@@ -96,14 +96,14 @@ ds.cbind(x=c('newEndDate','D3'), newobj='D5')
 
 # Adding in the weights
 ds.asNumeric('D5$CASE_OBJ', newobj = "caseNums")
-ds.assign(toAssign="((caseNums-1)*35.92055)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_france'])
-ds.assign(toAssign="((caseNums-1)*23.55086)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_italy'])
-ds.assign(toAssign="((caseNums-1)*11.0115)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_spain'])
-ds.assign(toAssign="((caseNums-1)*27.87205)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_uk'])
-ds.assign(toAssign="((caseNums-1)*24.27497)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_netherlands'])
-ds.assign(toAssign="((caseNums-1)*24.62187)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_germany'])
-ds.assign(toAssign="((caseNums-1)*17.68276)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_sweden'])
-ds.assign(toAssign="((caseNums-1)*27.28305)*-1",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
+ds.assign(toAssign="((1 - caseNums)*35.92055) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_france'])
+ds.assign(toAssign="((1 - caseNums)*23.55086) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_italy'])
+ds.assign(toAssign="((1 - caseNums)*11.0115) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_spain'])
+ds.assign(toAssign="((1 - caseNums)*27.87205) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_uk'])
+ds.assign(toAssign="((1 - caseNums)*24.27497) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_netherlands'])
+ds.assign(toAssign="((1 - caseNums)*24.62187) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_germany'])
+ds.assign(toAssign="((1 - caseNums)*17.68276) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_sweden'])
+ds.assign(toAssign="((1 - caseNums)*27.28305) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
 
 # Non InterAct studies get a weighting of 1 in either case or noncase
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
