@@ -84,46 +84,46 @@ under3500cal <- ds.length('E3$SEX', type = 'split')
 ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800)
 afterIntake <- ds.length('E4$SEX', type = 'split')
 
-# # Setup an additional proxy ID column for each study 
-# for(i in 1:length(opals)){
-#   work1 <- afterIntake[[i]]
-#   work2 <- paste0("datashield.assign(opals[",i,"],'fakeIds', quote(c(1:",work1,")))")
-#   eval(parse(text=work2))
-# }
-# ds.cbind(x=c('fakeIds','E4'), newobj='E5')
-# 
-# # Loop to produce E4 and model_all_len for descriptive stats
-# # Note that this doesnt actually handle well if a study has lost all its participants before this section
-# my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
-# 	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
-# 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-# my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
-# 
-# 
-# # Dataframe to hold length figures
-# model_all_len <- data.frame()
-# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-# 
-# 
-# for (i in 2:length(my_vars_all)){
-#   ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])+
-#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-#   # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
-#   thingToBind = vector("numeric")
-#   print(i)
-#   for (k in 1:num_studies){
-#     lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
-#     thingToBind = c(thingToBind, lengthNum)
-#     print(thingToBind)
-#   }
-#   thingToBind = unlist(unname(thingToBind))
-#   print("this is thingtobind unlistedunnamed")
-#   print(k)
-#   print(thingToBind)
-#   model_all_len = rbind(model_all_len, thingToBind)
-# }
-# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-# row.names(model_all_len) <- rownames
+# Setup an additional proxy ID column for each study 
+for(i in 1:length(opals)){
+  work1 <- afterIntake[[i]]
+  work2 <- paste0("datashield.assign(opals[",i,"],'fakeIds', quote(c(1:",work1,")))")
+  eval(parse(text=work2))
+}
+ds.cbind(x=c('fakeIds','E4'), newobj='E5')
+
+# Loop to produce E4 and model_all_len for descriptive stats
+# Note that this doesnt actually handle well if a study has lost all its participants before this section
+my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
+	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
+	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS")
+my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
+
+
+# Dataframe to hold length figures
+model_all_len <- data.frame()
+model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+
+
+for (i in 2:length(my_vars_all)){
+  ds.subset(x = 'E5', subset = 'E6', cols =  my_vars_all[1:i])+
+  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+  # model_all_len <- rbind(model_all_len, ds.length('E7$fakeIds', type = 'split'))
+  thingToBind = vector("numeric")
+  print(i)
+  for (k in 1:num_studies){
+    lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
+    thingToBind = c(thingToBind, lengthNum)
+    print(thingToBind)
+  }
+  thingToBind = unlist(unname(thingToBind))
+  print("this is thingtobind unlistedunnamed")
+  print(k)
+  print(thingToBind)
+  model_all_len = rbind(model_all_len, thingToBind)
+}
+rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+row.names(model_all_len) <- rownames
 
 
 ###############################################################################
