@@ -94,7 +94,7 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
-my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
+my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
 	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
 	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
@@ -189,7 +189,6 @@ colnames(alt_case_missing_table) <- c('Study Name', 'Total in Study', 'miMissing
 #---------------------------------------------------------
 # Confounders Missing Checker
 agebaseMissing = ds.numNA('D$AGE_BASE')
-ageendMissing = ds.numNA('D$AGE_END')
 sexMissing = ds.numNA('D$SEX')
 bmiMissing = ds.numNA('D$BMI')
 educationMissing = ds.numNA('D$EDUCATION')
