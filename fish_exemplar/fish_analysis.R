@@ -175,7 +175,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
 	         .(round(res$pval,3)))), atransf = exp)
 		usr <- par("usr")
-		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
+		text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
 		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
 		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
 	}
