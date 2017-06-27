@@ -323,9 +323,24 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
-				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
+				else if(study_names[i]=='NOWAC'){
 				  #omit sex
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else if(study_names[i]=='Whitehall'){
+				  #omit fiber
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'FIBER'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else if(study_names[i]=='Zutphen'){
+				  #omit meat
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('MEAT', 'SEX')])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else if(study_names[i]=='InterAct_spain'){
+				  #omit sug_bevs
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SUG_BEVS'])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				else {
@@ -554,16 +569,20 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
+problems = c("E_INTAKE", "FRUIT")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                  "ALCOHOL", "FIBER", "MEAT", "VEG", "SUG_BEVS")
+
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
 model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
-# incremental model 2
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_2_incremental')
-model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+# # incremental model 2
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_2_incremental')
+# model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
 
 # sensitivity analysis
