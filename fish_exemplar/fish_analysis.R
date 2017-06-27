@@ -439,7 +439,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
 
 # Simple Regression Model For Testing Quickly 
 ref_table = 'D4'
@@ -466,14 +466,16 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |\/| |/ _ \ / _` |/ _ \ |   / /  
 # | |  | | (_) | (_| |  __/ | ./ /___
 # \_|  |_/\___/ \__,_|\___|_| \_____/
-# Model 2a: As model 1 + adj for alcohol intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements
+# Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
+#     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
 # Model 2b: As model 2a + adj for energy intake
 
 # model2a
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
-				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "SUPPLEMENTS")
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_surv.svg')
@@ -484,8 +486,9 @@ model_2a_rem = model_2a[[2]]
 # model2b
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-				"ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "SUPPLEMENTS", "FAM_DIAB")
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2b_surv.svg')
@@ -629,7 +632,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 # BMI < 25
-ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI<', threshold = 25)
+ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0)
 men <- ds.length('D4_men$SEX', type = 'split')
 
 ref_table = 'D4_men'
@@ -639,7 +642,7 @@ model_4men_all = model_4men[[1]]
 model_4men_rem = model_4men[[2]]
 
 # BMI >= 25
-ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'BMI>=', threshold = 25)
+ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'BMI==', threshold = 1)
 women <- ds.length('D4_women$SEX', type = 'split')
 
 ref_table = 'D4_women'
