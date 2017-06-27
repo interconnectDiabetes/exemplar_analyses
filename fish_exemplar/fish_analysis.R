@@ -355,6 +355,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 	return (list(model_all, model_rem))
 }
 
+
 runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width){
 	# Runs survival models incrementally through a list of provided covariates, producing randomeffectmodels and therein
 	# forest plots along the way. Mainly used for exploratory purposes.
@@ -370,6 +371,84 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 		print(mypath_func)
 	}
 	return(overall_df)
+}
+
+runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, interaction_term) {
+	# Runs an interaction model of the given interaction term. It is similar to the normal survival model runSurvival functions
+	# however the formula has to take the additional interaction term into account.
+	REM_results = list()
+	study_regs = data.frame()
+
+	svg(filename=mypath, 
+		width=4 * length(my_exposure), 
+		height=3 * length(my_outcome), 
+		pointsize=10)
+	par(mar=c(5,3,2,2)+0.1)
+	par(mfrow=c(length(my_outcome),length(my_exposure)))
+	par(ps=10)
+
+	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
+	# and expand the dataset using the ds.lexis b command
+	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
+	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
+	idColString = paste0(ref_table, '$', 'ID')
+	entryColString = paste0(ref_table, '$', 'newStartDate')
+	exitColString = paste0(ref_table, '$', 'newEndDate')
+	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
+	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
+	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A')
+	
+	ds.asNumeric('A$CENSOR','censor')
+	ds.asFactor('A$TIME.PERIOD','tid.f')
+	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
+	lexised_table = 'A'
+
+	for (k in 1:length(my_outcome)){
+	  
+		# for each exposure and
+		for (j in 1:length(my_exposure)){
+			estimates = vector()
+			s_errors = vector()
+			labels = vector()
+
+			for(i in 1:length(opals)) {
+				reg_data <- data.frame()
+				
+        # need to check this formula for correctness
+				if(study_names[i]=='InterAct_france'){
+				  #omit sex
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+"),"+", lexised_table,"$",interaction_term,"*", lexised_table,"$",my_exposure[j]))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
+				  #omit sex
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+"),"+", lexised_table,"$",interaction_term,"*", lexised_table,"$",my_exposure[j]))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else {
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+"),"+", lexised_table,"$",interaction_term,"*", lexised_table,"$",my_exposure[j]))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				study_regs = rbind(study_regs,reg_data)
+				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+				labels = rbind(labels, reg_data[2,1])      
+				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+			}
+			fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			#meta analysis here
+			for (n in 1:length(variables)){
+				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
+			}
+		}
+	}
+
+	#Store results
+	dev.off()
+	model_all <- study_regs
+	model_rem <- REM_results
+
+	return (list(model_all, model_rem))
 }
 
 runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, my_mediation) {
@@ -400,6 +479,7 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 
 	return(list(mediate1, mediate2, mediate3, mediate4))
 }
+
 
 runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, stratified_var) {
 	# Runs a stratified set of survival models given the categorical variable to be stratified
@@ -549,7 +629,7 @@ model_3a_rem = model_3a[[2]]
 # Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, 
 #             fibre intake, meat intake, fruit intake, vegetables intake, sugary drinks intake.
 
-# Stratified analyses by sex (men, women) if positive interaction 
+# Stratified analyses by sex (men, women) if significant
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
@@ -591,7 +671,7 @@ model_4women_rem = model_4women[[2]]
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
 # 
-# Stratified analyses by BMI (BMI<25, BMI ≥25) if positive interaction 
+# Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -629,13 +709,14 @@ model_4women_rem = model_4women[[2]]
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
 # 
-# Stratified analyses by geographical area (Central area, Eastern area, Western area) if positive interaction 
+#  analyses by geographical area (Central area, Eastern area, Western area) if significant
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
 				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
 
-# GEOGRAPHIC AREA (BUT MIGHT NOT DO THIS ONE ANYWAY)
-
+# Meta regression
+# inside of a meta regression you take the regression coefficient values and regress them against another trait (like the geographical area)
+# and then look at the coefficients here.
 
