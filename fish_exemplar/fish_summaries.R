@@ -30,9 +30,9 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           	"AGE_BASE", "AGE_END_OBJ", "AGE_END_OBJ_SELF", "MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           	"FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS")
-
+           "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -95,8 +95,8 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
 my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
-	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "MI", "STROKE", "CANCER", "HYPERTENSION", "E_INTAKE", "FRUIT",
-	"VEG", "DAIRY", "FIBER", "RED_MEAT", "PROC_MEAT", "SUG_BEVS", "MEDS")
+	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "COMORBID", "E_INTAKE", "FRUIT",
+	"VEG", "FIBER", "MEAT", "SUG_BEVS", "MEDS")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
 
 

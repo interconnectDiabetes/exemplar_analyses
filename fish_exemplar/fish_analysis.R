@@ -440,27 +440,25 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID")
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1.svg')
 
-model_1_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1_all = model_1_results[[1]]
-model_1_REM = model_1_results[[2]]
-# 
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
 # survival version with lexis b
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1b_surv.svg')
-# model_1_b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-# model_1_b_all = model_1_b[[1]]
-# model_1_b_rem = model_1_b[[2]]
-
-# incremental model
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_1b_inc')
-model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,2,2,2,2,2,2,2,2))
+mypath = file.path('~', 'plots', 'model_1_survival.svg')
+model_1 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
 
-
-datashield.aggregate(opals = opals[10], expr=quote("lexisDS1.b(D4$newEndDate)"))
+# incremental model 1
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1_incremental')
+model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
