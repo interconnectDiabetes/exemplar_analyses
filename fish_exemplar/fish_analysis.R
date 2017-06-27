@@ -466,32 +466,31 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |\/| |/ _ \ / _` |/ _ \ |   / /  
 # | |  | | (_) | (_| |  __/ | ./ /___
 # \_|  |_/\___/ \__,_|\___|_| \_____/
+
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
 #     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
-# Model 2b: As model 2a + adj for energy intake
-
-# model2a
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
-                  "SUPPLEMENTS")
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_2a_surv.svg')
+mypath = file.path('~', 'plots', 'model_2a_survival.svg')
 model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
-# model2b
+
+# sensitivity analysis
+# Model 2b: As model 2a + adj for family history of diabetes
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
-                  "SUPPLEMENTS", "FAM_DIAB")
+                  "FAM_DIAB")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_2b_surv.svg')
+mypath = file.path('~', 'plots', 'model_2b_survival.svg')
 model_2b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2b_all = model_2b[[1]]
 model_2b_rem = model_2b[[2]]
@@ -503,78 +502,35 @@ model_2b_rem = model_2b[[2]]
 # | |\/| |/ _ \ / _` |/ _ \ |     \ \
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
-# Model 3: As model 2b + adj for BMI,  
+
 # Sensitivity analyses: include waist circumference or waist to hip ratio
-# 
-# Models to test Sensitivity (interaction)
-
-# interaction with fam_diab
+# Model 3: As model 2b + adj for waist circumference
 my_exposure = c('TOTAL')
-my_outcome = c('FAM_DIAB')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE")
-
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3c_surv.svg')
-model_2c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_2c_all = model_2c[[1]]
-model_2c_rem = model_2c[[2]]
-
-my_exposure = c('FAM_DIAB')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE")
-
-mypath = file.path('~', 'plots', 'model_3d_surv.svg')
-model_2d = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_2d_all = model_2d[[1]]
-model_2d_rem = model_2d[[2]]
-
-
-# interaction with waist
-my_exposure = c('TOTAL')
-my_outcome = c('WAIST')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "FAM_DIAB", "WAIST")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3a_surv.svg')
+mypath = file.path('~', 'plots', 'model_3_survival.svg')
+model_3 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3_all = model_3[[1]]
+model_3_rem = model_3[[2]]
+
+
+# sensitivity with fish oil supplements
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "FAM_DIAB", "WAIST", "SUPPLEMENTS")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3a_survival.svg')
 model_3a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
 
-my_exposure = c('WAIST')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "E_INTAKE", "FAM_DIAB")
-
-mypath = file.path('~', 'plots', 'model_3b_surv.svg')
-model_3b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_3b_all = model_3b[[1]]
-model_3b_rem = model_3b[[2]]
-
-
-# interaction with fish oil
-my_exposure = c('TOTAL')
-my_outcome = c('SUPPLEMENTS')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE", "FAM_DIAB")
-
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3c_surv.svg')
-model_3c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_3c_all = model_3c[[1]]
-model_3c_rem = model_3c[[2]]
-
-my_exposure = c('SUPPLEMENTS')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "E_INTAKE", "FAM_DIAB")
-
-mypath = file.path('~', 'plots', 'model_3d_surv.svg')
-model_3d = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_3d_all = model_3d[[1]]
-model_3d_rem = model_3d[[2]]
 
 
 # ___  ___          _      _     ___ 
