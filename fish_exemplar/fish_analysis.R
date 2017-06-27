@@ -362,7 +362,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	study_regs = data.frame()
 	overall_df = data.frame()
 	for (i in 1:length(my_covariate)){
-		mypath_func = file.path(paste0(mypath_prefix, "_", i, "outta", length(my_covariate), ".svg"))
+		mypath_func = file.path(paste0(mypath_prefix, "_", i, "_out_of_", length(my_covariate), ".svg"))
 		sub_covariate_list = my_covariate[1:i]
 		runResults = runSurvival_B_Model(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2))
 		runCoeffs = runResults[[1]]
@@ -479,6 +479,11 @@ mypath = file.path('~', 'plots', 'model_2a_survival.svg')
 model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
+
+# incremental model 2
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2_incremental')
+model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
 
 # sensitivity analysis
