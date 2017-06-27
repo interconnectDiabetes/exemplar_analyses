@@ -546,14 +546,20 @@ model_3a_rem = model_3a[[2]]
 # \_|  |_/\___/ \__,_|\___|_|     |_/
 # Exposure: total fish (g/d) at baseline*sex
 # Outcome: Type 2 diabetes incidence
-# Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
+# Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, 
+#             fibre intake, meat intake, fruit intake, vegetables intake, sugary drinks intake.
 
 # Stratified analyses by sex (men, women) if positive interaction 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
-                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX")
+my_interaction = "SEX"
 
+
+
+
+## If the result was significant then we have to subset into groups and see the differences
 # Men
 ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
 men <- ds.length('D4_men$SEX', type = 'split')
