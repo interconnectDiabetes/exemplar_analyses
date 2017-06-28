@@ -615,7 +615,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "FAM_DIAB")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_2b_survival.svg')
+mypath = file.path('~', 'plots', 'model_3a_survival.svg')
 model_3a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
@@ -628,7 +628,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "WAIST")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3_survival.svg')
+mypath = file.path('~', 'plots', 'model_3b_survival.svg')
 model_3b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
@@ -641,7 +641,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "SUPPLEMENTS")
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3a_survival.svg')
+mypath = file.path('~', 'plots', 'model_3c_survival.svg')
 model_3c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
@@ -666,14 +666,16 @@ my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX")
 my_interaction = "SEX"
 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
+model_4 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_4_all = model_4[[1]]
+model_4_rem = model_4[[2]]
 
-
-
-## If the result was significant then we have to subset into groups and see the differences
+## If the result was significant
 # Men
 ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
 men <- ds.length('D4_men$SEX', type = 'split')
-
 ref_table = 'D4_men'
 mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
 model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
@@ -683,12 +685,12 @@ model_4men_rem = model_4men[[2]]
 # Women
 ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'SEX==', threshold = 1)
 women <- ds.length('D4_women$SEX', type = 'split')
-
 ref_table = 'D4_women'
 mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
 model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_4women_all = model_4women[[1]]
 model_4women_rem = model_4women[[2]]
+
 
 
 # ___  ___          _      _   _____ 
