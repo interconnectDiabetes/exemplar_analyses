@@ -548,9 +548,8 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 # \_|  |_/\___/ \__,_|\___|_| \___/
                                  
 # Exposure: total fish (g/d) at baseline
-# Outcome: Type 2 diabetes incidence
-# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension
-# 
+# Outcome: CASE_OBJ
+# Confounders: Age, sex, education, smoking, physical activity, BMI, co-morbidities
 # To assess the impact of each confounder we will also run models including each confounder separately.
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -741,18 +740,26 @@ model_overweight_rem = model_overweight[[2]]
 # | |\/| |/ _ \ / _` |/ _ \ | | ___ \
 # | |  | | (_) | (_| |  __/ | | \_/ |
 # \_|  |_/\___/ \__,_|\___|_| \_____/
-# Exposure: total fish (g/d) at baseline*geographical area
-# Outcome: Type 2 diabetes incidence
-# Confounders: Age, sex, education, smoking, physical activity, family history of diabetes, MI, stroke, cancer, hypertension, medications for hypertension, energy intake, fibre intake, processed meat intake, fruit and vegetables intake, sugary drinks intake, fish oil supplements, BMI
-# 
-#  analyses by geographical area (Central area, Eastern area, Western area) if significant
+# Present analyses by geographical area (Central area, Eastern area, Western area)
 
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "FAM_DIAB", "MI", "STROKE", "CANCER", "HYPERTENSION","MEDS",
-				"E_INTAKE", "FIBER", "PROC_MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "BMI")
+# subset opals list by geographic area then carry out regression for each one on their own.
+opals_central = 0
+opals_western = 0
+opals_eastern = 0
+
+# copy opals into temporary copy while opals is utilised by the subsets
+opals_comp = opals
+
+# central area
+opals = opals_central
+
+
+
+# eastern area
+opals = opals_eastern
+# western area
+opals = opals_western
 
 # Meta regression
 # inside of a meta regression you take the regression coefficient values and regress them against another trait (like the geographical area)
 # and then look at the coefficients here.
-
