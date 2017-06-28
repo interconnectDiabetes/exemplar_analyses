@@ -343,6 +343,16 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SUG_BEVS'])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
+				else if(study_names[i]=='HOORN'){
+				  #omit sug_bevs
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('E_INTAKE', 'FRUIT')])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
+				else if(study_names[i]=='NHAPC'){
+				  #omit sug_bevs
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'E_INTAKE'])), collapse= "+")))
+				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				}
 				else {
 				  fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
@@ -570,8 +580,11 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 problems = c("E_INTAKE", "FRUIT")
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                  "ALCOHOL", "FIBER", "MEAT", "VEG", "SUG_BEVS")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", "E_INTAKE",
+                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+
+my_covariate =  c("AGE_BASE", "FRUIT")
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
