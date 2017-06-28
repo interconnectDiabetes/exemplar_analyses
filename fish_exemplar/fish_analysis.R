@@ -667,7 +667,7 @@ my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_
 my_interaction = "SEX"
 
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
+mypath = file.path('~', 'plots', 'model_4_surv.svg')
 model_4 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
 model_4_all = model_4[[1]]
 model_4_rem = model_4[[2]]
@@ -709,26 +709,31 @@ my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_interaction = "BMI"
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_5_surv.svg')
+model_5 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_5_all = model_5[[1]]
+model_5_rem = model_5[[2]]
 
 # BMI < 25
 ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0)
-men <- ds.length('D4_men$SEX', type = 'split')
-
-ref_table = 'D4_men'
-mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
-model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_4men_all = model_4men[[1]]
-model_4men_rem = model_4men[[2]]
+men <- ds.length('underweight$SEX', type = 'split')
+ref_table = 'underweight'
+mypath = file.path('~', 'plots', 'model_5_underweight_surv.svg')
+model_underweight = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_underweight_all = model_underweight[[1]]
+model_underweight_rem = model_underweight[[2]]
 
 # BMI >= 25
-ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'BMI==', threshold = 1)
-women <- ds.length('D4_women$SEX', type = 'split')
-
-ref_table = 'D4_women'
-mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
-model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_4women_all = model_4women[[1]]
-model_4women_rem = model_4women[[2]]
+ds.subset(x = 'D4', subset = 'overweight', logicalOperator = 'BMI==', threshold = 1)
+women <- ds.length('overweight$SEX', type = 'split')
+ref_table = 'overweight'
+mypath = file.path('~', 'plots', 'model_5_overweight_surv.svg')
+model_overweight = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_overweight_all = model_overweight[[1]]
+model_overweight_rem = model_overweight[[2]]
 
 
 # ___  ___          _      _    ____ 
