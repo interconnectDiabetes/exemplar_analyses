@@ -398,7 +398,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	return(overall_df)
 }
 
-runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, interaction_term) {
+runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, interaction_term) {
 	# Runs an interaction model of the given interaction term. It is similar to the normal survival model runSurvival functions
 	# however the formula has to take the additional interaction term into account.
 	REM_results = list()
@@ -584,7 +584,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
                   "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 
-my_covariate =  c("AGE_BASE", "FRUIT")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", "FRUIT")
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
