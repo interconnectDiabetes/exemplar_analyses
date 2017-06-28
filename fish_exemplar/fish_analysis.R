@@ -598,8 +598,16 @@ model_2a_rem = model_2a[[2]]
 # model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
 
+# ___  ___          _      _   _____ 
+# |  \/  |         | |    | | |____ |
+# | .  . | ___   __| | ___| |     / /
+# | |\/| |/ _ \ / _` |/ _ \ |     \ \
+# | |  | | (_) | (_| |  __/ | .___/ /
+# \_|  |_/\___/ \__,_|\___|_| \____/ 
+
+
 # sensitivity analysis
-# Model 2b: As model 2a + adj for family history of diabetes
+# Model 3a: As model 2 + adj for family history of diabetes
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
@@ -608,45 +616,35 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2b_survival.svg')
-model_2b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_2b_all = model_2b[[1]]
-model_2b_rem = model_2b[[2]]
-
-
-# ___  ___          _      _   _____ 
-# |  \/  |         | |    | | |____ |
-# | .  . | ___   __| | ___| |     / /
-# | |\/| |/ _ \ / _` |/ _ \ |     \ \
-# | |  | | (_) | (_| |  __/ | .___/ /
-# \_|  |_/\___/ \__,_|\___|_| \____/ 
-
-# Sensitivity analyses: include waist circumference or waist to hip ratio
-# Model 3: As model 2b + adj for waist circumference
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
-                  "FAM_DIAB", "WAIST")
-
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3_survival.svg')
-model_3 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-model_3_all = model_3[[1]]
-model_3_rem = model_3[[2]]
-
-
-# sensitivity with fish oil supplements
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
-                  "FAM_DIAB", "WAIST", "SUPPLEMENTS")
-
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_3a_survival.svg')
 model_3a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
+
+# Model 3b: As model 2 + adj for waist circumference
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "WAIST")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3_survival.svg')
+model_3b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3b_all = model_3b[[1]]
+model_3b_rem = model_3b[[2]]
+
+# Model 3c: As model 2 + adj for fish oil supplements
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "SUPPLEMENTS")
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_3a_survival.svg')
+model_3c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3c_all = model_3c[[1]]
+model_3c_rem = model_3c[[2]]
 
 
 
