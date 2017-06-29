@@ -123,6 +123,7 @@ ds.cbind(x=c('burtonWeights','D5'), newobj='D4')
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
 	print(opals[counter])
+  print(my_fmla)
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -139,6 +140,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
 	print(opals[counter])
+  print(my_fmla)
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit=100, checks=TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -350,7 +352,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				}
 				else if(study_names[i]=='Zutphen'){
 				  #omit meat
-				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('MEAT', 'SEX', 'WAIST')])), collapse= "+")))
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('MEAT', 'SEX', 'WAIST', 'E_INTAKE')])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				else if(study_names[i]=='InterAct_spain'){
@@ -360,7 +362,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				}
 				else if(study_names[i]=='HOORN'){
 				  #omit sug_bevs
-				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FRUIT', 'SUPPLEMENTS')])), collapse= "+")))
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FRUIT', 'SUPPLEMENTS', 'E_INTAKE')])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				else if(study_names[i]=='NHAPC'){
@@ -575,9 +577,9 @@ model_1_all = model_1[[1]]
 model_1_rem = model_1[[2]]
 
 # # incremental model 1
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_1_incremental')
-# model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_1_incremental')
+model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
@@ -594,14 +596,16 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 problems = c("E_INTAKE")
 
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                  "E_INTAKE")
+
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
 model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                  "E_INTAKE")
+
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
