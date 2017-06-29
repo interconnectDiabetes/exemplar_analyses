@@ -335,7 +335,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				}
 				else if(study_names[i]=='InterAct_spain'){
 				  #omit sex
-				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FAM_DIAB')])), collapse= "+")))
+				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FAM_DIAB', 'SUG_BEVS')])), collapse= "+")))
 				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				}
 				else if(study_names[i]=='Whitehall'){
