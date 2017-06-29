@@ -238,9 +238,14 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
 				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 				}
-				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
+				else if(study_names[i]=='NOWAC'){
 				  #omit sex
 				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
+				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				}
+				else if(study_names[i] =='Zutphen'){
+				  #omit sex
+				  fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% c('SEX', 'E_INTAKE')])), collapse= "+")))
 				  reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 				}
 				else {
