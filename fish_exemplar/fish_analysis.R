@@ -123,8 +123,8 @@ ds.cbind(x=c('burtonWeights','D5'), newobj='D4')
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
 	print(opals[counter])
-  print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit=100, checks=TRUE)
+  	print(my_fmla)
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter])
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -140,8 +140,8 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
 	print(opals[counter])
-  print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit=100, checks=TRUE)
+  	print(my_fmla)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -207,6 +207,13 @@ findOutcomeFamily <- function(ref_table, outcome){
 	return(outcome_family)
 }
 
+# createFormula <- function(ref_table, outcome, exposure, covariate_list, type = "survival") {
+# 	# for regression
+
+# 	fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% c('SEX')])), collapse= "+")))
+# 	# for survival?
+# 	fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('MEAT', 'SEX', 'WAIST')])), collapse= "+")))
+# }
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath){
 	# main function that runs, fits, and stores the results of a regression model using the 
@@ -414,6 +421,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	}
 	return(overall_df)
 }
+
 
 runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, interaction_term) {
 	# Runs an interaction model of the given interaction term. It is similar to the normal survival model runSurvival functions
