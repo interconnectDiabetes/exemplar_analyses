@@ -207,13 +207,37 @@ findOutcomeFamily <- function(ref_table, outcome){
 	return(outcome_family)
 }
 
-# createFormula <- function(ref_table, outcome, exposure, covariate_list, type = "survival") {
-# 	# for regression
+createFormula <- function(studyName, data_table, outcome, exposure, covariate_list, type = "survival") {
+	if (studyName == "InterAct_france"){ 
+		exceptions = c("SEX")
+	} else if (studyName = "InterAct_italy") {
+		exceptions = c("FAM_DIAB")
+	} else if (studyName = "InterAct_spain") {
+		exceptions = c("FAM_DIAB", "SUG_BEVS")
+	} else if (studyName = "HOORN") {
+		exceptions = c("SUPPLEMENTS")
+	} else if (studyName = "NHAPC") {
+		exceptions = c("FAM_DIAB")
+	} else if (studyName = "NOWAC") {
+		exceptions = c("SEX", "FAM_DIAB", "WAIST")
+	} else if (studyName = "Whitehall") {
+		exceptions = c("FIBER")
+	} else if (studyName = "Zutphen") {
+		exceptions = c("MEAT", "SEX", "WAIST")
+	} else {
+		exceptions = c()
+	}
 
-# 	fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% c('SEX')])), collapse= "+")))
-# 	# for survival?
-# 	fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('MEAT', 'SEX', 'WAIST')])), collapse= "+")))
-# }
+	if (type == "standard"){
+		fmla <- as.formula(paste(data_table, '$', outcome," ~ ", paste0(c(paste0(data_table, '$',exposure), 
+			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
+		return(fmla)
+	} else if (type == "survival") {
+		fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
+			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
+		return (fmla)
+	}
+}
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath){
 	# main function that runs, fits, and stores the results of a regression model using the 
