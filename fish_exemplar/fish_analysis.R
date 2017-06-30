@@ -191,6 +191,7 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	return(res)
 }
 
+
 findOutcomeFamily <- function(ref_table, outcome){
 	# Find outcome family for regression
 	# used in the do_reg function
@@ -203,6 +204,7 @@ findOutcomeFamily <- function(ref_table, outcome){
 	}
 	return(outcome_family)
 }
+
 
 createModelFormula <- function(studyName, data_table, outcome, exposure, covariate_list, type = "survival") {
 	if (studyName == "InterAct_france"){ 
@@ -246,6 +248,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 		return(NULL)
 	}
 }
+
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath){
 	# main function that runs, fits, and stores the results of a regression model using the 
@@ -303,6 +306,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 
 	return (list(model_all, model_rem))
 }
+
 
 runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width) {
 	# main function that runs, fits, and stores the results of a survival model using the 
@@ -467,6 +471,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	return (list(model_all, model_rem))
 }
 
+
 runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, my_mediation) {
 	# Runs a mediation survival model, with the provided extra mediations.
 	# ie. it does the following:
@@ -568,10 +573,6 @@ my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
-problems = c("E_INTAKE")
-
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                  "E_INTAKE")
 
 # Survival Model
 ref_table = 'D4'
@@ -580,14 +581,12 @@ model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate,
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
-
 # Normal Regression for Error Checking
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
 model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
-
 
 # Incremental Model
 ref_table = 'D4'
@@ -602,7 +601,6 @@ model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |\/| |/ _ \ / _` |/ _ \ |     \ \
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
-
 
 # sensitivity analysis
 # Model 3a: As model 2 + adj for family history of diabetes
@@ -653,6 +651,7 @@ model_3c_rem = model_3c[[2]]
 # | |\/| |/ _ \ / _` |/ _ \ | / /_| |
 # | |  | | (_) | (_| |  __/ | \___  |
 # \_|  |_/\___/ \__,_|\___|_|     |_/
+
 # Exposure: total fish (g/d) at baseline*sex
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, 
@@ -698,6 +697,7 @@ model_4women_rem = model_4women[[2]]
 # | |\/| |/ _ \ / _` |/ _ \ |     \ \
 # | |  | | (_) | (_| |  __/ | /\__/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
+
 # Exposure: total fish (g/d) at baseline*BMI
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, fibre intake, red and processed meat intake, fruit intake, vegetables intake, sugary drinks intake.
@@ -741,6 +741,7 @@ model_overweight_rem = model_overweight[[2]]
 # | |\/| |/ _ \ / _` |/ _ \ | | ___ \
 # | |  | | (_) | (_| |  __/ | | \_/ |
 # \_|  |_/\___/ \__,_|\___|_| \_____/
+
 # Present analyses by geographical area (Central area, Eastern area, Western area)
 
 # subset opals list by geographic area then carry out regression for each one on their own.
@@ -753,9 +754,6 @@ opals_comp = opals
 
 # central area
 opals = opals_central
-
-
-
 # eastern area
 opals = opals_eastern
 # western area
