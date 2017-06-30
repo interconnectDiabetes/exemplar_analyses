@@ -124,7 +124,7 @@ do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
 	print(opals[counter])
   	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter])
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit = 25)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -141,7 +141,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# as part of the do_rem process
 	print(opals[counter])
   	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit = 30)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
