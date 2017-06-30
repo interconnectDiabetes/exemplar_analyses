@@ -111,7 +111,43 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 
-ds.cbind(x=c('burtonWeights','D5'), newobj='D4')
+ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
+
+
+# Loop to produce E4 and model_all_len for descriptive stats
+# Note that this doesnt actually handle well if a study has lost all its participants before this section
+my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
+                "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "COMORBID", "E_INTAKE", "FRUIT",
+                "VEG", "FIBER", "MEAT", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D4', cols =  my_vars_all, completeCases = TRUE)
+
+# # Dataframe to hold length figures
+# model_all_len <- data.frame()
+# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+# for (i in 2:length(my_vars_all)){
+#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+#   ds.subset(x = 'E6', subset = 'D4', completeCases = TRUE)
+#   thingToBind = vector("numeric")
+#   print(i)
+#   for (k in 1:num_studies){
+#     lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
+#     thingToBind = c(thingToBind, lengthNum)
+#     print(thingToBind)
+#   }
+#   thingToBind = unlist(unname(thingToBind))
+#   print("this is thingtobind unlistedunnamed")
+#   print(k)
+#   print(thingToBind)
+#   model_all_len = rbind(model_all_len, thingToBind)
+# }
+# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+# row.names(model_all_len) <- rownames
+
+
+
 
 
 # ###############################################################################
