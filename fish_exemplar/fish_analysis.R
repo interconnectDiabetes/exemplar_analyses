@@ -34,11 +34,9 @@ myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED",
            "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
            "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
-
-
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
-# # To include all possible variables uncomment this line and and comment out previus line
+## To include all possible variables uncomment this line and and comment out previus line
 # opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish')
 
 ###############################################################################
@@ -94,7 +92,7 @@ ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 ds.assign(toAssign = 'D3$AGE_END_OBJ-D3$AGE_BASE', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D5')
 
-# Adding in the weights
+# Adding in the weights as described by Dr. Burton
 ds.asNumeric('D5$CASE_OBJ', newobj = "caseNums")
 ds.assign(toAssign="((1 - caseNums)*35.92055) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_france'])
 ds.assign(toAssign="((1 - caseNums)*23.55086) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_italy'])
@@ -116,14 +114,13 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.cbind(x=c('burtonWeights','D5'), newobj='D4')
 
 
-
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
 	print(opals[counter])
-  	print(my_fmla)
+	print(my_fmla)
 	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit = 25)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -140,7 +137,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
 	print(opals[counter])
-  	print(my_fmla)
+	print(my_fmla)
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit = 30)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
@@ -210,21 +207,29 @@ findOutcomeFamily <- function(ref_table, outcome){
 createModelFormula <- function(studyName, data_table, outcome, exposure, covariate_list, type = "survival") {
 	if (studyName == "InterAct_france"){ 
 		exceptions = c("SEX")
-	} else if (studyName == "InterAct_italy") {
+	} 
+	else if (studyName == "InterAct_italy") {
 		exceptions = c("FAM_DIAB")
-	} else if (studyName == "InterAct_spain") {
+	} 
+	else if (studyName == "InterAct_spain") {
 		exceptions = c("FAM_DIAB", "SUG_BEVS")
-	} else if (studyName == "HOORN") {
+	} 
+	else if (studyName == "HOORN") {
 		exceptions = c("SUPPLEMENTS")
-	} else if (studyName == "NHAPC") {
+	} 
+	else if (studyName == "NHAPC") {
 		exceptions = c("FAM_DIAB")
-	} else if (studyName == "NOWAC") {
+	} 
+	else if (studyName == "NOWAC") {
 		exceptions = c("SEX", "FAM_DIAB", "WAIST")
-	} else if (studyName == "Whitehall") {
+	} 
+	else if (studyName == "Whitehall") {
 		exceptions = c("FIBER")
-	} else if (studyName == "Zutphen") {
+	} 
+	else if (studyName == "Zutphen") {
 		exceptions = c("MEAT", "SEX", "WAIST")
-	} else {
+	} 
+	else {
 		exceptions = c()
 	}
 
