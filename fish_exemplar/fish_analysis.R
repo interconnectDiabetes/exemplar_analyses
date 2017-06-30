@@ -138,7 +138,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# as part of the do_rem process
 	print(opals[counter])
 	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit = 30)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -438,7 +438,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-        		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term,type = "survival")
+        		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
