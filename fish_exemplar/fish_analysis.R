@@ -599,6 +599,7 @@ problems = c("E_INTAKE")
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                   "E_INTAKE")
 
+# Survival Model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
 model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
@@ -606,12 +607,19 @@ model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
 
-
+# Normal Regression for Error Checking
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
-model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1reg_all = model_1reg_results[[1]]
-model_1reg_REM = model_1reg_results[[2]]
+model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_2reg_all = model_2reg_results[[1]]
+model_2reg_REM = model_2reg_results[[2]]
+
+
+# Incremental Model
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2_incremental')
+model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+
 
 
 # ___  ___          _      _   _____ 
