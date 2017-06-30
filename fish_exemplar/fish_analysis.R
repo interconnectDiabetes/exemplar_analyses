@@ -206,7 +206,7 @@ findOutcomeFamily <- function(ref_table, outcome){
 }
 
 
-createModelFormula <- function(studyName, data_table, outcome, exposure, covariate_list, type = "survival") {
+createModelFormula <- function(studyName, data_table, outcome, exposure, covariate_list, interaction_term = NULL, type = "survival") {
 	if (studyName == "InterAct_france"){ 
 		exceptions = c("SEX")
 	} 
@@ -243,7 +243,12 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 		fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
-	} else {
+	} else if (type == "interaction") {
+		fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
+			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
+		return (fmla)
+	} 
+	else {
 		warning("Undefined type of model for formula")
 		return(NULL)
 	}
@@ -433,29 +438,17 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-				
-        # need to check this formula for correctness
-				if(study_names[i]=='InterAct_france'){
-				  #omit sex
-				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+"),"+", lexised_table,"$",interaction_term,"*", lexised_table,"$",my_exposure[j]))
-				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				}
-				else if(study_names[i]=='NOWAC' || study_names[i] =='Zutphen'){
-				  #omit sex
-				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+"),"+", lexised_table,"$",interaction_term,"*", lexised_table,"$",my_exposure[j]))
-				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				}
-				else {
-				  fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+"),"+", lexised_table,"$",interaction_term,"*", lexised_table,"$",my_exposure[j]))
-				  reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				}
+        		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term,type = "survival")
+				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
+
 			fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			
 			#meta analysis here
 			for (n in 1:length(variables)){
 				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
