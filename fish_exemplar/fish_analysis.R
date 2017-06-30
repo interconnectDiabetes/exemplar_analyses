@@ -268,27 +268,6 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
 
-				# # need to check this formula for correctness
-				# if(study_names[i]=='InterAct_france'){
-				#   #omit sex
-				#   fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
-				#   reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-				# }
-				# else if(study_names[i]=='NOWAC'){
-				#   #omit sex
-				#   fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
-				#   reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-				# }
-				# else if(study_names[i] =='Zutphen'){
-				#   #omit sex
-				#   fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate[! my_covariate %in% c('SEX')])), collapse= "+")))
-				#   reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-				# }
-				# else {
-				#   fmla <- as.formula(paste(ref_table, '$', my_outcome[k]," ~ ", paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
-				#   reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
-				# }
-
 				fmla <- createModelFormula(study_names[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, type = "standard")
 				reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
 				
@@ -360,58 +339,6 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-				
-    #     # need to check this formula for correctness
-				# if(study_names[i]=='InterAct_france'){
-				#   #omit sex
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SEX'])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='NOWAC'){
-				#   #omit sex
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('SEX','FAM_DIAB','WAIST')])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='InterAct_italy'){
-				#   #omit sex
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FAM_DIAB')])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='InterAct_spain'){
-				#   #omit sex
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FAM_DIAB', 'SUG_BEVS')])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='Whitehall'){
-				#   #omit fiber
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'FIBER'])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='Zutphen'){
-				#   #omit meat
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('MEAT', 'SEX', 'WAIST')])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='InterAct_spain'){
-				#   #omit sug_bevs
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% 'SUG_BEVS'])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='HOORN'){
-				#   #omit sug_bevs
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('SUPPLEMENTS')])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else if(study_names[i]=='NHAPC'){
-				#   #omit sug_bevs
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate[! my_covariate %in% c('FAM_DIAB')])), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table,burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
-				# else {
-				#   fmla <- as.formula(paste(lexised_table, '$', my_outcome[k]," ~ ", '0', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				#   fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
-				# }
 				
 				fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, type = "survival")
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
