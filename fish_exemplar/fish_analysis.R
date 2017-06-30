@@ -413,7 +413,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				#   reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				# }
 				
-				fmla <- createModelFormula(study_names[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, type = "standard")
+				fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, type = "survival")
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 
 				study_regs = rbind(study_regs,reg_data)
