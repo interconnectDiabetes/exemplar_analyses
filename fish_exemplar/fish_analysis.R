@@ -116,13 +116,15 @@ ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
-my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
+my_vars_all = c("AGE_BASE", "CASE_OBJ", "TOTAL",
                 "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "COMORBID", "E_INTAKE", "FRUIT",
                 "VEG", "FIBER", "MEAT", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D4', cols =  my_vars_all, completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
+
 
 # # Dataframe to hold length figures
 # model_all_len <- data.frame()
