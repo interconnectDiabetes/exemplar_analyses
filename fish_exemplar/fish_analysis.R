@@ -127,26 +127,26 @@ ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
 
 
 # # Dataframe to hold length figures
-# model_all_len <- data.frame()
-# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-# for (i in 2:length(my_vars_all)){
-#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-#   ds.subset(x = 'E6', subset = 'D4', completeCases = TRUE)
-#   thingToBind = vector("numeric")
-#   print(i)
-#   for (k in 1:num_studies){
-#     lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
-#     thingToBind = c(thingToBind, lengthNum)
-#     print(thingToBind)
-#   }
-#   thingToBind = unlist(unname(thingToBind))
-#   print("this is thingtobind unlistedunnamed")
-#   print(k)
-#   print(thingToBind)
-#   model_all_len = rbind(model_all_len, thingToBind)
-# }
-# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-# row.names(model_all_len) <- rownames
+model_all_len <- data.frame()
+model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+for (i in 2:length(my_vars_all)){
+  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+  thingToBind = vector("numeric")
+  print(i)
+  for (k in 1:num_studies){
+    lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
+    thingToBind = c(thingToBind, lengthNum)
+    print(thingToBind)
+  }
+  thingToBind = unlist(unname(thingToBind))
+  print("this is thingtobind unlistedunnamed")
+  print(k)
+  print(thingToBind)
+  model_all_len = rbind(model_all_len, thingToBind)
+}
+rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+row.names(model_all_len) <- rownames
 
 
 
@@ -278,7 +278,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return(fmla)
 	} else if (type == "survival") {
-		fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
+		fmla <- as.formula(paste("censor"," ~ ", "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
 	} else if (type == "interaction") {
@@ -401,7 +401,7 @@ runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
-			fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 			#meta analysis here
 			for (n in 1:length(variables)){
 				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
@@ -571,7 +571,6 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
-
 # Simple Regression Model For Testing Quickly 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
