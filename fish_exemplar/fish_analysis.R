@@ -104,8 +104,8 @@ ds.assign(toAssign="((1 - caseNums)*17.68276) + caseNums",  newobj = "burtonWeig
 ds.assign(toAssign="((1 - caseNums)*27.28305) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
 
 # Non InterAct studies get a weighting of 1 in either case or noncase
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
+# ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
+# ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
@@ -130,12 +130,13 @@ ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
 model_all_len <- data.frame()
 model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
 for (i in 2:length(my_vars_all)){
+  print(my_vars_all[1:i])
   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
   thingToBind = vector("numeric")
   print(i)
   for (k in 1:num_studies){
-    lengthNum = ds.length('E7$fakeIds', datasources = opals[k])
+    lengthNum = ds.length('E7$ID', datasources = opals[k])
     thingToBind = c(thingToBind, lengthNum)
     print(thingToBind)
   }
