@@ -113,18 +113,29 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 
 ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
+# put in any dummy columns for the studies with completely missing columns
+# italy missing fam_diab
+d6len = ds.length('D6$SEX', datasources = opals['InterAct_italy'])
+ds.assign(toAssign = "1", newobj = "FAM_DIAB", datasources = opals['InterAct_italy'])
+ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['InterAct_italy'])
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
 my_vars_all = c("AGE_BASE", "CASE_OBJ", "TOTAL",
                 "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "COMORBID", "E_INTAKE", "FRUIT",
-                "VEG", "FIBER", "MEAT", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+                "VEG", "FIBER", "MEAT", "SUG_BEVS", "FAM_DIAB", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
+                  "FAM_DIAB")
 
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
 ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-
+length_complete = ds.length('D4$SEX')
 
 # # Dataframe to hold length figures
 model_all_len <- data.frame()
