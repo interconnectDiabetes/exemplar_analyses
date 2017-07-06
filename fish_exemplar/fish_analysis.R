@@ -116,51 +116,58 @@ ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 # put in any dummy columns for the studies with completely missing columns
 # italy missing fam_diab
 d6len = ds.length('D6$SEX', datasources = opals['InterAct_italy'])
-ds.assign(toAssign = "1", newobj = "FAM_DIAB", datasources = opals['InterAct_italy'])
+ds.assign(toAssign = "newStartDate + 1", newobj = "FAM_DIAB", datasources = opals['InterAct_italy'])
+ds.asFactor(x = "FAM_DIAB", newobj = "FAM_DIAB", datasources = opals['InterAct_italy'])
 ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['InterAct_italy'])
+# spain
+d6len = ds.length('D6$SEX', datasources = opals['InterAct_spain'])
+ds.assign(toAssign = "newStartDate + 1", newobj = "FAM_DIAB", datasources = opals['InterAct_spain'])
+ds.asFactor(x = "FAM_DIAB", newobj = "FAM_DIAB", datasources = opals['InterAct_spain'])
+ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['InterAct_spain'])
+# nowac
+d6len = ds.length('D6$SEX', datasources = opals['NOWAC'])
+ds.assign(toAssign = "newStartDate + 1", newobj = "FAM_DIAB", datasources = opals['NOWAC'])
+ds.asFactor(x = "FAM_DIAB", newobj = "FAM_DIAB", datasources = opals['NOWAC'])
+ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['NOWAC'])
+
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
 my_vars_all = c("AGE_BASE", "CASE_OBJ", "TOTAL",
                 "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "COMORBID", "E_INTAKE", "FRUIT",
-                "VEG", "FIBER", "MEAT", "SUG_BEVS", "FAM_DIAB", "newEndDate", "newStartDate", "burtonWeights")
+                "VEG", "FIBER", "MEAT", "SUG_BEVS", "FAM_DIAB", "WAIST", "SUPPLEMENTS","newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
-
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
-                  "FAM_DIAB")
 
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
 ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
 length_complete = ds.length('D4$SEX')
+length_complete_split = ds.length("D4$SEX", type = "split")
 
-# # Dataframe to hold length figures
-model_all_len <- data.frame()
-model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-for (i in 2:length(my_vars_all)){
-  print(my_vars_all[1:i])
-  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-  thingToBind = vector("numeric")
-  print(i)
-  for (k in 1:num_studies){
-    lengthNum = ds.length('E7$ID', datasources = opals[k])
-    thingToBind = c(thingToBind, lengthNum)
-    print(thingToBind)
-  }
-  thingToBind = unlist(unname(thingToBind))
-  print("this is thingtobind unlistedunnamed")
-  print(k)
-  print(thingToBind)
-  model_all_len = rbind(model_all_len, thingToBind)
-}
-rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-row.names(model_all_len) <- rownames
-
-
+# # # Dataframe to hold length figures
+# model_all_len <- data.frame()
+# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+# for (i in 2:length(my_vars_all)){
+#   print(my_vars_all[1:i])
+#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+#   thingToBind = vector("numeric")
+#   print(i)
+#   for (k in 1:num_studies){
+#     lengthNum = ds.length('E7$ID', datasources = opals[k])
+#     thingToBind = c(thingToBind, lengthNum)
+#     print(thingToBind)
+#   }
+#   thingToBind = unlist(unname(thingToBind))
+#   print("this is thingtobind unlistedunnamed")
+#   print(k)
+#   print(thingToBind)
+#   model_all_len = rbind(model_all_len, thingToBind)
+# }
+# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+# row.names(model_all_len) <- rownames
+# 
+# 
 
 
 
@@ -258,14 +265,29 @@ findOutcomeFamily <- function(ref_table, outcome){
 
 createModelFormula <- function(studyName, data_table, outcome, exposure, covariate_list, interaction_term = NULL, type = "survival") {
 	if (studyName == "InterAct_france"){ 
-		exceptions = c("SEX")
+		exceptions = c("SEX", "SUPPLEMENTS")
 	} 
 	else if (studyName == "InterAct_italy") {
-		exceptions = c("FAM_DIAB")
+		exceptions = c("FAM_DIAB", "SUPPLEMENTS")
+	}	
+  else if (studyName == "InterAct_spain") {
+	  exceptions = c("FAM_DIAB", "SUG_BEVS", "SUPPLEMENTS")
 	} 
-	else if (studyName == "InterAct_spain") {
-		exceptions = c("FAM_DIAB", "SUG_BEVS")
-	} 
+  else if (studyName == "InterAct_uk") {
+    exceptions = c("SUPPLEMENTS")
+  } 
+  else if (studyName == "InterAct_netherlands") {
+    exceptions = c("SUPPLEMENTS")
+  } 
+  else if (studyName == "InterAct_germany") {
+    exceptions = c("SUPPLEMENTS")
+  } 
+  else if (studyName == "InterAct_sweden") {
+    exceptions = c("SUPPLEMENTS")
+  } 
+  else if (studyName == "InterAct_denmark") {
+    exceptions = c("SUPPLEMENTS")
+  } 
 	else if (studyName == "HOORN") {
 		exceptions = c("SUPPLEMENTS")
 	} 
@@ -700,6 +722,8 @@ model_3c_rem = model_3c[[2]]
 #             fibre intake, meat intake, fruit intake, vegetables intake, sugary drinks intake.
 
 # Stratified analyses by sex (men, women) if significant
+# we have to leave zutphen, nowac and france out of this one i think
+
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
@@ -758,6 +782,12 @@ model_5 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, 
 model_5_all = model_5[[1]]
 model_5_rem = model_5[[2]]
 
+
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
 # BMI < 25
 ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0)
 men <- ds.length('underweight$SEX', type = 'split')
@@ -786,10 +816,20 @@ model_overweight_rem = model_overweight[[2]]
 
 # Present analyses by geographical area (Central area, Eastern area, Western area)
 
+# Non InterAct studies get a weighting of 1 in either case or noncase
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
+
 # subset opals list by geographic area then carry out regression for each one on their own.
-opals_central = 0
-opals_western = 0
-opals_eastern = 0
+opals_central = opals["InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
+                      "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
+                      "InterAct_denmark", "HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"]
+opals_western = opals["elsa"]
+opals_eastern = opals["NHAPC"]
 
 # copy opals into temporary copy while opals is utilised by the subsets
 opals_comp = opals
