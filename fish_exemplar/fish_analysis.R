@@ -556,7 +556,7 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 	
 	# outcome~mediator + covariates
 	mypath_3 = file.path(paste0(mypath_prefix, "_", "part_3", ".svg"))
-	mediate3 = runSurvival_B_Model(ref_table, my_mediation, my_mediation, my_covariate, mypath_3, interval_width)
+	mediate3 = runSurvival_B_Model(ref_table, my_mediation, my_mediation, my_covariate, mypathk_3, interval_width)
 
 	# outcome~exposure + covariates + mediator
 	my_covariate = c(my_covariate, my_mediation)
@@ -815,32 +815,57 @@ model_overweight_rem = model_overweight[[2]]
 # \_|  |_/\___/ \__,_|\___|_| \_____/
 
 # Present analyses by geographical area (Central area, Eastern area, Western area)
-
-# Non InterAct studies get a weighting of 1 in either case or noncase
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
-
 # subset opals list by geographic area then carry out regression for each one on their own.
-opals_central = opals["InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
+opals_central = opals[c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
                       "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
-                      "InterAct_denmark", "HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"]
+                      "InterAct_denmark", "NOWAC", "SMC", "Whitehall")]
 opals_western = opals["elsa"]
 opals_eastern = opals["NHAPC"]
 
-# copy opals into temporary copy while opals is utilised by the subsets
-opals_comp = opals
+# Assign country code to each of the studies
+# Adding in the weights as described by Dr. Burton
 
 # central area
-opals = opals_central
+length_central = ds.length('D4$SEX', datasources = opals_central)
+for(i in 1:length(opals_central)){
+  ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_central[i])
+  ds.asFactor(x = "geocode", newobj = "geocode", datasources = opals_central[i])
+}
+rm(i) # removal of i as it is not scoped within the loop
+ds.cbind(x=c('geocode','D4'), newobj='D4')
+
 # eastern area
-opals = opals_eastern
+length_eastern = ds.length('D4$SEX', datasources = opals_eastern)
+for(i in 1:length(opals_eastern)){
+  ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_eastern[i])
+  ds.asFactor(x = "geocode", newobj = "geocode", datasources = opals_eastern[i])
+}
+rm(i) # removal of i as it is not scoped within the loop
+ds.cbind(x=c('geocode','D4'), newobj='D4')
+
 # western area
-opals = opals_western
+length_central = ds.length('D4$SEX', datasources = opals_western)
+for(i in 1:length(opals_western)){
+  ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_western[i])
+  ds.asFactor(x = "geocode", newobj = "geocode", datasources = opals_western[i])
+}
+rm(i) # removal of i as it is not scoped within the loop
+ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 # Meta regression
 # inside of a meta regression you take the regression coefficient values and regress them against another trait (like the geographical area)
 # and then look at the coefficients here.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
