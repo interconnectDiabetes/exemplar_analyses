@@ -145,29 +145,29 @@ length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
 # # # Dataframe to hold length figures
-# model_all_len <- data.frame()
-# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-# for (i in 2:length(my_vars_all)){
-#   print(my_vars_all[1:i])
-#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-#   thingToBind = vector("numeric")
-#   print(i)
-#   for (k in 1:num_studies){
-#     lengthNum = ds.length('E7$ID', datasources = opals[k])
-#     thingToBind = c(thingToBind, lengthNum)
-#     print(thingToBind)
-#   }
-#   thingToBind = unlist(unname(thingToBind))
-#   print("this is thingtobind unlistedunnamed")
-#   print(k)
-#   print(thingToBind)
-#   model_all_len = rbind(model_all_len, thingToBind)
-# }
-# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-# row.names(model_all_len) <- rownames
-# 
-# 
+model_all_len <- data.frame()
+model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+for (i in 2:length(my_vars_all)){
+  print(my_vars_all[1:i])
+  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+  thingToBind = vector("numeric")
+  print(i)
+  for (k in 1:num_studies){
+    lengthNum = ds.length('E7$ID', datasources = opals[k])
+    thingToBind = c(thingToBind, lengthNum)
+    print(thingToBind)
+  }
+  thingToBind = unlist(unname(thingToBind))
+  print("this is thingtobind unlistedunnamed")
+  print(k)
+  print(thingToBind)
+  model_all_len = rbind(model_all_len, thingToBind)
+}
+rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+row.names(model_all_len) <- rownames
+
+
 
 
 
@@ -822,10 +822,16 @@ opals_central = opals[c("InterAct_france", "InterAct_italy", "InterAct_spain", "
 opals_western = opals["elsa"]
 opals_eastern = opals["NHAPC"]
 
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
 # Assign country code to each of the studies
 # Adding in the weights as described by Dr. Burton
-
+######################################################
 # central area
+######################################################
 length_central = ds.length('D4$SEX', datasources = opals_central)
 for(i in 1:length(opals_central)){
   ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_central[i])
@@ -834,7 +840,15 @@ for(i in 1:length(opals_central)){
 rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('geocode','D4'), newobj='D4')
 
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_6_central_surv.svg')
+model_6central = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_6central_all = model_6central[[1]]
+model_6central_rem = model_6central[[2]]
+
+######################################################
 # eastern area
+######################################################
 length_eastern = ds.length('D4$SEX', datasources = opals_eastern)
 for(i in 1:length(opals_eastern)){
   ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_eastern[i])
@@ -843,7 +857,16 @@ for(i in 1:length(opals_eastern)){
 rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('geocode','D4'), newobj='D4')
 
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
+model_6eastern = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_6eastern_all = model_6eastern[[1]]
+model_6eastern_rem = model_6eastern[[2]]
+
+######################################################
 # western area
+######################################################
 length_central = ds.length('D4$SEX', datasources = opals_western)
 for(i in 1:length(opals_western)){
   ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_western[i])
@@ -851,6 +874,12 @@ for(i in 1:length(opals_western)){
 }
 rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('geocode','D4'), newobj='D4')
+
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
+model_6western = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_6western_all = model_6western[[1]]
+model_6western_rem = model_6western[[2]]
 
 # Meta regression
 # inside of a meta regression you take the regression coefficient values and regress them against another trait (like the geographical area)
