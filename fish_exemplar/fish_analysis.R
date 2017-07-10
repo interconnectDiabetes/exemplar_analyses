@@ -392,10 +392,10 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	study_regs = data.frame()
 
 	svg(filename=mypath, 
-		width=4 * length(my_exposure), 
-		height=3 * length(my_outcome), 
+		width=5*length(my_exposure), 
+		height=4*length(my_outcome), 
 		pointsize=10)
-	par(mar=c(5,3,2,2)+0.1)
+	par(mar=c(5,3,2,2)+0.2)
 	par(mfrow=c(length(my_outcome),length(my_exposure)))
 	par(ps=10)
 
@@ -479,10 +479,10 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term))[[1]])
 
 	svg(filename=mypath, 
-		width=4 * number_of_interactions, 
-		height=3 * length(my_outcome), 
+		width=5*number_of_interactions, 
+		height=4*length(my_outcome), 
 		pointsize=10)
-	par(mar=c(5,3,2,2)+0.1)
+	par(mar=c(5,3,2,2)+0.2)
 	par(mfrow=c(length(my_outcome),length(number_of_interactions)))
 	par(ps=10)
 
