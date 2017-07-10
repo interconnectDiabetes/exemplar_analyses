@@ -476,12 +476,14 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	REM_results = list()
 	study_regs = data.frame()
 
+	number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term))[[1]])
+
 	svg(filename=mypath, 
-		width=4 * length(my_exposure), 
+		width=4 * number_of_interactions, 
 		height=3 * length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
-	par(mfrow=c(length(my_outcome),length(my_exposure)))
+	par(mfrow=c(length(my_outcome),length(number_of_interactions)))
 	par(ps=10)
 
 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
@@ -510,7 +512,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-        fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
+        		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
