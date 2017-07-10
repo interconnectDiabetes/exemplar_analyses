@@ -385,7 +385,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 }
 
 
-runSurvival_B_Model <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width) {
+runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
 	REM_results = list()
@@ -461,7 +461,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	for (i in 1:length(my_covariate)){
 		mypath_func = file.path(paste0(mypath_prefix, "_", i, "_out_of_", length(my_covariate), ".svg"))
 		sub_covariate_list = my_covariate[1:i]
-		runResults = runSurvival_B_Model(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2))
+		runResults = runSurvivalModel(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2))
 		runCoeffs = runResults[[1]]
 		overall_df = rbind(overall_df, runCoeffs)
 		print(mypath_func)
@@ -548,20 +548,20 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 
 	# outcome~exposure + covariates
 	mypath_1 = file.path(paste0(mypath_prefix, "_", "part_1", ".svg"))
-	mediate1 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath_1, interval_width)
+	mediate1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath_1, interval_width)
 
 	# mediator~exposure + covariates
 	mypath_2 = file.path(paste0(mypath_prefix, "_", "part_2", ".svg"))
-	mediate2 = runSurvival_B_Model(ref_table, my_exposure, my_mediation, my_covariate, mypath_2, interval_width)
+	mediate2 = runSurvivalModel(ref_table, my_exposure, my_mediation, my_covariate, mypath_2, interval_width)
 	
 	# outcome~mediator + covariates
 	mypath_3 = file.path(paste0(mypath_prefix, "_", "part_3", ".svg"))
-	mediate3 = runSurvival_B_Model(ref_table, my_mediation, my_mediation, my_covariate, mypathk_3, interval_width)
+	mediate3 = runSurvivalModel(ref_table, my_mediation, my_mediation, my_covariate, mypathk_3, interval_width)
 
 	# outcome~exposure + covariates + mediator
 	my_covariate = c(my_covariate, my_mediation)
 	mypath_4 = file.path(paste0(mypath_prefix, "_", "part_4", ".svg"))
-	mediate4 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width)
+	mediate4 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width)
 
 	return(list(mediate1, mediate2, mediate3, mediate4))
 }
@@ -584,7 +584,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 
 		# run the model on the stratified dataframe and append to list of models
 		mypath_func = file.path(paste0(mypath_prefix, "_",stratified_var,"==", cats[category], ".svg"))
-		stratified_model = runSurvival_B_Model(newTable, my_exposure, my_outcome, my_covariate, mypath_func, interval_width)
+		stratified_model = runSurvivalModel(newTable, my_exposure, my_outcome, my_covariate, mypath_func, interval_width)
 		list_of_models[category] = stratified_model
 	}
 
@@ -615,7 +615,7 @@ model_1reg_REM = model_1reg_results[[2]]
 # survival version with lexis b
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_1_survival.svg')
-model_1 = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_1_all = model_1[[1]]
 model_1_rem = model_1[[2]]
 
@@ -641,7 +641,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
 # Survival Model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
-model_2a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
@@ -676,7 +676,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3a_survival.svg')
-model_3a = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
 
@@ -689,7 +689,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3b_survival.svg')
-model_3b = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
 
@@ -703,7 +703,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3c_survival.svg')
-model_3c = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
 
@@ -742,7 +742,7 @@ ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
 men <- ds.length('D4_men$SEX', type = 'split')
 ref_table = 'D4_men'
 mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
-model_4men = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4men = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_4men_all = model_4men[[1]]
 model_4men_rem = model_4men[[2]]
 
@@ -751,7 +751,7 @@ ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'SEX==', threshold = 
 women <- ds.length('D4_women$SEX', type = 'split')
 ref_table = 'D4_women'
 mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
-model_4women = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_4women_all = model_4women[[1]]
 model_4women_rem = model_4women[[2]]
 
@@ -793,7 +793,7 @@ ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI==', threshold
 men <- ds.length('underweight$SEX', type = 'split')
 ref_table = 'underweight'
 mypath = file.path('~', 'plots', 'model_5_underweight_surv.svg')
-model_underweight = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_underweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_underweight_all = model_underweight[[1]]
 model_underweight_rem = model_underweight[[2]]
 
@@ -802,7 +802,7 @@ ds.subset(x = 'D4', subset = 'overweight', logicalOperator = 'BMI==', threshold 
 women <- ds.length('overweight$SEX', type = 'split')
 ref_table = 'overweight'
 mypath = file.path('~', 'plots', 'model_5_overweight_surv.svg')
-model_overweight = runSurvival_B_Model(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_overweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_overweight_all = model_overweight[[1]]
 model_overweight_rem = model_overweight[[2]]
 
