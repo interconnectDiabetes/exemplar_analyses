@@ -884,7 +884,13 @@ model_6western_rem = model_6western[[2]]
 # Meta regression
 # inside of a meta regression you take the regression coefficient values and regress them against another trait (like the geographical area)
 # and then look at the coefficients here.
-
+# we can just use the regression coefficients created out of the values and 
+# then do local linear regression to see the relationship between the variables.
+study_regression_coefficients = c(model_6central_all, model_6western_all, model_6eastern_all)
+central_codes = rep(1, times = length(opals_central))
+western_codes = rep(2, times = length(opals_western))
+eastern_codes = rep(3, times = length(opals_eastern))
+geocodes = as.factor(x = c(central_codes, western_codes, eastern_codes))
 
 
 
