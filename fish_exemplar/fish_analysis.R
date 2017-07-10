@@ -510,7 +510,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 			for(i in 1:length(opals)) {
 				reg_data <- data.frame()
-        		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
+        fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -519,7 +519,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
 
-			fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
 			
 			#meta analysis here
 			for (n in 1:length(variables)){
@@ -891,6 +891,9 @@ central_codes = rep(1, times = length(opals_central))
 western_codes = rep(2, times = length(opals_western))
 eastern_codes = rep(3, times = length(opals_eastern))
 geocodes = as.factor(x = c(central_codes, western_codes, eastern_codes))
+
+meta_fmla = "total_coeffs wrt censor ~  geocodes"
+meta_regression_model = lm(formula = meta_fmla)
 
 
 
