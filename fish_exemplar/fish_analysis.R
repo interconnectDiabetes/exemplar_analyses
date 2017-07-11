@@ -213,37 +213,69 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 
 	#add the weights to the labels
 	res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
-
+	
 	#forest plots
 	if (out_family == 'gaussian') {
+		# forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+		# 	.(round(res$QEp,3)),')')),
+		# 	xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
+		# 	.(round(res$pval,3)))))
+		# usr <- par("usr")
+		# text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
+		# text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+		# text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+		
 		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-			.(round(res$QEp,3)),')')),
-			xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
-			.(round(res$pval,3)))))
+		  .(sprintf("%.3f", round(res$QEp,3))),')')),
+		  xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
+		  .(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
 		usr <- par("usr")
-		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
-		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=1)
+		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
+		
+		
 	}
 	else if (out_family == 'poisson'){
-	  forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-	         .(round(res$QEp,3)),')')),
-	         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
-	         .(round(res$pval,3)))), atransf = exp)
+	#   forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+	#          .(round(res$QEp,3)),')')),
+	#          xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+	#          .(round(res$pval,3)))), atransf = exp)
+	# 	usr <- par("usr")
+	# 	text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+	# 	text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+	# 	text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+		
+		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+		       .(sprintf("%.3f", round(res$QEp,3))),')')),
+		       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+		       .(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
 		usr <- par("usr")
-		text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
-		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+		text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=1)
+		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
+		
 	}
 	else if (out_family == 'binomial'){
-			forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-			.(round(res$QEp,3)),')')),
-			xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
-			.(round(res$pval,3)))), atransf = exp)
+		# 	forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+		# 	.(round(res$QEp,3)),')')),
+		# 	xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
+		# 	.(round(res$pval,3)))), atransf = exp)
+		# usr <- par("usr")
+		# text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
+		# text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+		# text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+		# 
+		forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
+		       .(sprintf("%.3f", round(res$QEp,3))),')')),
+		       xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
+		       .(sprintf("%.3f", round(res$pval,3))))), atransf = exp, cex=1, cex.lab=0.75, cex.axis=1)
 		usr <- par("usr")
-		text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
-		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-		text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
+		
+		text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=1)
+		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+		text(usr[1], usr[3], variable, adj = c( 0, 0),cex=1)
+		
 	}
 	return(res)
 }
@@ -483,7 +515,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 		height=3.7*length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
-	par(mfrow=c(length(my_outcome),length(number_of_interactions)))
+	par(mfrow=c(length(my_outcome),number_of_interactions))
 	par(ps=10)
 
 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
@@ -517,7 +549,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 				study_regs = rbind(study_regs,reg_data)
 				# estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
+				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
