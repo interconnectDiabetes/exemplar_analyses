@@ -392,8 +392,8 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	study_regs = data.frame()
 
 	svg(filename=mypath, 
-		width=4.5*length(my_exposure), 
-		height=3.5*length(my_outcome), 
+		width=4.7*length(my_exposure), 
+		height=3.7*length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
 	par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -479,8 +479,8 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term))[[1]])
 
 	svg(filename=mypath, 
-		width=4.5*number_of_interactions, 
-		height=3.5*length(my_outcome), 
+		width=4.7*number_of_interactions, 
+		height=3.7*length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
 	par(mfrow=c(length(my_outcome),length(number_of_interactions)))
@@ -515,8 +515,9 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
         		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
 				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
 				study_regs = rbind(study_regs,reg_data)
-				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+				# estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov, ),"Estimate"])
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
