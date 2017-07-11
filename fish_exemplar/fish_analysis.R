@@ -216,15 +216,6 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	
 	#forest plots
 	if (out_family == 'gaussian') {
-		# forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-		# 	.(round(res$QEp,3)),')')),
-		# 	xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
-		# 	.(round(res$pval,3)))))
-		# usr <- par("usr")
-		# text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=0.75)
-		# text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-		# text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
-		
 		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
 		  .(sprintf("%.3f", round(res$QEp,3))),')')),
 		  xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
@@ -237,15 +228,6 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 		
 	}
 	else if (out_family == 'poisson'){
-	#   forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-	#          .(round(res$QEp,3)),')')),
-	#          xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
-	#          .(round(res$pval,3)))), atransf = exp)
-	# 	usr <- par("usr")
-	# 	text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
-	# 	text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-	# 	text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
-		
 		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
 		       .(sprintf("%.3f", round(res$QEp,3))),')')),
 		       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
@@ -257,15 +239,6 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 		
 	}
 	else if (out_family == 'binomial'){
-		# 	forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-		# 	.(round(res$QEp,3)),')')),
-		# 	xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
-		# 	.(round(res$pval,3)))), atransf = exp)
-		# usr <- par("usr")
-		# text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=0.75)
-		# text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-		# text(usr[1], usr[3], variable, adj = c( 0, 0),cex=0.75)
-		# 
 		forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
 		       .(sprintf("%.3f", round(res$QEp,3))),')')),
 		       xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
@@ -348,7 +321,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
 	} else if (type == "interaction") {
-		fmla <- as.formula(paste("censor"," ~ ", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
+		fmla <- as.formula(paste("censor"," ~ ",  "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
 		return (fmla)
 	} 
@@ -366,8 +339,8 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 	study_regs = data.frame()
 
 	svg(filename=mypath, 
-		width=4 * length(my_exposure), 
-		height=3 * length(my_outcome), 
+		width=4.5 * length(my_exposure), 
+		height=3.5 * length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
 	par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -424,8 +397,8 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	study_regs = data.frame()
 
 	svg(filename=mypath, 
-		width=4.7*length(my_exposure), 
-		height=3.7*length(my_outcome), 
+		width=5*length(my_exposure), 
+		height=4*length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
 	par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -511,8 +484,8 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term))[[1]])
 
 	svg(filename=mypath, 
-		width=4.7*number_of_interactions, 
-		height=3.7*length(my_outcome), 
+		width=5*number_of_interactions, 
+		height=4*length(my_outcome), 
 		pointsize=10)
 	par(mar=c(5,3,2,2)+0.1)
 	par(mfrow=c(length(my_outcome),number_of_interactions))
