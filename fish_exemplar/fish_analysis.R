@@ -145,28 +145,27 @@ length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
 # # # Dataframe to hold length figures
-model_all_len <- data.frame()
-model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-for (i in 2:length(my_vars_all)){
-  print(my_vars_all[1:i])
-  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-  thingToBind = vector("numeric")
-  print(i)
-  for (k in 1:num_studies){
-    lengthNum = ds.length('E7$ID', datasources = opals[k])
-    thingToBind = c(thingToBind, lengthNum)
-    print(thingToBind)
-  }
-  thingToBind = unlist(unname(thingToBind))
-  print("this is thingtobind unlistedunnamed")
-  print(k)
-  print(thingToBind)
-  model_all_len = rbind(model_all_len, thingToBind)
-}
-rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-row.names(model_all_len) <- rownames
-
+# model_all_len <- data.frame()
+# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+# for (i in 2:length(my_vars_all)){
+#   print(my_vars_all[1:i])
+#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+#   thingToBind = vector("numeric")
+#   print(i)
+#   for (k in 1:num_studies){
+#     lengthNum = ds.length('E7$ID', datasources = opals[k])
+#     thingToBind = c(thingToBind, lengthNum)
+#     print(thingToBind)
+#   }
+#   thingToBind = unlist(unname(thingToBind))
+#   print("this is thingtobind unlistedunnamed")
+#   print(k)
+#   print(thingToBind)
+#   model_all_len = rbind(model_all_len, thingToBind)
+# }
+# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+# row.names(model_all_len) <- rownames
 
 
 
@@ -228,14 +227,30 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 		
 	}
 	else if (out_family == 'poisson'){
-		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-		       .(sprintf("%.3f", round(res$QEp,3))),')')),
-		       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
-		       .(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
-		usr <- par("usr")
-		text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=1)
-		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
-		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
+	  
+	  forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+	                                          .(round(res$I2)),'%, p = ',
+	                                          .(round(res$QEp,3)),')')),
+	         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+	                           .(round(res$pval,3)))), atransf = exp)
+	 usr <- par("usr")
+	 text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+	 text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+	 text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
+		
+	#  forest(res, mlab=bquote(paste('Overall (I'^2*' = ',
+	#                                .(round(res$I2)),'%, p = ',
+	#                                .(sprintf("%.3f", 
+	#                                          round(res$QEp,3))),')')),
+	#         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+	#                           .(sprintf("%.3f", 
+	#                                     round(res$pval,3)))), 
+	#                     atransf = exp), 
+	#         cex=1, cex.lab=0.75, cex.axis=1)
+	# 	usr <- par("usr")
+	# 	text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=1)
+	# 	text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
+	# 	text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
 		
 	}
 	else if (out_family == 'binomial'){
@@ -660,12 +675,12 @@ model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariat
 model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
 
-# Incremental Model
-ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_2_incremental')
-model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-
-
+# # Incremental Model
+# ref_table = 'D4'
+# mypath = file.path('~', 'plots', 'model_2_incremental')
+# model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+# 
+# 
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
