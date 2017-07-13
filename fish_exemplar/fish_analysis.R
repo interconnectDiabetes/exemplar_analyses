@@ -660,8 +660,7 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 
 studies_no_nowac = study_names[! study_names %in% c("NOWAC")]
 opals_no_nowac = opals[studies_no_nowac]
-opals_temp = opals
-opals = opals_no_nowac
+
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -687,8 +686,6 @@ model_2reg_REM = model_2reg_results[[2]]
 # mypath = file.path('~', 'plots', 'model_2_incremental')
 # model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
-opals = opals_temp
-
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
 # | .  . | ___   __| | ___| |     / /
@@ -698,8 +695,6 @@ opals = opals_temp
 
 studies_no_nowac = study_names[! study_names %in% c("NOWAC")]
 opals_no_nowac = opals[studies_no_nowac]
-opals_temp = opals
-opals = opals_no_nowac
 
 # sensitivity analysis
 # Model 3a: As model 2 + adj for family history of diabetes
@@ -742,8 +737,6 @@ model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, my
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
 
-opals = opals_temp
-
 
 # ___  ___          _      _     ___ 
 # |  \/  |         | |    | |   /   |
@@ -762,8 +755,6 @@ opals = opals_temp
 
 studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "zutphen", "NOWAC")]
 opals_no_SG = opals[studies_no_singleGender]
-opals_temp = opals
-opals = opals_no_SG
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -795,8 +786,6 @@ mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
 model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_4women_all = model_4women[[1]]
 model_4women_rem = model_4women[[2]]
-
-opals = opals_temp
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |  ___|
