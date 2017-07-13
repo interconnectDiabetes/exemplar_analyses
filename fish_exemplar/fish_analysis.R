@@ -175,6 +175,11 @@ row.names(model_all_len) <- rownames
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family, studies = opals){
+  temp <- ds.summary('D$TOTAL', datasources = studies)
+  study_names <- names(temp)
+  num_studies <- length(temp)
+  rm(temp)
+  
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
 	print(studies[counter])
 	print(my_fmla)
@@ -193,6 +198,11 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
+  temp <- ds.summary('D$TOTAL', datasources = studies)
+  study_names <- names(temp)
+  num_studies <- length(temp)
+  rm(temp)
+  
 	print(studies[counter])
 	print(my_fmla)
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
@@ -270,10 +280,10 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 }
 
 
-findOutcomeFamily <- function(ref_table, outcome){
+findOutcomeFamily <- function(ref_table, outcome, studies = opals){
 	# Find outcome family for regression
 	# used in the do_reg function
-	out_class = ds.class(paste0(ref_table, '$', outcome))[[1]]
+	out_class = ds.class(paste0(ref_table, '$', outcome), datasources = studies)[[1]]
 	if (out_class == 'factor') {
 		outcome_family = 'binomial'
 	}
@@ -350,7 +360,12 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals){
 	# main function that runs, fits, and stores the results of a regression model using the 
-	# datashield process 
+	# datashield process
+  temp <- ds.summary('D$TOTAL', datasources = studies)
+  study_names <- names(temp)
+  num_studies <- length(temp)
+  rm(temp)
+  
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -409,6 +424,11 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
+  temp <- ds.summary('D$TOTAL', datasources = studies)
+  study_names <- names(temp)
+  num_studies <- length(temp)
+  rm(temp)
+  
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -476,6 +496,11 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, studies = opals){
 	# Runs survival models incrementally through a list of provided covariates, producing randomeffectmodels and therein
 	# forest plots along the way. Mainly used for exploratory purposes.
+  temp <- ds.summary('D$TOTAL', datasources = studies)
+  study_names <- names(temp)
+  num_studies <- length(temp)
+  rm(temp)
+  
 	REM_results = list()
 	study_regs = data.frame()
 	overall_df = data.frame()
@@ -494,6 +519,11 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, interaction_term, studies = opals) {
 	# Runs an interaction model of the given interaction term. It is similar to the normal survival model runSurvival functions
 	# however the formula has to take the additional interaction term into account.
+  temp <- ds.summary('D$TOTAL', datasources = studies)
+  study_names <- names(temp)
+  num_studies <- length(temp)
+  rm(temp)
+  
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -670,21 +700,21 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
 # Survival Model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
-model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
+model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_no_nowac)
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
 # Normal Regression for Error Checking
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
-model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, opals_no_nowac)
+model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_no_nowac)
 model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
 
 # # Incremental Model
-# ref_table = 'D4'
-# mypath = file.path('~', 'plots', 'model_2_incremental')
-# model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+ref_table = 'D4'
+mypath = file.path('~', 'plots', 'model_2_incremental')
+model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_no_nowac)
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
