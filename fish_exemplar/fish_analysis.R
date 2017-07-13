@@ -657,6 +657,12 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
 #     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
+
+studies_no_nowac = study_names[! study_names %in% c("NOWAC")]
+opals_no_nowac = opals[studies_no_nowac]
+opals_temp = opals
+opals = opals_no_nowac
+
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
@@ -680,8 +686,8 @@ model_2reg_REM = model_2reg_results[[2]]
 # ref_table = 'D4'
 # mypath = file.path('~', 'plots', 'model_2_incremental')
 # model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
-# 
-# 
+
+opals = opals_temp
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
@@ -689,6 +695,11 @@ model_2reg_REM = model_2reg_results[[2]]
 # | |\/| |/ _ \ / _` |/ _ \ |     \ \
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
+
+studies_no_nowac = study_names[! study_names %in% c("NOWAC")]
+opals_no_nowac = opals[studies_no_nowac]
+opals_temp = opals
+opals = opals_no_nowac
 
 # sensitivity analysis
 # Model 3a: As model 2 + adj for family history of diabetes
@@ -731,6 +742,7 @@ model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, my
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
 
+opals = opals_temp
 
 
 # ___  ___          _      _     ___ 
@@ -747,6 +759,11 @@ model_3c_rem = model_3c[[2]]
 
 # Stratified analyses by sex (men, women) if significant
 # we have to leave zutphen, nowac and france out of this one i think
+
+studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "zutphen", "NOWAC")]
+opals_no_SG = opals[studies_no_singleGender]
+opals_temp = opals
+opals = opals_no_SG
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -779,7 +796,7 @@ model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate
 model_4women_all = model_4women[[1]]
 model_4women_rem = model_4women[[2]]
 
-
+opals = opals_temp
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |  ___|
