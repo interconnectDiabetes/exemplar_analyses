@@ -110,6 +110,7 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['AusDiab'])
 
 ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
@@ -145,27 +146,27 @@ length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
 # # # Dataframe to hold length figures
-# model_all_len <- data.frame()
-# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-# for (i in 2:length(my_vars_all)){
-#   print(my_vars_all[1:i])
-#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-#   thingToBind = vector("numeric")
-#   print(i)
-#   for (k in 1:num_studies){
-#     lengthNum = ds.length('E7$ID', datasources = opals[k])
-#     thingToBind = c(thingToBind, lengthNum)
-#     print(thingToBind)
-#   }
-#   thingToBind = unlist(unname(thingToBind))
-#   print("this is thingtobind unlistedunnamed")
-#   print(k)
-#   print(thingToBind)
-#   model_all_len = rbind(model_all_len, thingToBind)
-# }
-# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-# row.names(model_all_len) <- rownames
+model_all_len <- data.frame()
+model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+for (i in 2:length(my_vars_all)){
+  print(my_vars_all[1:i])
+  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+  thingToBind = vector("numeric")
+  print(i)
+  for (k in 1:num_studies){
+    lengthNum = ds.length('E7$ID', datasources = opals[k])
+    thingToBind = c(thingToBind, lengthNum)
+    print(thingToBind)
+  }
+  thingToBind = unlist(unname(thingToBind))
+  print("this is thingtobind unlistedunnamed")
+  print(k)
+  print(thingToBind)
+  model_all_len = rbind(model_all_len, thingToBind)
+}
+rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+row.names(model_all_len) <- rownames
 
 
 
