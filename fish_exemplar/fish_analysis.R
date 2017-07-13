@@ -174,11 +174,11 @@ row.names(model_all_len) <- rownames
 # ###############################################################################
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
-do_reg <- function(counter, my_fmla, study, outcome, out_family){
+do_reg <- function(counter, my_fmla, study, outcome, out_family, studies = opals){
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
-	print(opals[counter])
+	print(studies[counter])
 	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=opals[counter], maxit = 25)
+	model <- ds.glm(formula = my_fmla, data = ref_table, family = out_family, datasources=studies[counter], maxit = 25)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -189,13 +189,13 @@ do_reg <- function(counter, my_fmla, study, outcome, out_family){
 }
 
 
-do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable, burtonWeights){
+do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset_column, lexisTable, burtonWeights, studies = opals){
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
-	print(opals[counter])
+	print(studies[counter])
 	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=opals[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -348,7 +348,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 }
 
 
-runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath){
+runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals){
 	# main function that runs, fits, and stores the results of a regression model using the 
 	# datashield process 
 	REM_results = list()
@@ -371,11 +371,11 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 			s_errors = vector()
 			labels = vector()
 
-			for(i in 1:length(opals)) {
+			for(i in 1:length(studies)) {
 				reg_data <- data.frame()
 
 				fmla <- createModelFormula(study_names[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, type = "standard")
-				reg_data <- do_reg(i,fmla, names(opals[i]), my_outcome[k], outcome_family)
+				reg_data <- do_reg(i,fmla, names(studies[i]), my_outcome[k], outcome_family, studies)
 				
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
 					reg_data = reg_data[1:9]
@@ -406,7 +406,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 }
 
 
-runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width) {
+runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
 	REM_results = list()
@@ -422,18 +422,18 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 
 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
 	# and expand the dataset using the ds.lexis b command
-	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
-	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
+	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = studies)
+	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = studies)
 	idColString = paste0(ref_table, '$', 'ID')
 	entryColString = paste0(ref_table, '$', 'newStartDate')
 	exitColString = paste0(ref_table, '$', 'newEndDate')
 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
-	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A')
+	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
 	
-	ds.asNumeric('A$CENSOR','censor')
-	ds.asFactor('A$TIME.PERIOD','tid.f')
-	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
+	ds.asNumeric('A$CENSOR','censor', datasources = studies)
+	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
+	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
 	lexised_table = 'A'
 
 	for (k in 1:length(my_outcome)){
@@ -444,11 +444,11 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 			s_errors = vector()
 			labels = vector()
 
-			for(i in 1:length(opals)) {
+			for(i in 1:length(studies)) {
 				reg_data <- data.frame()
 				
 				fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, type = "survival")
-				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"), studies = studies)
 
 				study_regs = rbind(study_regs,reg_data)
 				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
@@ -473,7 +473,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 }
 
 
-runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width){
+runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, studies = opals){
 	# Runs survival models incrementally through a list of provided covariates, producing randomeffectmodels and therein
 	# forest plots along the way. Mainly used for exploratory purposes.
 	REM_results = list()
@@ -482,7 +482,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 	for (i in 1:length(my_covariate)){
 		mypath_func = file.path(paste0(mypath_prefix, "_", i, "_out_of_", length(my_covariate), ".svg"))
 		sub_covariate_list = my_covariate[1:i]
-		runResults = runSurvivalModel(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2))
+		runResults = runSurvivalModel(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2), studies)
 		runCoeffs = runResults[[1]]
 		overall_df = rbind(overall_df, runCoeffs)
 		print(mypath_func)
@@ -491,7 +491,7 @@ runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_c
 }
 
 
-runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, interaction_term) {
+runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, interaction_term, studies = opals) {
 	# Runs an interaction model of the given interaction term. It is similar to the normal survival model runSurvival functions
 	# however the formula has to take the additional interaction term into account.
 	REM_results = list()
@@ -509,18 +509,18 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 
 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
 	# and expand the dataset using the ds.lexis b command
-	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = opals)
-	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = opals)
+	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = studies)
+	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = studies)
 	idColString = paste0(ref_table, '$', 'ID')
 	entryColString = paste0(ref_table, '$', 'newStartDate')
 	exitColString = paste0(ref_table, '$', 'newEndDate')
 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
-	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A')
+	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
 	
-	ds.asNumeric('A$CENSOR','censor')
-	ds.asFactor('A$TIME.PERIOD','tid.f')
-	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA')
+	ds.asNumeric('A$CENSOR','censor', datasources = studies)
+	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
+	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
 	lexised_table = 'A'
 
 	for (k in 1:length(my_outcome)){
@@ -531,10 +531,10 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 			s_errors = vector()
 			labels = vector()
 
-			for(i in 1:length(opals)) {
+			for(i in 1:length(studies)) {
 				reg_data <- data.frame()
         		fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
-				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(opals[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"))
+				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"), studies = studies)
 				study_regs = rbind(study_regs,reg_data)
 				# estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
 				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
@@ -561,7 +561,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 }
 
 
-runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, my_mediation) {
+runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, my_mediation, studies = opals) {
 	# Runs a mediation survival model, with the provided extra mediations.
 	# ie. it does the following:
 	# 1. it runs the simple relationship outcome~exposure + covariates
@@ -572,26 +572,26 @@ runMediationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, 
 
 	# outcome~exposure + covariates
 	mypath_1 = file.path(paste0(mypath_prefix, "_", "part_1", ".svg"))
-	mediate1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath_1, interval_width)
+	mediate1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath_1, interval_width, studies)
 
 	# mediator~exposure + covariates
 	mypath_2 = file.path(paste0(mypath_prefix, "_", "part_2", ".svg"))
-	mediate2 = runSurvivalModel(ref_table, my_exposure, my_mediation, my_covariate, mypath_2, interval_width)
+	mediate2 = runSurvivalModel(ref_table, my_exposure, my_mediation, my_covariate, mypath_2, interval_width, studies)
 	
 	# outcome~mediator + covariates
 	mypath_3 = file.path(paste0(mypath_prefix, "_", "part_3", ".svg"))
-	mediate3 = runSurvivalModel(ref_table, my_mediation, my_mediation, my_covariate, mypathk_3, interval_width)
+	mediate3 = runSurvivalModel(ref_table, my_mediation, my_mediation, my_covariate, mypathk_3, interval_width, studies)
 
 	# outcome~exposure + covariates + mediator
 	my_covariate = c(my_covariate, my_mediation)
 	mypath_4 = file.path(paste0(mypath_prefix, "_", "part_4", ".svg"))
-	mediate4 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width)
+	mediate4 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath_4, interval_width, studies)
 
 	return(list(mediate1, mediate2, mediate3, mediate4))
 }
 
 
-runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, stratified_var) {
+runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, stratified_var, studies = opals) {
 	# Runs a stratified set of survival models given the categorical variable to be stratified
 	# could possibly be better implemented as a simple survival model where the input dataframe "ref_table" is
 	# instead just subset before hand, makes it easier to see in the analysis code when reading
@@ -604,11 +604,11 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 	for (category in 1:length(cats)){
 		newTable = paste0(ref_table, '_S_', category)
 		logicalOperatorString = paste0(stratified_var, '==')
-		ds.subset(x = ref_table, subset = newTable, logicalOperator = logicalOperatorString, threshold = cats[category])
+		ds.subset(x = ref_table, subset = newTable, logicalOperator = logicalOperatorString, threshold = cats[category], datasources = studies)
 
 		# run the model on the stratified dataframe and append to list of models
 		mypath_func = file.path(paste0(mypath_prefix, "_",stratified_var,"==", cats[category], ".svg"))
-		stratified_model = runSurvivalModel(newTable, my_exposure, my_outcome, my_covariate, mypath_func, interval_width)
+		stratified_model = runSurvivalModel(newTable, my_exposure, my_outcome, my_covariate, mypath_func, interval_width, studies = opals)
 		list_of_models[category] = stratified_model
 	}
 
@@ -670,14 +670,14 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
 # Survival Model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
-model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
 # Normal Regression for Error Checking
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
-model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
+model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, opals_no_nowac)
 model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
 
@@ -706,7 +706,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3a_survival.svg')
-model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
 
@@ -719,7 +719,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3b_survival.svg')
-model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
 model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
 
@@ -733,7 +733,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3c_survival.svg')
-model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
 
@@ -764,7 +764,7 @@ my_interaction = "SEX"
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_4_surv.svg')
-model_4 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_4 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, opals_no_SG)
 model_4_all = model_4[[1]]
 model_4_rem = model_4[[2]]
 
@@ -774,7 +774,7 @@ ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
 men <- ds.length('D4_men$SEX', type = 'split')
 ref_table = 'D4_men'
 mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
-model_4men = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4men = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_SG)
 model_4men_all = model_4men[[1]]
 model_4men_rem = model_4men[[2]]
 
@@ -783,7 +783,7 @@ ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'SEX==', threshold = 
 women <- ds.length('D4_women$SEX', type = 'split')
 ref_table = 'D4_women'
 mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
-model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_SG)
 model_4women_all = model_4women[[1]]
 model_4women_rem = model_4women[[2]]
 
