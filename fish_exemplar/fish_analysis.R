@@ -832,7 +832,7 @@ model_4women_rem = model_4women[[2]]
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
 # Studies involved in model 5
-studies_model5 = study_names[! study_names %in% c("NOWAC", "zutphen")]
+studies_model5 = study_names[! study_names %in% c("zutphen")]
 opals_model5 = opals[studies_model5]
 
 my_exposure = c('TOTAL')
