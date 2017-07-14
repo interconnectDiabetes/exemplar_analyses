@@ -108,7 +108,7 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['elsa'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['ELSA'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['AusDiab'])
@@ -689,8 +689,8 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
 #     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
 
-studies_no_nowac = study_names[! study_names %in% c("NOWAC")]
-opals_no_nowac = opals[studies_no_nowac]
+studies_model2 = study_names[! study_names %in% c("NOWAC", "zutphen")]
+opals_model2 = opals[studies_model2]
 
 
 my_exposure = c('TOTAL')
@@ -701,21 +701,21 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
 # Survival Model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
-model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_no_nowac)
+model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
 # Normal Regression for Error Checking
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
-model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_no_nowac)
+model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_model2)
 model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
 
 # # Incremental Model
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_2_incremental')
-model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_no_nowac)
+model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
@@ -724,8 +724,8 @@ model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 
-studies_no_nowac = study_names[! study_names %in% c("NOWAC")]
-opals_no_nowac = opals[studies_no_nowac]
+studies_model3 = study_names[! study_names %in% c("NOWAC", "zutphen")]
+opals_model3 = opals[studies_model3]
 
 # sensitivity analysis
 # Model 3a: As model 2 + adj for family history of diabetes
@@ -737,7 +737,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3a_survival.svg')
-model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
+model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3)
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
 
@@ -750,7 +750,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3b_survival.svg')
-model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
+model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3)
 model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
 
@@ -764,7 +764,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3c_survival.svg')
-model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_nowac)
+model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3)
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
 
@@ -831,6 +831,10 @@ model_4women_rem = model_4women[[2]]
 # 
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
+# Studies involved in model 5
+studies_model5 = study_names[! study_names %in% c("NOWAC", "zutphen")]
+opals_model5 = opals[studies_model5]
+
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
@@ -839,7 +843,7 @@ my_interaction = "BMI"
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_5_surv.svg')
-model_5 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_5 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_model5)
 model_5_all = model_5[[1]]
 model_5_rem = model_5[[2]]
 
@@ -854,7 +858,7 @@ ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI==', threshold
 men <- ds.length('underweight$SEX', type = 'split')
 ref_table = 'underweight'
 mypath = file.path('~', 'plots', 'model_5_underweight_surv.svg')
-model_underweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_underweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2),  studies = opals_model5)
 model_underweight_all = model_underweight[[1]]
 model_underweight_rem = model_underweight[[2]]
 
@@ -863,7 +867,7 @@ ds.subset(x = 'D4', subset = 'overweight', logicalOperator = 'BMI==', threshold 
 women <- ds.length('overweight$SEX', type = 'split')
 ref_table = 'overweight'
 mypath = file.path('~', 'plots', 'model_5_overweight_surv.svg')
-model_overweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_overweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2),  studies = opals_model5)
 model_overweight_all = model_overweight[[1]]
 model_overweight_rem = model_overweight[[2]]
 
@@ -903,7 +907,7 @@ ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_central_surv.svg')
-model_6central = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_6central = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_central)
 model_6central_all = model_6central[[1]]
 model_6central_rem = model_6central[[2]]
 
@@ -921,7 +925,7 @@ ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
-model_6eastern = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_6eastern = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_eastern)
 model_6eastern_all = model_6eastern[[1]]
 model_6eastern_rem = model_6eastern[[2]]
 
@@ -938,7 +942,7 @@ ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
-model_6western = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction)
+model_6western = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_western)
 model_6western_all = model_6western[[1]]
 model_6western_rem = model_6western[[2]]
 
