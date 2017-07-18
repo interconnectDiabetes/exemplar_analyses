@@ -147,27 +147,27 @@ length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
 # # # Dataframe to hold length figures
-model_all_len <- data.frame()
-model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-for (i in 2:length(my_vars_all)){
-  print(my_vars_all[1:i])
-  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-  thingToBind = vector("numeric")
-  print(i)
-  for (k in 1:num_studies){
-    lengthNum = ds.length('E7$ID', datasources = opals[k])
-    thingToBind = c(thingToBind, lengthNum)
-    print(thingToBind)
-  }
-  thingToBind = unlist(unname(thingToBind))
-  print("this is thingtobind unlistedunnamed")
-  print(k)
-  print(thingToBind)
-  model_all_len = rbind(model_all_len, thingToBind)
-}
-rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-row.names(model_all_len) <- rownames
+# model_all_len <- data.frame()
+# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+# for (i in 2:length(my_vars_all)){
+#   print(my_vars_all[1:i])
+#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+#   thingToBind = vector("numeric")
+#   print(i)
+#   for (k in 1:num_studies){
+#     lengthNum = ds.length('E7$ID', datasources = opals[k])
+#     thingToBind = c(thingToBind, lengthNum)
+#     print(thingToBind)
+#   }
+#   thingToBind = unlist(unname(thingToBind))
+#   print("this is thingtobind unlistedunnamed")
+#   print(k)
+#   print(thingToBind)
+#   model_all_len = rbind(model_all_len, thingToBind)
+# }
+# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+# row.names(model_all_len) <- rownames
 
 
 
@@ -784,7 +784,7 @@ model_3c_rem = model_3c[[2]]
 # Stratified analyses by sex (men, women) if significant
 # we have to leave zutphen, nowac and france out of this one i think
 
-studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "zutphen", "NOWAC")]
+studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "zutphen", "NOWAC", "HOORN")]
 opals_no_SG = opals[studies_no_singleGender]
 
 my_exposure = c('TOTAL')
@@ -832,7 +832,7 @@ model_4women_rem = model_4women[[2]]
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
 # Studies involved in model 5
-studies_model5 = study_names[! study_names %in% c("zutphen")]
+studies_model5 = study_names[! study_names %in% c("zutphen", "HOORN")]
 opals_model5 = opals[studies_model5]
 
 my_exposure = c('TOTAL')
