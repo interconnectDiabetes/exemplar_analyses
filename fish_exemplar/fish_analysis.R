@@ -689,7 +689,7 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
 #     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
 
-studies_model2 = study_names[! study_names %in% c("NOWAC", "zutphen")]
+studies_model2 = study_names[! study_names %in% c("NOWAC", "Zutphen")]
 opals_model2 = opals[studies_model2]
 
 
@@ -724,7 +724,7 @@ model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 
-studies_model3 = study_names[! study_names %in% c("NOWAC", "zutphen")]
+studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen")]
 opals_model3 = opals[studies_model3]
 
 # sensitivity analysis
@@ -782,9 +782,9 @@ model_3c_rem = model_3c[[2]]
 #             fibre intake, meat intake, fruit intake, vegetables intake, sugary drinks intake.
 
 # Stratified analyses by sex (men, women) if significant
-# we have to leave zutphen, nowac and france out of this one i think
+# we have to leave Zutphen, nowac and france out of this one i think
 
-studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "zutphen", "NOWAC", "HOORN")]
+studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "Zutphen", "NOWAC", "HOORN")]
 opals_no_SG = opals[studies_no_singleGender]
 
 my_exposure = c('TOTAL')
@@ -832,7 +832,7 @@ model_4women_rem = model_4women[[2]]
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
 # Studies involved in model 5
-studies_model5 = study_names[! study_names %in% c("zutphen", "HOORN")]
+studies_model5 = study_names[! study_names %in% c("Zutphen", "HOORN")]
 opals_model5 = opals[studies_model5]
 
 my_exposure = c('TOTAL')
