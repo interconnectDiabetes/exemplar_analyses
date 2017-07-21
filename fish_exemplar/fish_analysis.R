@@ -334,7 +334,10 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 	} 
 	else if (studyName == "Zutphen") {
 		exceptions = c("MEAT", "SEX", "WAIST")
-	} 
+	}
+  else if (studyName == "AusDiab") {
+    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS")
+  } 
 	else {
 		exceptions = c()
 	}
@@ -787,6 +790,10 @@ model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, my
 model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
 
+
+studies_model3c = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA", "AusDiab")]
+opals_model3c = opals[studies_model3c]
+
 # Model 3c: As model 2 + adj for fish oil supplements
 # ABSOLUTELY NO ONE HAS WORKING SUPPLEMENTS
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
@@ -805,7 +812,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_3c_survival.svg')
-model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3)
+model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3c)
 model_3c_all = model_3c[[1]]
 model_3c_rem = model_3c[[2]]
 
