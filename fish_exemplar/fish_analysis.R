@@ -646,12 +646,27 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 	return(list_of_models)
 }
 
+
+
+
 # ___  ___          _      _   __  
 # |  \/  |         | |    | | /  | 
 # | .  . | ___   __| | ___| | `| | 
 # | |\/| |/ _ \ / _` |/ _ \ |  | | 
 # | |  | | (_) | (_| |  __/ | _| |_
 # \_|  |_/\___/ \__,_|\___|_| \___/
+
+# The new idea from Silvia is to start using semi complete cases, ie we look at only the data that concerns the variables we want to look at
+my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
+length_complete = ds.length('D4$SEX')
+length_complete_split = ds.length("D4$SEX", type = "split")
+
                                  
 # Exposure: total fish (g/d) at baseline
 # Outcome: CASE_OBJ
@@ -689,7 +704,7 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
 #     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
 
-studies_model2 = study_names[! study_names %in% c("NOWAC", "Zutphen")]
+studies_model2 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC")]
 opals_model2 = opals[studies_model2]
 
 
@@ -724,11 +739,21 @@ model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 
-studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen")]
+studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC")]
 opals_model3 = opals[studies_model3]
 
 # sensitivity analysis
 # Model 3a: As model 2 + adj for family history of diabetes
+
+# The new idea from Silvia is to start using semi complete cases, ie we look at only the data that concerns the variables we want to look at
+my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "FAM_DIAB")
+my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
+length_complete = ds.length('D4$SEX')
+length_complete_split = ds.length("D4$SEX", type = "split")
+
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
@@ -742,6 +767,14 @@ model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
 
 # Model 3b: As model 2 + adj for waist circumference
+my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST")
+my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
+length_complete = ds.length('D4$SEX')
+length_complete_split = ds.length("D4$SEX", type = "split")
+
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
@@ -756,6 +789,14 @@ model_3b_rem = model_3b[[2]]
 
 # Model 3c: As model 2 + adj for fish oil supplements
 # ABSOLUTELY NO ONE HAS WORKING SUPPLEMENTS
+my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
+length_complete = ds.length('D4$SEX')
+length_complete_split = ds.length("D4$SEX", type = "split")
+
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID", 
@@ -782,9 +823,16 @@ model_3c_rem = model_3c[[2]]
 #             fibre intake, meat intake, fruit intake, vegetables intake, sugary drinks intake.
 
 # Stratified analyses by sex (men, women) if significant
-# we have to leave Zutphen, nowac and france out of this one i think
 
-studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "Zutphen", "NOWAC", "HOORN")]
+my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
+length_complete = ds.length('D4$SEX')
+length_complete_split = ds.length("D4$SEX", type = "split")
+
+studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "NOWAC", "Zutphen", "HOORN", "NHAPC")]
 opals_no_SG = opals[studies_no_singleGender]
 
 my_exposure = c('TOTAL')
@@ -832,7 +880,7 @@ model_4women_rem = model_4women[[2]]
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
 # Studies involved in model 5
-studies_model5 = study_names[! study_names %in% c("Zutphen", "HOORN")]
+studies_model5 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC")]
 opals_model5 = opals[studies_model5]
 
 my_exposure = c('TOTAL')
@@ -885,7 +933,7 @@ opals_central = opals[c("InterAct_france", "InterAct_italy", "InterAct_spain", "
                       "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
                       "InterAct_denmark", "NOWAC", "SMC", "Whitehall")]
 opals_western = opals["elsa"]
-opals_eastern = opals["NHAPC"]
+opals_eastern = opals["NHAPC", "JPHC"]
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
