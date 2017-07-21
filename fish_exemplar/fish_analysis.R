@@ -704,7 +704,7 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
 #     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
 
-studies_model2 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC")]
+studies_model2 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
 opals_model2 = opals[studies_model2]
 
 
@@ -739,7 +739,7 @@ model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 
-studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC")]
+studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
 opals_model3 = opals[studies_model3]
 
 # sensitivity analysis
@@ -832,7 +832,7 @@ ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
 length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
-studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "NOWAC", "Zutphen", "HOORN", "NHAPC")]
+studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
 opals_no_SG = opals[studies_no_singleGender]
 
 my_exposure = c('TOTAL')
@@ -880,7 +880,7 @@ model_4women_rem = model_4women[[2]]
 # Stratified analyses by BMI (BMI<25, BMI ≥25) if significant
 
 # Studies involved in model 5
-studies_model5 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC")]
+studies_model5 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
 opals_model5 = opals[studies_model5]
 
 my_exposure = c('TOTAL')
