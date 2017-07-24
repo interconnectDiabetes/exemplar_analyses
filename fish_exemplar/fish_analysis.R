@@ -146,28 +146,28 @@ ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
 length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
-# # # Dataframe to hold length figures
-model_all_len <- data.frame()
-model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
-for (i in 2:length(my_vars_all)){
-  print(my_vars_all[1:i])
-  ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-  ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
-  thingToBind = vector("numeric")
-  print(i)
-  for (k in 1:num_studies){
-    lengthNum = ds.length('E7$ID', datasources = opals[k])
-    thingToBind = c(thingToBind, lengthNum)
-    print(thingToBind)
-  }
-  thingToBind = unlist(unname(thingToBind))
-  print("this is thingtobind unlistedunnamed")
-  print(k)
-  print(thingToBind)
-  model_all_len = rbind(model_all_len, thingToBind)
-}
-rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
-row.names(model_all_len) <- rownames
+# # # # Dataframe to hold length figures
+# model_all_len <- data.frame()
+# model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
+# for (i in 2:length(my_vars_all)){
+#   print(my_vars_all[1:i])
+#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
+#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+#   thingToBind = vector("numeric")
+#   print(i)
+#   for (k in 1:num_studies){
+#     lengthNum = ds.length('E7$ID', datasources = opals[k])
+#     thingToBind = c(thingToBind, lengthNum)
+#     print(thingToBind)
+#   }
+#   thingToBind = unlist(unname(thingToBind))
+#   print("this is thingtobind unlistedunnamed")
+#   print(k)
+#   print(thingToBind)
+#   model_all_len = rbind(model_all_len, thingToBind)
+# }
+# rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
+# row.names(model_all_len) <- rownames
 
 
 
@@ -336,7 +336,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 		exceptions = c("MEAT", "SEX", "WAIST")
 	}
   else if (studyName == "AusDiab") {
-    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS")
+    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
   } 
 	else {
 		exceptions = c()
@@ -666,9 +666,7 @@ my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single colum
 
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-length_complete = ds.length('D4$SEX')
-length_complete_split = ds.length("D4$SEX", type = "split")
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
 
                                  
 # Exposure: total fish (g/d) at baseline
@@ -679,21 +677,21 @@ my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
 # Simple Regression Model For Testing Quickly 
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
 model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
 model_1reg_all = model_1reg_results[[1]]
 model_1reg_REM = model_1reg_results[[2]]
 
 # survival version with lexis b
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_1_survival.svg')
 model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 model_1_all = model_1[[1]]
 model_1_rem = model_1[[2]]
 
 # # incremental model 1
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_1_incremental')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
@@ -717,21 +715,21 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 # Survival Model
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
 model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
 # Normal Regression for Error Checking
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_2_normal_regression.svg')
 model_2reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_model2)
 model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
 
 # # Incremental Model
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_2_incremental')
 model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
 
@@ -753,9 +751,7 @@ my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "FAM_DIAB")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-length_complete = ds.length('D4$SEX')
-length_complete_split = ds.length("D4$SEX", type = "split")
+ds.subset(x = 'D7', subset = 'D9', completeCases = TRUE)
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -763,7 +759,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
                   "FAM_DIAB")
 
-ref_table = 'D4'
+ref_table = 'D9'
 mypath = file.path('~', 'plots', 'model_3a_survival.svg')
 model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3)
 model_3a_all = model_3a[[1]]
@@ -774,9 +770,7 @@ my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-length_complete = ds.length('D4$SEX')
-length_complete_split = ds.length("D4$SEX", type = "split")
+ds.subset(x = 'D7', subset = 'D10', completeCases = TRUE)
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -784,7 +778,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
                   "WAIST")
 
-ref_table = 'D4'
+ref_table = 'D10'
 mypath = file.path('~', 'plots', 'model_3b_survival.svg')
 model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3)
 model_3b_all = model_3b[[1]]
@@ -800,9 +794,7 @@ my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-length_complete = ds.length('D4$SEX')
-length_complete_split = ds.length("D4$SEX", type = "split")
+ds.subset(x = 'D7', subset = 'D11', completeCases = TRUE)
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -810,7 +802,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", 
                   "SUPPLEMENTS")
 
-ref_table = 'D4'
+ref_table = 'D11'
 mypath = file.path('~', 'plots', 'model_3c_survival.svg')
 model_3c = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_model3c)
 model_3c_all = model_3c[[1]]
@@ -835,9 +827,7 @@ my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-length_complete = ds.length('D4$SEX')
-length_complete_split = ds.length("D4$SEX", type = "split")
+ds.subset(x = 'D7', subset = 'D12', completeCases = TRUE)
 
 studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
 opals_no_SG = opals[studies_no_singleGender]
@@ -848,7 +838,7 @@ my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX")
 my_interaction = "SEX"
 
-ref_table = 'D4'
+ref_table = 'D12'
 mypath = file.path('~', 'plots', 'model_4_surv.svg')
 model_4 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, opals_no_SG)
 model_4_all = model_4[[1]]
@@ -856,18 +846,18 @@ model_4_rem = model_4[[2]]
 
 ## If the result was significant
 # Men
-ds.subset(x = 'D4', subset = 'D4_men', logicalOperator = 'SEX==', threshold = 0)
-men <- ds.length('D4_men$SEX', type = 'split')
-ref_table = 'D4_men'
+ds.subset(x = 'D12', subset = 'D12_men', logicalOperator = 'SEX==', threshold = 0)
+men <- ds.length('D12_men$SEX', type = 'split')
+ref_table = 'D12_men'
 mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
 model_4men = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_SG)
 model_4men_all = model_4men[[1]]
 model_4men_rem = model_4men[[2]]
 
 # Women
-ds.subset(x = 'D4', subset = 'D4_women', logicalOperator = 'SEX==', threshold = 1)
-women <- ds.length('D4_women$SEX', type = 'split')
-ref_table = 'D4_women'
+ds.subset(x = 'D12', subset = 'D12_women', logicalOperator = 'SEX==', threshold = 1)
+women <- ds.length('D12_women$SEX', type = 'split')
+ref_table = 'D12_women'
 mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
 model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_SG)
 model_4women_all = model_4women[[1]]
@@ -896,7 +886,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA","BMI", "COMORB
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 my_interaction = "BMI"
 
-ref_table = 'D4'
+ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_5_surv.svg')
 model_5 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_model5)
 model_5_all = model_5[[1]]
@@ -909,7 +899,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "COMORBID","E
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 # BMI < 25
-ds.subset(x = 'D4', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0)
+ds.subset(x = 'D8', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0)
 men <- ds.length('underweight$SEX', type = 'split')
 ref_table = 'underweight'
 mypath = file.path('~', 'plots', 'model_5_underweight_surv.svg')
@@ -918,7 +908,7 @@ model_underweight_all = model_underweight[[1]]
 model_underweight_rem = model_underweight[[2]]
 
 # BMI >= 25
-ds.subset(x = 'D4', subset = 'overweight', logicalOperator = 'BMI==', threshold = 1)
+ds.subset(x = 'D8', subset = 'overweight', logicalOperator = 'BMI==', threshold = 1)
 women <- ds.length('overweight$SEX', type = 'split')
 ref_table = 'overweight'
 mypath = file.path('~', 'plots', 'model_5_overweight_surv.svg')
