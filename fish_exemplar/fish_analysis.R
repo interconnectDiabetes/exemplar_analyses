@@ -206,7 +206,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
   
 	print(studies[counter])
 	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = out_family, datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = "poisson", datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -661,7 +661,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 
 # The new idea from Silvia is to start using semi complete cases, ie we look at only the data that concerns the variables we want to look at
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 
 # quicker complete cases
@@ -676,6 +676,8 @@ ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+
 # Simple Regression Model For Testing Quickly 
 ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
@@ -739,19 +741,18 @@ model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # | |\/| |/ _ \ / _` |/ _ \ |     \ \
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
-
-studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
-opals_model3 = opals[studies_model3]
-
 # sensitivity analysis
 # Model 3a: As model 2 + adj for family history of diabetes
 
 # The new idea from Silvia is to start using semi complete cases, ie we look at only the data that concerns the variables we want to look at
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "FAM_DIAB")
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights","FAM_DIAB")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D9', completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D9', completeCases = TRUE, datasources = opals)
+
+studies_model3 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
+opals_model3 = opals[studies_model3]
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -767,10 +768,10 @@ model_3a_rem = model_3a[[2]]
 
 # Model 3b: As model 2 + adj for waist circumference
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST")
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights","WAIST")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D10', completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D10', completeCases = TRUE, datasources = opals)
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -785,16 +786,16 @@ model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
 
 
-studies_model3c = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA", "AusDiab")]
-opals_model3c = opals[studies_model3c]
-
 # Model 3c: As model 2 + adj for fish oil supplements
 # ABSOLUTELY NO ONE HAS WORKING SUPPLEMENTS
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS","newEndDate", "newStartDate", "burtonWeights",  "SUPPLEMENTS")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D11', completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D11', completeCases = TRUE, datasources = opals)
+
+studies_model3c = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA", "AusDiab")]
+opals_model3c = opals[studies_model3c]
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -824,10 +825,10 @@ model_3c_rem = model_3c[[2]]
 # Stratified analyses by sex (men, women) if significant
 
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
-                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "newEndDate", "newStartDate", "burtonWeights","SUG_BEVS")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D12', completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D12', completeCases = TRUE, datasources = opals)
 
 studies_no_singleGender = study_names[! study_names %in% c("InterAct_france", "NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
 opals_no_SG = opals[studies_no_singleGender]
@@ -846,8 +847,8 @@ model_4_rem = model_4[[2]]
 
 ## If the result was significant
 # Men
-ds.subset(x = 'D12', subset = 'D12_men', logicalOperator = 'SEX==', threshold = 0)
-men <- ds.length('D12_men$SEX', type = 'split')
+ds.subset(x = 'D12', subset = 'D12_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
+men <- ds.length('D12_men$SEX', type = 'split', datasources = opals)
 ref_table = 'D12_men'
 mypath = file.path('~', 'plots', 'model_4_men_surv.svg')
 model_4men = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_SG)
@@ -855,8 +856,8 @@ model_4men_all = model_4men[[1]]
 model_4men_rem = model_4men[[2]]
 
 # Women
-ds.subset(x = 'D12', subset = 'D12_women', logicalOperator = 'SEX==', threshold = 1)
-women <- ds.length('D12_women$SEX', type = 'split')
+ds.subset(x = 'D12', subset = 'D12_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
+women <- ds.length('D12_women$SEX', type = 'split', datasources = opals)
 ref_table = 'D12_women'
 mypath = file.path('~', 'plots', 'model_4_women_surv.svg')
 model_4women = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), opals_no_SG)
@@ -899,8 +900,8 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "COMORBID","E
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 # BMI < 25
-ds.subset(x = 'D8', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0)
-men <- ds.length('underweight$SEX', type = 'split')
+ds.subset(x = 'D8', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0, datasources = opals)
+men <- ds.length('underweight$SEX', type = 'split', datasources = opals)
 ref_table = 'underweight'
 mypath = file.path('~', 'plots', 'model_5_underweight_surv.svg')
 model_underweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2),  studies = opals_model5)
@@ -908,8 +909,8 @@ model_underweight_all = model_underweight[[1]]
 model_underweight_rem = model_underweight[[2]]
 
 # BMI >= 25
-ds.subset(x = 'D8', subset = 'overweight', logicalOperator = 'BMI==', threshold = 1)
-women <- ds.length('overweight$SEX', type = 'split')
+ds.subset(x = 'D8', subset = 'overweight', logicalOperator = 'BMI==', threshold = 1, datasources = opals)
+women <- ds.length('overweight$SEX', type = 'split', datasources = opals)
 ref_table = 'overweight'
 mypath = file.path('~', 'plots', 'model_5_overweight_surv.svg')
 model_overweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2),  studies = opals_model5)
