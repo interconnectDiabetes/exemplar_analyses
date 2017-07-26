@@ -531,7 +531,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	REM_results = list()
 	study_regs = data.frame()
 
-	number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term))[[1]])
+	number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term), datasources = studies)[[1]])
 
 	svg(filename=mypath, 
 		width=5*number_of_interactions, 
