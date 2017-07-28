@@ -206,7 +206,7 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
   
 	print(studies[counter])
 	print(my_fmla)
-	model <- ds.glm(formula = my_fmla, data = lexisTable, family = "poisson", datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100)
+	model <- ds.glm(formula = my_fmla, data = lexisTable, family = "poisson", datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100, checks = TRUE)
 	model_coeffs <- as.data.frame(model$coefficients)
 	model_coeffs$study = study
 	model_coeffs$outcome = outcome
@@ -731,9 +731,9 @@ model_2reg_all = model_2reg_results[[1]]
 model_2reg_REM = model_2reg_results[[2]]
 
 # # Incremental Model
-ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_2_incremental')
-model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
+# ref_table = 'D8'
+# mypath = file.path('~', 'plots', 'model_2_incremental')
+# model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
