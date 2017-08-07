@@ -330,9 +330,6 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 	else if (studyName == "NOWAC") {
 		exceptions = c("SEX", "FAM_DIAB", "WAIST")
 	} 
-	else if (studyName == "Whitehall") {
-		exceptions = c("FIBER")
-	} 
 	else if (studyName == "Zutphen") {
 		exceptions = c("MEAT", "SEX", "WAIST")
 	}
