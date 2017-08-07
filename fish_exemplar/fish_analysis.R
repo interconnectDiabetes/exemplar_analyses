@@ -336,11 +336,11 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals){
 	# main function that runs, fits, and stores the results of a regression model using the 
 	# datashield process
-  temp <- ds.summary('D$TOTAL', datasources = studies)
-  study_names <- names(temp)
-  num_studies <- length(temp)
-  rm(temp)
-  
+	temp <- ds.summary('D$TOTAL', datasources = studies)
+	study_names <- names(temp)
+	num_studies <- length(temp)
+	rm(temp)
+	
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -399,11 +399,11 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
-  temp <- ds.summary('D$TOTAL', datasources = studies)
-  study_names <- names(temp)
-  num_studies <- length(temp)
-  rm(temp)
-  
+	temp <- ds.summary('D$TOTAL', datasources = studies)
+	study_names <- names(temp)
+	num_studies <- length(temp)
+	rm(temp)
+	
 	REM_results = list()
 	study_regs = data.frame()
 
@@ -424,7 +424,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	exitColString = paste0(ref_table, '$', 'newEndDate')
 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
-	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
+		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
 	
 	ds.asNumeric('A$CENSOR','censor', datasources = studies)
 	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
@@ -432,7 +432,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	lexised_table = 'A'
 
 	for (k in 1:length(my_outcome)){
-	  
+		
 		# for each exposure and
 		for (j in 1:length(my_exposure)){
 			estimates = vector()
