@@ -419,6 +419,39 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 	return (list(model_all, model_rem))
 }
 
+# tunedLexisB <- function(ref_table, defaultInterval, studies = opals) {
+# 	temp <- ds.summary('D$TOTAL', datasources = studies)
+# 	study_names <- names(temp)
+# 	num_studies <- length(temp)
+# 	rm(temp)
+
+# 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
+# 	# and expand the dataset using the ds.lexis b command
+# 	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(0.1)), opals = studies)
+# 	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(0.1)), opals = studies)
+# 	idColString = paste0(ref_table, '$', 'ID')
+# 	entryColString = paste0(ref_table, '$', 'newStartDate')
+# 	exitColString = paste0(ref_table, '$', 'newEndDate')
+# 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
+
+
+# 	if (studyName == "InterAct_france"){ 
+# 		exceptions = c("SEX", "SUPPLEMENTS")
+# 	} 
+# 	else if (studyName == "InterAct_italy") {
+# 		exceptions = c("FAM_DIAB", "SUPPLEMENTS")
+# 	}	
+# 	else if (studyName == "InterAct_spain") {
+# 		exceptions = c("FAM_DIAB", "SUG_BEVS", "SUPPLEMENTS")
+# 	} 
+# 	else if (studyName == "InterAct_uk") {
+# 		exceptions = c("SUPPLEMENTS")
+# 	} 
+
+# 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
+# 		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
+
+# }
 
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
@@ -452,6 +485,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	
 	ds.asNumeric('A$CENSOR','censor', datasources = studies)
 	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
+	checkFactoredTime(studies = studies)
 	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
 	lexised_table = 'A'
 
@@ -549,6 +583,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	
 	ds.asNumeric('A$CENSOR','censor', datasources = studies)
 	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
+	checkFactoredTime(studies = studies)
 	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
 	lexised_table = 'A'
 
