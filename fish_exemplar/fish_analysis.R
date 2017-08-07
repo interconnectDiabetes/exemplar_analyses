@@ -19,8 +19,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
+#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # get extra functions from betaTestClient that didnt make it
 source("fish_exemplar/helperFunctions.R")
@@ -31,9 +31,9 @@ setwd("~")
 datashield.logout(opals)
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
-           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
+           "FUP_OBJ", "FUP_OBJ_SELF", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG",  "FIBER", "SUG_BEVS", "WAIST", "SUPPLEMENTS", 
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "AGE_BASE", "MEAT", "COMORBID")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
 ## To include all possible variables uncomment this line and and comment out previus line
@@ -89,7 +89,7 @@ for(i in 1:length(opals)){
 rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
 
-ds.assign(toAssign = 'D3$AGE_END_OBJ-D3$AGE_BASE', newobj = 'newEndDate')
+ds.assign(toAssign = 'D3$FUP_OBJ', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D5')
 
 # Adding in the weights as described by Dr. Burton
@@ -112,6 +112,7 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['AusDiab'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['JPHC'])
 
 ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
@@ -446,8 +447,8 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 
 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
 	# and expand the dataset using the ds.lexis b command
-	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(1)), opals = studies)
-	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(1)), opals = studies)
+	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(0.1)), opals = studies)
+	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(0.1)), opals = studies)
 	idColString = paste0(ref_table, '$', 'ID')
 	entryColString = paste0(ref_table, '$', 'newStartDate')
 	exitColString = paste0(ref_table, '$', 'newEndDate')
@@ -688,7 +689,7 @@ model_1reg_REM = model_1reg_results[[2]]
 # survival version with lexis b
 ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_1_survival.svg')
-model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2))
 model_1_all = model_1[[1]]
 model_1_rem = model_1[[2]]
 
