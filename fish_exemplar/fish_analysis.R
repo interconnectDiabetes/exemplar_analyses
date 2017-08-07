@@ -1,4 +1,4 @@
-## Analysis script for Fish Exemplar Analysis
+\## Analysis script for Fish Exemplar Analysis
 ## Author: Paul Scherer
 ##		   Tom Bishop
 ## Date: 31/03/2017
@@ -19,8 +19,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-#setwd("/home/l_pms69/exemplar_analyses/")
-setwd("/home/l_trpb2/git/exemplar_analyses/")
+setwd("/home/l_pms69/exemplar_analyses/")
+#setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # get extra functions from betaTestClient that didnt make it
 source("fish_exemplar/helperFunctions.R")
@@ -28,16 +28,14 @@ source("fish_exemplar/helperFunctions.R")
 source("creds/fish_exemplar_creds.R")
 setwd("~")
 
+# Logout in case there was any older session in place and login with chosen variables
 datashield.logout(opals)
-
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
            "FUP_OBJ", "FUP_OBJ_SELF", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG",  "FIBER", "SUG_BEVS", "WAIST", "SUPPLEMENTS", 
            "AGE_END_OBJ_SELF", "AGE_END_OBJ", "AGE_BASE", "MEAT", "COMORBID")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
-
-## To include all possible variables uncomment this line and and comment out previus line
-# opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish')
+# opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish') # for all available variables
 
 ###############################################################################
 ########################### SET UP DATA  ######################################
@@ -80,15 +78,14 @@ for(i in 1:length(opals)){
 rm(i) # removal of i as it is not scoped within the loop
 ds.cbind(x=c('ID','E4'), newobj='D2')
 
-# adding in zero columns to the studies
+# Zeros, new start date and end date
 for(i in 1:length(opals)){
   work1 <- afterIntake[[i]]
   work2 <- paste0("datashield.assign(opals[",i,"],'newStartDate', quote(rep(0,",work1,")))")
   eval(parse(text=work2))
 }
-rm(i) # removal of i as it is not scoped within the loop
+rm(i)
 ds.cbind(x=c('newStartDate','D2'), newobj='D3')
-
 ds.assign(toAssign = 'D3$FUP_OBJ', newobj = 'newEndDate')
 ds.cbind(x=c('newEndDate','D3'), newobj='D5')
 
@@ -113,7 +110,6 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['AusDiab'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['JPHC'])
-
 ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
 # put in any dummy columns for the studies with completely missing columns
@@ -122,17 +118,16 @@ d6len = ds.length('D6$SEX', datasources = opals['InterAct_italy'])
 ds.assign(toAssign = "newStartDate + 1", newobj = "FAM_DIAB", datasources = opals['InterAct_italy'])
 ds.asFactor(x = "FAM_DIAB", newobj = "FAM_DIAB", datasources = opals['InterAct_italy'])
 ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['InterAct_italy'])
-# spain
+# spain missing fam_diab
 d6len = ds.length('D6$SEX', datasources = opals['InterAct_spain'])
 ds.assign(toAssign = "newStartDate + 1", newobj = "FAM_DIAB", datasources = opals['InterAct_spain'])
 ds.asFactor(x = "FAM_DIAB", newobj = "FAM_DIAB", datasources = opals['InterAct_spain'])
 ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['InterAct_spain'])
-# nowac
+# nowac missing fam_diab
 d6len = ds.length('D6$SEX', datasources = opals['NOWAC'])
 ds.assign(toAssign = "newStartDate + 1", newobj = "FAM_DIAB", datasources = opals['NOWAC'])
 ds.asFactor(x = "FAM_DIAB", newobj = "FAM_DIAB", datasources = opals['NOWAC'])
 ds.cbind(x = c("FAM_DIAB", "D6"), newobj = "D6", datasources = opals['NOWAC'])
-
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
@@ -147,7 +142,7 @@ ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
 length_complete = ds.length('D4$SEX')
 length_complete_split = ds.length("D4$SEX", type = "split")
 
-# # # # Dataframe to hold length figures
+## Dataframe to hold length figures
 # model_all_len <- data.frame()
 # model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
 # for (i in 2:length(my_vars_all)){
@@ -169,8 +164,6 @@ length_complete_split = ds.length("D4$SEX", type = "split")
 # }
 # rownames = c("ALL", "PREV_DIAB", "TYPE_DIAB", "under3500cal", "afterIntake", my_vars_all[2:length(my_vars_all)])
 # row.names(model_all_len) <- rownames
-
-
 
 
 # ###############################################################################
