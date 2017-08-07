@@ -1,4 +1,4 @@
-\## Analysis script for Fish Exemplar Analysis
+## Analysis script for Fish Exemplar Analysis
 ## Author: Paul Scherer
 ##		   Tom Bishop
 ## Date: 31/03/2017
