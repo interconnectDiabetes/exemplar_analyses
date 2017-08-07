@@ -229,35 +229,17 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=1)
 		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
 		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
-		
-		
 	}
 	else if (out_family == 'poisson'){
-	  
-	  forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
-	                                          .(round(res$I2)),'%, p = ',
-	                                          .(round(res$QEp,3)),')')),
-	         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
-	                           .(round(res$pval,3)))), atransf = exp)
-	 usr <- par("usr")
-	 text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
-	 text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
-	 text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
-		
-	#  forest(res, mlab=bquote(paste('Overall (I'^2*' = ',
-	#                                .(round(res$I2)),'%, p = ',
-	#                                .(sprintf("%.3f", 
-	#                                          round(res$QEp,3))),')')),
-	#         xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
-	#                           .(sprintf("%.3f", 
-	#                                     round(res$pval,3)))), 
-	#                     atransf = exp), 
-	#         cex=1, cex.lab=0.75, cex.axis=1)
-	# 	usr <- par("usr")
-	# 	text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=1)
-	# 	text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
-	# 	text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=1)
-		
+		forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+		                                      .(round(res$I2)),'%, p = ',
+		                                      .(round(res$QEp,3)),')')),
+		     xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+		                       .(round(res$pval,3)))), atransf = exp)
+		usr <- par("usr")
+		text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
+		text(usr[1], usr[3], variable, adj = c( 0, 0 ),cex=0.75)
 	}
 	else if (out_family == 'binomial'){
 		forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
@@ -269,7 +251,6 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 		text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=1)
 		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
 		text(usr[1], usr[3], variable, adj = c( 0, 0),cex=1)
-		
 	}
 	return(res)
 }
@@ -296,24 +277,24 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 	else if (studyName == "InterAct_italy") {
 		exceptions = c("FAM_DIAB", "SUPPLEMENTS")
 	}	
-  else if (studyName == "InterAct_spain") {
-	  exceptions = c("FAM_DIAB", "SUG_BEVS", "SUPPLEMENTS")
+	else if (studyName == "InterAct_spain") {
+		exceptions = c("FAM_DIAB", "SUG_BEVS", "SUPPLEMENTS")
 	} 
-  else if (studyName == "InterAct_uk") {
-    exceptions = c("SUPPLEMENTS")
-  } 
-  else if (studyName == "InterAct_netherlands") {
-    exceptions = c("SUPPLEMENTS")
-  } 
-  else if (studyName == "InterAct_germany") {
-    exceptions = c("SUPPLEMENTS")
-  } 
-  else if (studyName == "InterAct_sweden") {
-    exceptions = c("SUPPLEMENTS")
-  } 
-  else if (studyName == "InterAct_denmark") {
-    exceptions = c("SUPPLEMENTS")
-  } 
+	else if (studyName == "InterAct_uk") {
+		exceptions = c("SUPPLEMENTS")
+	} 
+	else if (studyName == "InterAct_netherlands") {
+		exceptions = c("SUPPLEMENTS")
+	} 
+	else if (studyName == "InterAct_germany") {
+		exceptions = c("SUPPLEMENTS")
+	} 
+	else if (studyName == "InterAct_sweden") {
+		exceptions = c("SUPPLEMENTS")
+	} 
+	else if (studyName == "InterAct_denmark") {
+		exceptions = c("SUPPLEMENTS")
+	} 
 	else if (studyName == "HOORN") {
 		exceptions = c("SUPPLEMENTS")
 	} 
@@ -326,9 +307,9 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 	else if (studyName == "Zutphen") {
 		exceptions = c("MEAT", "SEX", "WAIST")
 	}
-  else if (studyName == "AusDiab") {
-    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
-  } 
+	else if (studyName == "AusDiab") {
+		exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
+	} 
 	else {
 		exceptions = c()
 	}
@@ -339,14 +320,13 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 		return(fmla)
 	} else if (type == "survival") {
 		fmla <- as.formula(paste("censor"," ~ ", "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
-			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
+				paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
 	} else if (type == "interaction") {
 		fmla <- as.formula(paste("censor"," ~ ",  "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
 		return (fmla)
-	} 
-	else {
+	} else {
 		warning("Undefined type of model for formula")
 		return(NULL)
 	}
