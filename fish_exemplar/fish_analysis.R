@@ -170,11 +170,11 @@ length_complete_split = ds.length("D4$SEX", type = "split")
 # ########################### FUNCTIONS  ########################################
 # ###############################################################################
 do_reg <- function(counter, my_fmla, study, outcome, out_family, studies = opals){
-  temp <- ds.summary('D$TOTAL', datasources = studies)
-  study_names <- names(temp)
-  num_studies <- length(temp)
-  rm(temp)
-  
+	temp <- ds.summary('D$TOTAL', datasources = studies)
+	study_names <- names(temp)
+	num_studies <- length(temp)
+	rm(temp)
+	
 	# performs a regular regression and returns the coefficients of the fitted model as a dataframe
 	print(studies[counter])
 	print(my_fmla)
@@ -193,11 +193,11 @@ do_reg_survival <- function(counter, my_fmla, study, outcome, out_family, offset
 	# performs a survival analysis using the formula on the appropiately lexised table
 	# note that the coefficients returned as a dataframe are not exponentiated. this is done
 	# as part of the do_rem process
-  temp <- ds.summary('D$TOTAL', datasources = studies)
-  study_names <- names(temp)
-  num_studies <- length(temp)
-  rm(temp)
-  
+	temp <- ds.summary('D$TOTAL', datasources = studies)
+	study_names <- names(temp)
+	num_studies <- length(temp)
+	rm(temp)
+	
 	print(studies[counter])
 	print(my_fmla)
 	model <- ds.glm(formula = my_fmla, data = lexisTable, family = "poisson", datasources=studies[counter], offset = offset_column, weights = burtonWeights, maxit = 100, checks = TRUE)
@@ -222,9 +222,9 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	#forest plots
 	if (out_family == 'gaussian') {
 		forest(res, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-		  .(sprintf("%.3f", round(res$QEp,3))),')')),
-		  xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
-		  .(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
+			.(sprintf("%.3f", round(res$QEp,3))),')')),
+		xlab=bquote(paste('Test of H'[0]*': true mean association = 0, p = ',
+			.(sprintf("%.3f", round(res$pval,3))))), cex=1, cex.lab=0.75, cex.axis=1)
 		usr <- par("usr")
 		text(usr[2], usr[4], "Beta [95% CI]", adj = c(1, 4),cex=1)
 		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=1)
@@ -232,10 +232,10 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	}
 	else if (out_family == 'poisson'){
 		forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
-		                                      .(round(res$I2)),'%, p = ',
-		                                      .(round(res$QEp,3)),')')),
-		     xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
-		                       .(round(res$pval,3)))), atransf = exp)
+			.(round(res$I2)),'%, p = ',
+			.(round(res$QEp,3)),')')),
+		xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+			.(round(res$pval,3)))), atransf = exp)
 		usr <- par("usr")
 		text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
 		text(usr[1], usr[4], paste0(gsub(paste0(ref_table,"\\$"),"", deparse(fmla)),collapse="\n"), adj = c( 0, 1 ),cex=0.75)
@@ -243,9 +243,9 @@ do_REM <- function(coeffs, s_err, labels, fmla, out_family, variable){
 	}
 	else if (out_family == 'binomial'){
 		forest(res, digits=3, mlab=bquote(paste('Overall (I'^2*' = ', .(round(res$I2)),'%, p = ',
-		       .(sprintf("%.3f", round(res$QEp,3))),')')),
-		       xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
-		       .(sprintf("%.3f", round(res$pval,3))))), atransf = exp, cex=1, cex.lab=0.75, cex.axis=1)
+			.(sprintf("%.3f", round(res$QEp,3))),')')),
+		xlab=bquote(paste('Test of H'[0]*': true relative risk = 1, p = ',
+			.(sprintf("%.3f", round(res$pval,3))))), atransf = exp, cex=1, cex.lab=0.75, cex.axis=1)
 		usr <- par("usr")
 		
 		text(usr[2], usr[4], "Relative Risk [95% CI]", adj = c(1, 4),cex=1)
