@@ -256,7 +256,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 	return (list(model_all, model_rem))
 }
 
-tunedLexisB <- function(ref_table, defaultInterval, study) {
+tunedLexisB <- function(ref_table, study) {
 	# does a tuned Lexis B on one study can be used in a parallel loop to run
 	# multiple lexis b at once
 	# TODO check prerequisites with dsExists
@@ -283,6 +283,70 @@ tunedLexisB <- function(ref_table, defaultInterval, study) {
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = study)
 
+}
+
+
+tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
+	# main function that runs, fits, and stores the results of a survival model using the 
+	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
+	temp <- ds.summary('D$TOTAL', datasources = studies)
+	study_names <- names(temp)
+	num_studies <- length(temp)
+	rm(temp)
+
+	REM_results = list()
+	study_regs = data.frame()
+
+	svg(filename=mypath, 
+		width=5*length(my_exposure), 
+		height=4*length(my_outcome), 
+		pointsize=10)
+	par(mar=c(5,3,2,2)+0.1)
+	par(mfrow=c(length(my_outcome),length(my_exposure)))
+	par(ps=10)
+
+	for (study in studies) {
+		tunedLexisB(ref_table, study)
+	}
+
+	checkFactoredTime(studies = studies)
+	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
+	lexised_table = 'A'
+
+	for (k in 1:length(my_outcome)){
+
+		# for each exposure and
+		for (j in 1:length(my_exposure)){
+			estimates = vector()
+			s_errors = vector()
+			labels = vector()
+
+			for(i in 1:length(studies)) {
+				reg_data <- data.frame()
+				
+				fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, type = "survival")
+				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"), studies = studies)
+
+				study_regs = rbind(study_regs,reg_data)
+				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+				labels = rbind(labels, reg_data[2,1])      
+				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+			}
+			fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			#meta analysis here
+			for (n in 1:length(variables)){
+				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
+			}
+		}
+	}
+
+	#Store results
+	dev.off()
+	model_all <- study_regs
+	model_rem <- REM_results
+
+	return (list(model_all, model_rem))
 }
 
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
