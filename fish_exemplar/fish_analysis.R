@@ -14,7 +14,6 @@ library(dsModellingClient)
 library(dsBetaTestClient)
 library(metafor)
 
-
 ###############################################################################
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
@@ -256,9 +255,11 @@ model_2reg_REM = model_2reg_results[[2]]
 # | |  | | (_) | (_| |  __/ | .___/ /
 # \_|  |_/\___/ \__,_|\___|_| \____/ 
 # sensitivity analysis
-# Model 3a: As model 2 + adj for family history of diabetes
 
+####################################################
+# Model 3a: As model 2 + adj for family history of diabetes
 # Model Specific Setup
+####################################################
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights","FAM_DIAB")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
@@ -278,7 +279,9 @@ model_3a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, my
 model_3a_all = model_3a[[1]]
 model_3a_rem = model_3a[[2]]
 
+####################################################
 # Model 3b: As model 2 + adj for waist circumference
+####################################################
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights","WAIST")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
@@ -297,9 +300,9 @@ model_3b = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, my
 model_3b_all = model_3b[[1]]
 model_3b_rem = model_3b[[2]]
 
-
+####################################################
 # Model 3c: As model 2 + adj for fish oil supplements
-# ABSOLUTELY NO ONE HAS WORKING SUPPLEMENTS
+####################################################
 my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS","newEndDate", "newStartDate", "burtonWeights",  "SUPPLEMENTS")
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
@@ -355,6 +358,7 @@ model_4 = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, 
 model_4_all = model_4[[1]]
 model_4_rem = model_4[[2]]
 
+####################################################
 ## Stratified analyses by sex (men, women) if significant
 # Men
 ds.subset(x = 'D12', subset = 'D12_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
@@ -365,6 +369,7 @@ model_4men = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, 
 model_4men_all = model_4men[[1]]
 model_4men_rem = model_4men[[2]]
 
+####################################################
 # Women
 ds.subset(x = 'D12', subset = 'D12_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
 women <- ds.length('D12_women$SEX', type = 'split', datasources = opals)
@@ -409,6 +414,7 @@ my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "COMORBID","E_INTAKE", 
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
+####################################################
 # BMI < 25
 ds.subset(x = 'D8', subset = 'underweight', logicalOperator = 'BMI==', threshold = 0, datasources = opals)
 men <- ds.length('underweight$SEX', type = 'split', datasources = opals)
@@ -418,6 +424,7 @@ model_underweight = runSurvivalModel(ref_table, my_exposure, my_outcome, my_cova
 model_underweight_all = model_underweight[[1]]
 model_underweight_rem = model_underweight[[2]]
 
+####################################################
 # BMI >= 25
 ds.subset(x = 'D8', subset = 'overweight', logicalOperator = 'BMI==', threshold = 1, datasources = opals)
 women <- ds.length('overweight$SEX', type = 'split', datasources = opals)
