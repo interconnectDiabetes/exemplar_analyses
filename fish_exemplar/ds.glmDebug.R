@@ -270,7 +270,7 @@ ds.glmDebug <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weigh
 		)
 		class(glmds) <- 'glmds'
 
-		return(glmds, score_vector_list, information_matrix_list)
+		return(list(glmds, score_vector_list, information_matrix_list))
 	
 	} else {
 		warning(paste("Did not converge after", maxit, "iterations. Increase maxit parameter as necessary."))
