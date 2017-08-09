@@ -75,6 +75,10 @@ ds.glmDebug <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weigh
 
 	f<-NULL
 
+	# make storage for the score and information matrices
+	score_vector_list = list()
+	information_matrix_list = list()
+
 	while(!converge.state && iteration.count < maxit) {
 
 		iteration.count<-iteration.count+1
@@ -95,6 +99,9 @@ ds.glmDebug <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weigh
 		message("This is the information matrix:	", info.matrix.total)
 		message("This is the score vector:	", score.vect.total)
 		message("CURRENT DEVIANCE:      ", dev.total)
+
+		score_vector_list = unlist(list(score_vector_list, score.vect.total))
+		information_matrix_list = unlist(list(information_matrix_list, info.matrix.total))
 
 		if(iteration.count==1) {
 			# Sum participants only during first iteration.
@@ -263,7 +270,7 @@ ds.glmDebug <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weigh
 		)
 		class(glmds) <- 'glmds'
 
-		return(glmds)
+		return(glmds, score_vector_list, information_matrix_list)
 	
 	} else {
 		warning(paste("Did not converge after", maxit, "iterations. Increase maxit parameter as necessary."))
