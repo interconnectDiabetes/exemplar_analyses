@@ -171,33 +171,34 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 
 
 checkFactoredTime <- function(timeVariable = 'tid.f', studies = opals){
-	# checks a factored time to censor representation typically tid.f for any zero valued levels
-	# as this can be used as an indicator for singular matrices to come at the regression stage
-	# start check with isValid 
-	isValidList = ds.isValid(timeVariable, datasources = studies)
-
-	if (all(isValidList)) { 
-		# even if all the time variables are valid according to datashield, there may be levels with
-		# 0 participants in the factored version of the time variable
-		for (study in c(1:length(studies))) {
-		  print(study)
-		  print(studies[study])
-			timeVariableSummary = ds.summary(timeVariable, datasources = studies[study])
-			timeVariableSummary = (timeVariableSummary[[1]])[c(4:length(timeVariableSummary[[1]]))]
-			
-			for (i in timeVariableSummary) {
-				if (i == 0){
-					print(ds.summary('tid.f', datasources = studies[study]))
-					stop("One of the levels in the timeVariable has zero members in it!")
-				}
-			}
-		}
-	} else {
-		print(isValidList)
-		stop("There are study(ies) with invalid values for the timeVariable!")
-	}
-	return(NULL)
+  # checks a factored time to censor representation typically tid.f for any zero valued levels
+  # as this can be used as an indicator for singular matrices to come at the regression stage
+  # start check with isValid 
+  isValidList = ds.isValid(timeVariable, datasources = studies)
+  
+  if (all(isValidList)) { 
+    # even if all the time variables are valid according to datashield, there may be levels with
+    # 0 participants in the factored version of the time variable
+    for (study in c(1:length(studies))) {
+      print(study)
+      print(studies[study])
+      timeVariableSummary = ds.summary(timeVariable, datasources = studies[study])
+      timeVariableSummary = (timeVariableSummary[[1]])[c(4:length(timeVariableSummary[[1]]))]
+      
+      for (i in timeVariableSummary) {
+        if (i == 0){
+          print(ds.summary('tid.f', datasources = studies[study]))
+          stop("One of the levels in the timeVariable has zero members in it!")
+        }
+      }
+    }
+  } else {
+    print(isValidList)
+    stop("There are study(ies) with invalid values for the timeVariable!")
+  }
+  return(NULL)
 }
+
 
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals){
@@ -267,7 +268,7 @@ tunedLexisB <- function(ref_table, study) {
 	# does a tuned Lexis B on one study can be used in a parallel loop to run
 	# multiple lexis b at once
 	# TODO check prerequisites with dsExists
-
+  studyName = names(study)
 	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
 	# and expand the dataset using the ds.lexis b command
 	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(0.1)), opals = study)
@@ -289,11 +290,13 @@ tunedLexisB <- function(ref_table, study) {
 
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = study)
-
+	
+	print("Did LexisB for study \n")
+	print(studyName)
 }
 
 
-tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals) {
+tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
 	temp <- ds.summary('D$TOTAL', datasources = studies)
@@ -312,8 +315,8 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 	par(mfrow=c(length(my_outcome),length(my_exposure)))
 	par(ps=10)
 
-	for (study in studies) {
-		tunedLexisB(ref_table, study)
+	for (study in c(1:length(studies))) {
+		tunedLexisB(ref_table, studies[study])
 	}
 
 	checkFactoredTime(studies = studies)

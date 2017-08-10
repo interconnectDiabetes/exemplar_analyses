@@ -206,13 +206,12 @@ model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, myp
 model_1_all = model_1[[1]]
 model_1_rem = model_1[[2]]
 
-# tuned survival model
+# tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_1_survival_tuned.svg')
+mypath = file.path('~', 'plots', 'model_1_survivaltuned.svg')
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath)
-model_1_all = model_1[[1]]
-model_1_rem = model_1[[2]]
-
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
 
 # # incremental model 1
 ref_table = 'D8'
