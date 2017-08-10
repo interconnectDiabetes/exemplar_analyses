@@ -274,7 +274,7 @@ ds.glmDebug <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weigh
 	
 	} else {
 		warning(paste("Did not converge after", maxit, "iterations. Increase maxit parameter as necessary."))
-		return(NULL)
+		return(list(score_vector_list, information_matrix_list))
 	}
 	
 }
