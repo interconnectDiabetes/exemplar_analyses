@@ -292,7 +292,7 @@ tunedLexisB <- function(ref_table, study) {
 }
 
 
-tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
+tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
 	temp <- ds.summary('D$TOTAL', datasources = studies)
