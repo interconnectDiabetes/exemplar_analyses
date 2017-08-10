@@ -220,6 +220,176 @@ ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_1_incremental')
 model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
 
+#  ______    _   _         
+# |  ____|  | | | |        
+# | |__ __ _| |_| |_ _   _ 
+# |  __/ _` | __| __| | | |
+# | | | (_| | |_| |_| |_| |
+# |_|  \__,_|\__|\__|\__, |
+#                     __/ |
+#                    |___/ 
+
+fatty_studies = study_names[! study_names %in% c("Ausdiab", "ELSA", "NHAPC", "SMC", "Whitehall")]
+opals_fatty = opals[fatty_studies]
+
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fatty )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_fatty)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fatty)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+#  ______             _     
+# |  ____|           | |    
+# | |__ _ __ ___  ___| |__  
+# |  __| '__/ _ \/ __| '_ \ 
+# | |  | | |  __/\__ \ | | |
+# |_|  |_|  \___||___/_| |_|
+
+fresh_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                                 "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_fresh = opals[fresh_studies]
+
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fresh )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_fresh)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fresh)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#  ______    _          _ 
+# |  ____|  (_)        | |
+# | |__ _ __ _  ___  __| |
+# |  __| '__| |/ _ \/ _` |
+# | |  | |  | |  __/ (_| |
+# |_|  |_|  |_|\___|\__,_|
+
+fried_studies = study_names[! study_names %in% c("HOORN", "JPHC", "NOWAC", "NHAPC", "SMC", "Whitehall")]
+opals_fried = opals[fried_studies]
+
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fried )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_fried)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fried)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#  _                      
+# | |                     
+# | |     ___  __ _ _ __  
+# | |    / _ \/ _` | '_ \ 
+# | |___|  __/ (_| | | | |
+# |______\___|\__,_|_| |_|
+
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN","NHAPC", "SMC", "Whitehall")]
+opals_lean = opals[lean_studies]
+
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_normal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_lean )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_lean)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_survivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_lean)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#  _   _             ______ _     _     
+# | \ | |           |  ____(_)   | |    
+# |  \| | ___  _ __ | |__   _ ___| |__  
+# | . ` |/ _ \| '_ \|  __| | / __| '_ \ 
+# | |\  | (_) | | | | |    | \__ \ | | |
+# |_| \_|\___/|_| |_|_|    |_|___/_| |_|
+
+
+#   _____       _ _   
+#  / ____|     | | |  
+# | (___   __ _| | |_ 
+#  \___ \ / _` | | __|
+#  ____) | (_| | | |_ 
+# |_____/ \__,_|_|\__|
+
+#   _____ _____ _____  
+#  / ____/ ____|  __ \ 
+# | (___| (___ | |  | |
+#  \___ \\___ \| |  | |
+#  ____) |___) | |__| |
+# |_____/_____/|_____/ 
+
+
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \
 # | .  . | ___   __| | ___| | `' / /'
