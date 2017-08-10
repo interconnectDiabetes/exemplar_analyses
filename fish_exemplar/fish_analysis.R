@@ -113,6 +113,7 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['AusDiab'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['JPHC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['WHI'])
 
 ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
@@ -331,10 +332,16 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 		exceptions = c("SEX", "FAM_DIAB", "WAIST")
 	} 
 	else if (studyName == "Zutphen") {
-		exceptions = c("MEAT", "SEX", "WAIST")
+		exceptions = c("SEX", "WAIST", "SUPPLEMENTS")
 	}
   else if (studyName == "AusDiab") {
     exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
+  }
+  else if (studyName == "JPHC") {
+    exceptions = c("SUPPLEMENTS", "WAIST")
+  } 
+  else if (studyName == "WHI") {
+    exceptions = c("SEX", "SUPPLEMENTS")
   } 
 	else {
 		exceptions = c()
@@ -703,9 +710,9 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 # \_|  |_/\___/ \__,_|\___|_| \_____/
 
 # Model 2a: As model 1 + adj for energy intake, alcohol intake, fibre intake, meat intake, 
-#     fruit intake, vegetables intake, sugary drinks intake, fish oil supplements
+#     fruit intake, vegetables intake, sugary drinks intake
 
-studies_model2 = study_names[! study_names %in% c("NOWAC", "Zutphen", "HOORN", "NHAPC", "ELSA")]
+studies_model2 = study_names[! study_names %in% c("HOORN", "ELSA", "NHAPC", "Zutphen")]
 opals_model2 = opals[studies_model2]
 
 
@@ -717,7 +724,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
 # Survival Model
 ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
-model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
+model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,3,2,2,2), studies = opals_model2)
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
