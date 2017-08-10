@@ -132,21 +132,27 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 	else if (studyName == "InterAct_denmark") {
 		exceptions = c("SUPPLEMENTS")
 	} 
-	else if (studyName == "HOORN") {
-		exceptions = c("SUPPLEMENTS")
-	} 
-	else if (studyName == "NHAPC") {
-		exceptions = c("FAM_DIAB")
-	} 
-	else if (studyName == "NOWAC") {
-		exceptions = c("SEX", "FAM_DIAB", "WAIST")
-	} 
-	else if (studyName == "Zutphen") {
-		exceptions = c("MEAT", "SEX", "WAIST")
-	}
-	else if (studyName == "AusDiab") {
-		exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
-	} 
+  else if (studyName == "HOORN") {
+    exceptions = c("SUPPLEMENTS")
+  } 
+  else if (studyName == "NHAPC") {
+    exceptions = c("FAM_DIAB")
+  } 
+  else if (studyName == "NOWAC") {
+    exceptions = c("SEX", "FAM_DIAB", "WAIST")
+  } 
+  else if (studyName == "Zutphen") {
+    exceptions = c("SEX", "WAIST", "SUPPLEMENTS")
+  }
+  else if (studyName == "AusDiab") {
+    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
+  }
+  else if (studyName == "JPHC") {
+    exceptions = c("SUPPLEMENTS", "WAIST")
+  } 
+  else if (studyName == "WHI") {
+    exceptions = c("SEX", "SUPPLEMENTS")
+  }
 	else {
 		exceptions = c()
 	}
