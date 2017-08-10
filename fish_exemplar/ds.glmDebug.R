@@ -1,5 +1,5 @@
 ## Alternative ds.glm function
-## Author: Paul Scherer
+## Author: Gaye, A., Paul Scherer
 ## Date: 08/08/2017
 
 ds.glmDebug <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weights=NULL, checks=FALSE, maxit=15, CI=0.95, viewIter=FALSE, datasources=NULL) {

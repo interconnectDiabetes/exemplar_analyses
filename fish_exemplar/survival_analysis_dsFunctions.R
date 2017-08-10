@@ -169,23 +169,27 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 	}
 }
 
+
 checkFactoredTime <- function(timeVariable = 'tid.f', studies = opals){
 	# checks a factored time to censor representation typically tid.f for any zero valued levels
 	# as this can be used as an indicator for singular matrices to come at the regression stage
 	# start check with isValid 
 	isValidList = ds.isValid(timeVariable, datasources = studies)
+
 	if (all(isValidList)) { 
 		# even if all the time variables are valid according to datashield, there may be levels with
 		# 0 participants in the factored version of the time variable
 		for (study in studies) {
 			timeVariableSummary = ds.summary(timeVariable, datasources = study)
 			timeVariableSummary = (timeVariableSummary[[1]])[c(4:length(timeVariableSummary[[1]]))]
+			
 			for (i in timeVariableSummary) {
 				if (i == 0){
 					print(ds.summary('tid.f', datasources = studies[study]))
 					stop("One of the levels in the timeVariable has zero members in it!")
 				}
 			}
+			
 			return(TRUE)
 		}
 	} else {
@@ -193,6 +197,7 @@ checkFactoredTime <- function(timeVariable = 'tid.f', studies = opals){
 		stop("There are study(ies) with invalid values for the timeVariable!")
 	}
 }
+
 
 runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals){
 	# main function that runs, fits, and stores the results of a regression model using the 
@@ -255,6 +260,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 
 	return (list(model_all, model_rem))
 }
+
 
 tunedLexisB <- function(ref_table, study) {
 	# does a tuned Lexis B on one study can be used in a parallel loop to run
@@ -348,6 +354,7 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 
 	return (list(model_all, model_rem))
 }
+
 
 runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
@@ -575,6 +582,7 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 	return(list_of_models)
 }
 
-metaRegression <- function(outcome, exposure,) {
+
+metaRegression <- function(outcome, exposure) {
 	return (NULL)
 }
