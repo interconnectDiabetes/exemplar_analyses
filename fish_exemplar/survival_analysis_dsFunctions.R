@@ -185,7 +185,7 @@ checkFactoredTime <- function(timeVariable = 'tid.f', studies = opals){
 			
 			for (i in timeVariableSummary) {
 				if (i == 0){
-					print(ds.summary('tid.f', datasources = studies[study]))
+					print(ds.summary('tid.f', datasources = study))
 					stop("One of the levels in the timeVariable has zero members in it!")
 				}
 			}
