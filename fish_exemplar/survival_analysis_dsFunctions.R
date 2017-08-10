@@ -179,23 +179,24 @@ checkFactoredTime <- function(timeVariable = 'tid.f', studies = opals){
 	if (all(isValidList)) { 
 		# even if all the time variables are valid according to datashield, there may be levels with
 		# 0 participants in the factored version of the time variable
-		for (study in studies) {
-			timeVariableSummary = ds.summary(timeVariable, datasources = study)
+		for (study in c(1:length(studies))) {
+		  print(study)
+		  print(studies[study])
+			timeVariableSummary = ds.summary(timeVariable, datasources = studies[study])
 			timeVariableSummary = (timeVariableSummary[[1]])[c(4:length(timeVariableSummary[[1]]))]
 			
 			for (i in timeVariableSummary) {
 				if (i == 0){
-					print(ds.summary('tid.f', datasources = study))
+					print(ds.summary('tid.f', datasources = studies[study]))
 					stop("One of the levels in the timeVariable has zero members in it!")
 				}
 			}
-			
-			return(TRUE)
 		}
 	} else {
 		print(isValidList)
 		stop("There are study(ies) with invalid values for the timeVariable!")
 	}
+	return(NULL)
 }
 
 
