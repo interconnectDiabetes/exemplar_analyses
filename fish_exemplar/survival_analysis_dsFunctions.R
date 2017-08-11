@@ -148,7 +148,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
     exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
   }
   else if (studyName == "JPHC") {
-    exceptions = c("SUPPLEMENTS", "WAIST")
+    exceptions = c("SUPPLEMENTS", "WAIST", "EDUCATION")
   } 
   else if (studyName == "WHI") {
     exceptions = c("SEX", "SUPPLEMENTS")
