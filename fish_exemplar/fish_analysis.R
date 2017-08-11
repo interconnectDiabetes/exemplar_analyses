@@ -496,19 +496,20 @@ model_1_remtuned = model_1[[2]]
 #  \___ \\___ \| |  | |
 #  ____) |___) | |__| |
 # |_____/_____/|_____/ 
+
+ssd_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                               "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                               "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_ssd = opals[ssd_studies]
+
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("SSD", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-ssd_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
-                                               "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-                                               "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
-opals_ssd = opals[ssd_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_ssd)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_ssd)
 
 my_exposure = c('SSD')
 my_outcome = c('CASE_OBJ')
