@@ -228,6 +228,8 @@ model_1_remtuned = model_1[[2]]
 # |_|  \__,_|\__|\__|\__, |
 #                     __/ |
 #                    |___/ 
+fatty_studies = study_names[! study_names %in% c("Ausdiab", "ELSA", "NHAPC", "SMC", "Whitehall")]
+opals_fatty = opals[fatty_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("FATTY", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
@@ -235,12 +237,8 @@ my_vars_all = c("FATTY", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-
-fatty_studies = study_names[! study_names %in% c("Ausdiab", "ELSA", "NHAPC", "SMC", "Whitehall")]
-opals_fatty = opals[fatty_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fatty)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fatty)
 
 my_exposure = c('FATTY')
 my_outcome = c('CASE_OBJ')
@@ -273,6 +271,10 @@ model_1_remtuned = model_1[[2]]
 # |  __| '__/ _ \/ __| '_ \ 
 # | |  | | |  __/\__ \ | | |
 # |_|  |_|  \___||___/_| |_|
+fresh_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                                 "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_fresh = opals[fresh_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("FRESH", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
@@ -280,13 +282,8 @@ my_vars_all = c("FRESH", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-fresh_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
-                                                 "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
-opals_fresh = opals[fresh_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fresh)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fresh)
 
 my_exposure = c('FRESH')
 my_outcome = c('CASE_OBJ')
@@ -321,17 +318,17 @@ model_1_remtuned = model_1[[2]]
 # | |  | |  | |  __/ (_| |
 # |_|  |_|  |_|\___|\__,_|
 
+fried_studies = study_names[! study_names %in% c("HOORN", "JPHC", "NOWAC", "NHAPC", "SMC", "Whitehall")]
+opals_fried = opals[fried_studies]
+
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("FRIED", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-fried_studies = study_names[! study_names %in% c("HOORN", "JPHC", "NOWAC", "NHAPC", "SMC", "Whitehall")]
-opals_fried = opals[fried_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fried)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fried)
 
 my_exposure = c('FRIED')
 my_outcome = c('CASE_OBJ')
@@ -365,6 +362,8 @@ model_1_remtuned = model_1[[2]]
 # | |    / _ \/ _` | '_ \ 
 # | |___|  __/ (_| | | | |
 # |______\___|\__,_|_| |_|
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN","NHAPC", "SMC", "Whitehall")]
+opals_lean = opals[lean_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("LEAN", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
@@ -372,11 +371,8 @@ my_vars_all = c("LEAN", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN","NHAPC", "SMC", "Whitehall")]
-opals_lean = opals[lean_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_lean)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_lean)
 
 my_exposure = c('LEAN')
 my_outcome = c('CASE_OBJ')
@@ -410,17 +406,16 @@ model_1_remtuned = model_1[[2]]
 # | . ` |/ _ \| '_ \|  __| | / __| '_ \ 
 # | |\  | (_) | | | | |    | \__ \ | | |
 # |_| \_|\___/|_| |_|_|    |_|___/_| |_|
+
+nonfish_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "SMC", "Whitehall")]
+opals_nonfish = opals[nonfish_studies]
+
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("NONFISH", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all)
-
-# quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-nonfish_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "SMC", "Whitehall")]
-opals_nonfish = opals[nonfish_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_nonfish)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_nonfish)
 
 my_exposure = c('NONFISH')
 my_outcome = c('CASE_OBJ')
@@ -454,19 +449,20 @@ model_1_remtuned = model_1[[2]]
 #  \___ \ / _` | | __|
 #  ____) | (_| | | |_ 
 # |_____/ \__,_|_|\__|
+
+salt_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "JPHC", "Zutphen", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                                "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_salt = opals[salt_studies]
+
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
 my_vars_all = c("SALT", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
                 "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
-
-salt_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "JPHC", "Zutphen", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
-                                                "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
-opals_salt = opals[salt_studies]
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_salt)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_salt)
 
 my_exposure = c('SALT')
 my_outcome = c('CASE_OBJ')
