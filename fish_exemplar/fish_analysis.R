@@ -181,8 +181,8 @@ my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals)
 
                                  
 # Exposure: total fish (g/d) at baseline
