@@ -802,7 +802,7 @@ ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_central_surv.svg')
-model_6central = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_central)
+model_6central = model_6central = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_central)
 model_6central_all = model_6central[[1]]
 model_6central_rem = model_6central[[2]]
 
@@ -820,7 +820,7 @@ ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
-model_6eastern = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_eastern)
+model_6eastern = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_eastern)
 model_6eastern_all = model_6eastern[[1]]
 model_6eastern_rem = model_6eastern[[2]]
 
@@ -837,7 +837,7 @@ ds.cbind(x=c('geocode','D4'), newobj='D4')
 
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
-model_6western = runInteractionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), my_interaction, studies = opals_western)
+model_6western = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_western)
 model_6western_all = model_6western[[1]]
 model_6western_rem = model_6western[[2]]
 
