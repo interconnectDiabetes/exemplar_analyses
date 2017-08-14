@@ -181,8 +181,8 @@ my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", 
 my_vars_all <- c('ID', my_vars_all)
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals)
 
 
 # Exposure: total fish (g/d) at baseline
@@ -215,10 +215,326 @@ model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, m
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
 
-# # incremental model 1
+# # # incremental model 1
+# ref_table = 'D8'
+# mypath = file.path('~', 'plots', 'model_1_incremental')
+# model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+
+#  ______    _   _         
+# |  ____|  | | | |        
+# | |__ __ _| |_| |_ _   _ 
+# |  __/ _` | __| __| | | |
+# | | | (_| | |_| |_| |_| |
+# |_|  \__,_|\__|\__|\__, |
+#                     __/ |
+#                    |___/ 
+fatty_studies = study_names[! study_names %in% c("Ausdiab", "ELSA", "NHAPC", "SMC", "Whitehall")]
+opals_fatty = opals[fatty_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("FATTY", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fatty)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fatty)
+
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_1_incremental')
-model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2))
+mypath = file.path('~', 'plots', 'model_1_fatty_normal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fatty )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_fattysurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_fatty)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_fattysurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fatty)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+#  ______             _     
+# |  ____|           | |    
+# | |__ _ __ ___  ___| |__  
+# |  __| '__/ _ \/ __| '_ \ 
+# | |  | | |  __/\__ \ | | |
+# |_|  |_|  \___||___/_| |_|
+fresh_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                                 "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_fresh = opals[fresh_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("FRESH", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fresh)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fresh)
+
+my_exposure = c('FRESH')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_freshnormal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fresh )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_freshsurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_fresh)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_freshsurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fresh)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#  ______    _          _ 
+# |  ____|  (_)        | |
+# | |__ _ __ _  ___  __| |
+# |  __| '__| |/ _ \/ _` |
+# | |  | |  | |  __/ (_| |
+# |_|  |_|  |_|\___|\__,_|
+
+fried_studies = study_names[! study_names %in% c("HOORN", "JPHC", "NOWAC", "NHAPC", "SMC", "Whitehall")]
+opals_fried = opals[fried_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("FRIED", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fried)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fried)
+
+my_exposure = c('FRIED')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_friednormal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fried )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_friedsurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_fried)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_friedsurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_fried)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#  _                      
+# | |                     
+# | |     ___  __ _ _ __  
+# | |    / _ \/ _` | '_ \ 
+# | |___|  __/ (_| | | | |
+# |______\___|\__,_|_| |_|
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN","NHAPC", "SMC", "Whitehall")]
+opals_lean = opals[lean_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("LEAN", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_lean)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_lean)
+
+my_exposure = c('LEAN')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_leannormal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_lean )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_leansurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_lean)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_leansurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_lean)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#  _   _             ______ _     _     
+# | \ | |           |  ____(_)   | |    
+# |  \| | ___  _ __ | |__   _ ___| |__  
+# | . ` |/ _ \| '_ \|  __| | / __| '_ \ 
+# | |\  | (_) | | | | |    | \__ \ | | |
+# |_| \_|\___/|_| |_|_|    |_|___/_| |_|
+
+nonfish_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "SMC", "Whitehall")]
+opals_nonfish = opals[nonfish_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("NONFISH", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_nonfish)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_nonfish)
+
+my_exposure = c('NONFISH')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_nonfishnormal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_nonfish )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_nonfishsurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_nonfish)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_nonfishsurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_nonfish)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#   _____       _ _   
+#  / ____|     | | |  
+# | (___   __ _| | |_ 
+#  \___ \ / _` | | __|
+#  ____) | (_| | | |_ 
+# |_____/ \__,_|_|\__|
+
+salt_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "JPHC", "Zutphen", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                                "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_salt = opals[salt_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("SALT", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_salt)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_salt)
+
+my_exposure = c('SALT')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_saltnormal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_salt )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_saltsurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_salt)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_saltsurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_salt)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+
+
+#   _____ _____ _____  
+#  / ____/ ____|  __ \ 
+# | (___| (___ | |  | |
+#  \___ \\___ \| |  | |
+#  ____) |___) | |__| |
+# |_____/_____/|_____/ 
+
+ssd_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
+                                               "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
+                                               "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+opals_ssd = opals[ssd_studies]
+
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("SSD", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_ssd)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_ssd)
+
+my_exposure = c('SSD')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+# Simple Regression Model For Testing Quickly 
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_ssdnormal_regression.svg')
+model_1reg_results = runRegModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_ssd )
+model_1reg_all = model_1reg_results[[1]]
+model_1reg_REM = model_1reg_results[[2]]
+
+# survival version with lexis b
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_ssdsurvival.svg')
+model_1 = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,1,2,2,2), studies = opals_ssd)
+model_1_all = model_1[[1]]
+model_1_rem = model_1[[2]]
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_ssdsurvivaltuned.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_ssd)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | / __  \

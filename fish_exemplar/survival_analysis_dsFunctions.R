@@ -347,7 +347,7 @@ tunedLexisB <- function(ref_table, study) {
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = study)
 	
-	print("Did LexisB for study \n")
+	print("Did LexisB for study")
 	print(studyName)
 }
 
@@ -643,6 +643,27 @@ runStratificationModel <- function(ref_table, my_exposure, my_outcome, my_covari
 }
 
 
+extractExposureCoefficient <- function(outcome, exposure, data_table, study) {
+  # returns the coefficient for a particular outcome~exposure relation from the coefficients tables made during analysis
+  # for a particular study
+  est_value = data_table[which(data_table$study == study & data_table$outcome == outcome & data_table$cov == exposure),]
+  return(est_value$Estimate)
+}
+
+extractExposureCoefficientGroup <- function(outcome, exposure, data_table, studies = opals){
+  # does the same as extractExpsoureCoefficient for a gorup of opals objects
+  # returns the exponentiated list
+  study_names = names(studies)
+  resulting_coefficients = vector(mode = "numeric", length = length(study_names))
+  for (study in c(1:length(study_names))){
+    study_coeff = extractExposureCoefficient(outcome, exposure, data_table, study = study_names[study])
+    resulting_coefficients[study] = study_coeff
+  } 
+  return(exp(resulting_coefficients))
+}
+
 metaRegression <- function(outcome, exposure) {
 	return (NULL)
 }
+
+
