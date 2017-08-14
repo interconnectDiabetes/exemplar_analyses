@@ -374,6 +374,9 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 	for (study in c(1:length(studies))) {
 		tunedLexisB(ref_table, studies[study])
 	}
+	
+	ds.asNumeric('A$CENSOR','censor', datasources = studies)
+	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
 
 	checkFactoredTime(studies = studies)
 	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)

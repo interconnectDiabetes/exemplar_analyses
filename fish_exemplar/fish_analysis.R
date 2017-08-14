@@ -546,9 +546,12 @@ model_1_remtuned = model_1[[2]]
 
 #     fruit intake, vegetables intake, sugary drinks intake
 
-studies_model2 = study_names[! study_names %in% c( "HOORN" )]
+studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","NHAPC", "JPHC")]
 
 opals_model2 = opals[studies_model2]
+
+# Change order to check troublesome studies first
+opals_model2 <- opals_model2[c("ELSA", "Whitehall", "InterAct_france", "InterAct_denmark", "AusDiab", "InterAct_italy", "InterAct_netherlands",  "InterAct_spain", "InterAct_sweden", "InterAct_uk", "InterAct_germany", "NOWAC", "SMC", "WHI")]
 
 
 my_exposure = c('TOTAL')
@@ -574,6 +577,13 @@ model_2reg_REM = model_2reg_results[[2]]
 # ref_table = 'D8'
 # mypath = file.path('~', 'plots', 'model_2_incremental')
 # model_2_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2), studies = opals_model2)
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_2_survivaltuned.svg')
+model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_model2)
+model_2_alltuned = model_2[[1]]
+model_2_remtuned = model_2[[2]]
 
 # ___  ___          _      _   _____ 
 # |  \/  |         | |    | | |____ |
