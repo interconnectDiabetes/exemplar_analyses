@@ -183,7 +183,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals)
-
+length_complete_split_total = ds.length("D8$SEX", type = "split", datasources = opals)
                                  
 # Exposure: total fish (g/d) at baseline
 # Outcome: CASE_OBJ
@@ -228,7 +228,7 @@ model_1_remtuned = model_1[[2]]
 # |_|  \__,_|\__|\__|\__, |
 #                     __/ |
 #                    |___/ 
-fatty_studies = study_names[! study_names %in% c("Ausdiab", "ELSA", "NHAPC", "SMC", "Whitehall")]
+fatty_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "SMC", "Whitehall")]
 opals_fatty = opals[fatty_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -239,6 +239,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fatty)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fatty)
+length_complete_split_fatty = ds.length("D8$SEX", type = "split", datasources = opals_fatty)
 
 my_exposure = c('FATTY')
 my_outcome = c('CASE_OBJ')
@@ -273,7 +274,7 @@ model_1_remtuned = model_1[[2]]
 # |_|  |_|  \___||___/_| |_|
 fresh_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
                                                  "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy")]
 opals_fresh = opals[fresh_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -284,6 +285,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fresh)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fresh)
+length_complete_split_fresh = ds.length("D8$SEX", type = "split", datasources = opals_fresh)
 
 my_exposure = c('FRESH')
 my_outcome = c('CASE_OBJ')
@@ -318,7 +320,7 @@ model_1_remtuned = model_1[[2]]
 # | |  | |  | |  __/ (_| |
 # |_|  |_|  |_|\___|\__,_|
 
-fried_studies = study_names[! study_names %in% c("HOORN", "JPHC", "NOWAC", "NHAPC", "SMC", "Whitehall")]
+fried_studies = study_names[! study_names %in% c("HOORN", "JPHC", "NOWAC", "NHAPC", "SMC", "Whitehall", "InterAct_france")]
 opals_fried = opals[fried_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -329,6 +331,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fried)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fried)
+length_complete_split_fried = ds.length("D8$SEX", type = "split", datasources = opals_fried)
 
 my_exposure = c('FRIED')
 my_outcome = c('CASE_OBJ')
@@ -362,7 +365,7 @@ model_1_remtuned = model_1[[2]]
 # | |    / _ \/ _` | '_ \ 
 # | |___|  __/ (_| | | | |
 # |______\___|\__,_|_| |_|
-lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN","NHAPC", "SMC", "Whitehall")]
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN","NHAPC", "SMC", "Whitehall", "InterAct_germany")]
 opals_lean = opals[lean_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -373,6 +376,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_lean)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_lean)
+length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = opals_lean)
 
 my_exposure = c('LEAN')
 my_outcome = c('CASE_OBJ')
@@ -407,7 +411,7 @@ model_1_remtuned = model_1[[2]]
 # | |\  | (_) | | | | |    | \__ \ | | |
 # |_| \_|\___/|_| |_|_|    |_|___/_| |_|
 
-nonfish_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "SMC", "Whitehall")]
+nonfish_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "SMC", "Whitehall", "InterAct_germany")]
 opals_nonfish = opals[nonfish_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -416,6 +420,7 @@ my_vars_all = c("NONFISH", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING"
 my_vars_all <- c('ID', my_vars_all)
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_nonfish)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_nonfish)
+length_complete_split_nonfish = ds.length("D8$SEX", type = "split", datasources = opals_nonfish)
 
 my_exposure = c('NONFISH')
 my_outcome = c('CASE_OBJ')
@@ -452,7 +457,7 @@ model_1_remtuned = model_1[[2]]
 
 salt_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "JPHC", "Zutphen", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
                                                 "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy")]
 opals_salt = opals[salt_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -463,6 +468,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_salt)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_salt)
+length_complete_split_salt = ds.length("D8$SEX", type = "split", datasources = opals_salt)
 
 my_exposure = c('SALT')
 my_outcome = c('CASE_OBJ')
@@ -499,7 +505,7 @@ model_1_remtuned = model_1[[2]]
 
 ssd_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
                                                "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-                                               "InterAct_germany", "InterAct_sweden", "InterAct_denmark")]
+                                               "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy")]
 opals_ssd = opals[ssd_studies]
 
 # To limit the loss of participants we will only look variables we are investigating (from Silvia)
@@ -510,6 +516,7 @@ my_vars_all <- c('ID', my_vars_all)
 # quicker complete cases
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_ssd)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_ssd)
+length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = opals_ssd)
 
 my_exposure = c('SSD')
 my_outcome = c('CASE_OBJ')
@@ -547,7 +554,6 @@ model_1_remtuned = model_1[[2]]
 #     fruit intake, vegetables intake, sugary drinks intake
 
 studies_model2 = study_names[! study_names %in% c("HOORN", "ELSA", "NHAPC", "Zutphen")]
-
 opals_model2 = opals[studies_model2]
 
 
@@ -841,13 +847,16 @@ model_6western_rem = model_6western[[2]]
 # and then look at the coefficients here.
 # we can just use the regression coefficients created out of the values and 
 # then do local linear regression to see the relationship between the variables.
-study_regression_coefficients = c(model_6central_all, model_6western_all, model_6eastern_all)
+central_estimates = extractExposureCoefficientGroup(outcome = "censor", exposure = "TOTAL", data_table = model_6central_all, studies = opals_central)
+western_estimates = extractExposureCoefficientGroup(outcome = "censor", exposure = "TOTAL", data_table = model_6western_all, studies = opals_western)
+eastern_estimates = extractExposureCoefficientGroup(outcome = "censor", exposure = "TOTAL", data_table = model_6eastern_all, studies = opals_eastern)
+all_estimates = c(central_estimates, western_estimates, eastern_estimates)
 central_codes = rep(1, times = length(opals_central))
 western_codes = rep(2, times = length(opals_western))
 eastern_codes = rep(3, times = length(opals_eastern))
-geocodes = as.factor(x = c(central_codes, western_codes, eastern_codes))
+geo_codes = as.factor(x = c(central_codes, western_codes, eastern_codes))
 
-meta_fmla = "total_coeffs wrt censor ~  geocodes"
-meta_regression_model = lm(formula = meta_fmla)
+meta_fmla = as.formula("all_estimates ~  geo_codes")
+meta_regression_model = glm(formula = meta_fmla)
 
 
