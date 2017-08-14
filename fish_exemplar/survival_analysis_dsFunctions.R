@@ -148,7 +148,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
     exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
   }
   else if (studyName == "JPHC") {
-    exceptions = c("SUPPLEMENTS", "WAIST")
+    exceptions = c("SUPPLEMENTS", "WAIST", "EDUCATION")
   } 
   else if (studyName == "WHI") {
     exceptions = c("SEX", "SUPPLEMENTS")
@@ -284,15 +284,65 @@ tunedLexisB <- function(ref_table, study) {
 	exitColString = paste0(ref_table, '$', 'newEndDate')
 	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
 
-	if (studyName == "InterAct_france"){ 
-		interval_width =  c(2,2,1,3.5,2,2,1,2,2,2)
-	} 
-	else if (studyName == "InterAct_italy") {
-		interval_width =  c(2,2,1,3.5,2,2,1,2,2,2)
-	}	
-	else {
-		interval_width =  c(2,2,1,3.5,2,2,1,2,2,2)
+	if (studyName == "InterAct_germany"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
 	}
+	else if (studyName == "InterAct_denmark"){ 
+	  interval_width =  c(2,2,2,1.5,5)
+	}
+	else if (studyName == "InterAct_france"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1.5,1,4)
+	}
+	else if (studyName == "InterAct_italy"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "InterAct_netherlands"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "InterAct_spain"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "InterAct_sweden"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "InterAct_uk"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "HOORN"){ 
+	  interval_width =  c(2,2,2.5,2.5)
+	}
+	else if (studyName == "ELSA"){ 
+	  #interval_width =  c(2,2,1,3.5)
+	  interval_width =  c(2,2,0.5,3.5)
+	}
+	else if (studyName == "NOWAC"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "SMC"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "Zutphen"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "Whitehall"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "AusDiab"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1.5,1,1,1,2)
+	}
+	else if (studyName == "NHAPC"){ 
+	  interval_width =  c(1,1,1,1,1,1)
+	}
+	else if (studyName == "WHI"){ 
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
+	}
+	else if (studyName == "JPHC"){ 
+	  interval_width =  c(1,1,1,1,1,2.5)
+	}
+	else {
+	  interval_width =  c(1)
+	}
+	
 
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = study)

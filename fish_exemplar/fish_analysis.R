@@ -18,8 +18,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
+#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Source in the Extra functions for analysis
 source("fish_exemplar/helperFunctions.R")
@@ -184,7 +184,7 @@ my_vars_all <- c('ID', my_vars_all)
 ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
 ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE)
 
-                                 
+
 # Exposure: total fish (g/d) at baseline
 # Outcome: CASE_OBJ
 # Confounders: Age, sex, education, smoking, physical activity, BMI, co-morbidities
@@ -230,7 +230,7 @@ model_1_inc = runIncrementalSurvivalModel(ref_table, my_exposure, my_outcome, my
 
 #     fruit intake, vegetables intake, sugary drinks intake
 
-studies_model2 = study_names[! study_names %in% c("HOORN", "ELSA", "NHAPC", "Zutphen")]
+studies_model2 = study_names[! study_names %in% c( "HOORN" )]
 
 opals_model2 = opals[studies_model2]
 
@@ -243,7 +243,7 @@ my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMOR
 # Survival Model
 ref_table = 'D8'
 mypath = file.path('~', 'plots', 'model_2a_survival.svg')
-model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,3,2,2,2), studies = opals_model2)
+model_2a = runSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, c(2,2,1,3.5,2,2,3.5,2,2,2), studies = opals_model2)
 model_2a_all = model_2a[[1]]
 model_2a_rem = model_2a[[2]]
 
@@ -456,8 +456,8 @@ model_overweight_rem = model_overweight[[2]]
 # Present analyses by geographical area (Central area, Eastern area, Western area)
 # subset opals list by geographic area then carry out regression for each one on their own.
 opals_central = opals[c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
-                      "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
-                      "InterAct_denmark", "NOWAC", "SMC", "Whitehall")]
+                        "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
+                        "InterAct_denmark", "NOWAC", "SMC", "Whitehall")]
 opals_western = opals["elsa"]
 opals_eastern = opals["NHAPC", "JPHC"]
 
