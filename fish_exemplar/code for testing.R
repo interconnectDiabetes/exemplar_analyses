@@ -46,7 +46,7 @@ ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals[my_
 # To assess the impact of each confounder we will also run models including each confounder separately.
 
 
-ds.lexis.b(data='D8', intervalWidth =  c(1,1,1,1,1,2.5), idCol = 'D8$ID', entryCol = 'D8$newStartDate', 
+ds.lexis.b(data='D8', intervalWidth =  c(1,1,1,1,0.5,2.5), idCol = 'D8$ID', entryCol = 'D8$newStartDate', 
            exitCol = 'D8$newEndDate', statusCol = 'D8$CASE_OBJ', expandDF = 'A', datasources = opals[my_study])
 
 ds.asNumeric('A$CENSOR','censor', datasources = opals[my_study])

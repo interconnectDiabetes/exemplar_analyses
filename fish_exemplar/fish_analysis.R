@@ -554,14 +554,18 @@ model_1_remtuned = model_1[[2]]
 #     fruit intake, vegetables intake, sugary drinks intake
 
 
-studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","NHAPC", "JPHC")]
+studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","NHAPC")]
 
 
 opals_model2 = opals[studies_model2]
 
 # Change order to check troublesome studies first
-opals_model2 <- opals_model2[c("ELSA", "Whitehall", "InterAct_france", "InterAct_denmark", "AusDiab", "InterAct_italy", "InterAct_netherlands",  "InterAct_spain", "InterAct_sweden", "InterAct_uk", "InterAct_germany", "NOWAC", "SMC", "WHI")]
+opals_model2 <- opals_model2[c("JPHC","WHI",  "ELSA", "Whitehall", "InterAct_france", "InterAct_denmark", "AusDiab", "InterAct_italy", "InterAct_netherlands",  "InterAct_spain", "InterAct_sweden", "InterAct_uk", "InterAct_germany", "NOWAC", "SMC")]
 
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_model2)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_model2)
+length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = opals_model2)
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
@@ -793,13 +797,15 @@ model_overweight_rem = model_overweight[[2]]
 opals_central = opals[c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
                         "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
                         "InterAct_denmark", "NOWAC", "SMC", "Whitehall")]
-opals_western = opals["elsa"]
-opals_eastern = opals["NHAPC", "JPHC"]
+opals_western = opals[c("ELSA", "WHI")]
+opals_eastern = opals[c("NHAPC", "JPHC")]
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID","E_INTAKE", 
-                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+#my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID","E_INTAKE", 
+#                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
 
 # Assign country code to each of the studies
 # Adding in the weights as described by Dr. Burton

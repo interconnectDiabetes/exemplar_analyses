@@ -334,10 +334,10 @@ tunedLexisB <- function(ref_table, study) {
 	  interval_width =  c(1,1,1,1,1,1)
 	}
 	else if (studyName == "WHI"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
+	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1)
 	}
 	else if (studyName == "JPHC"){ 
-	  interval_width =  c(1,1,1,1,1,2.5)
+	  interval_width =  c(1,1,1,1,0.5,2.5)
 	}
 	else {
 	  interval_width =  c(1)
