@@ -41,33 +41,33 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ########################### SET UP DATA  ######################################
 ###############################################################################
 # all participants
-all_participants <- ds.length('D$TOTAL')
-all_participants_split <- ds.length('D$TOTAL',type = 'split')
+all_participants <- ds.length('D$TOTAL', datasources = opals)
+all_participants_split <- ds.length('D$TOTAL',type = 'split', datasources = opals)
 
 # Set studynames and numstudies
-temp <- ds.summary('D$TOTAL')
+temp <- ds.summary('D$TOTAL', datasources = opals)
 study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
 
 # remove participants with prevalent diabetes and type 1
-ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
-noPrevalence <- ds.length('E1$SEX', type = 'split')
-ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
-noType1 <- ds.length('E2$SEX', type = 'split')
+ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0, datasources = opals)
+noPrevalence <- ds.length('E1$SEX', type = 'split', datasources = opals)
+ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1, datasources = opals)
+noType1 <- ds.length('E2$SEX', type = 'split', datasources = opals)
 
 # In order to deal with the intake subsets stratified by sex we will have to create subsets of sex,
 # do the intake subset and then rbind the groups back together. What follows is DataSHIELD magic
-ds.asNumeric("E2$SEX", newobj = "sexNumbers")
-ds.assign(toAssign="(sexNumbers*300)+E2$E_INTAKE", newobj = "adjustedLowerBound")
-ds.assign(toAssign="(sexNumbers*700)+E2$E_INTAKE", newobj = "adjustedUpperBound")
-ds.cbind(x=c("adjustedLowerBound", "E2"), newobj = "L1")
-ds.cbind(x=c("adjustedUpperBound", "L1"), newobj = "L2")
+ds.asNumeric("E2$SEX", newobj = "sexNumbers", datasources = opals)
+ds.assign(toAssign="(sexNumbers*300)+E2$E_INTAKE", newobj = "adjustedLowerBound", datasources = opals)
+ds.assign(toAssign="(sexNumbers*700)+E2$E_INTAKE", newobj = "adjustedUpperBound", datasources = opals)
+ds.cbind(x=c("adjustedLowerBound", "E2"), newobj = "L1", datasources = opals)
+ds.cbind(x=c("adjustedUpperBound", "L1"), newobj = "L2", datasources = opals)
 # remove participants with too little and excessive consumption of calories
-ds.subset(x = 'L2', subset = 'E3', logicalOperator = 'adjustedUpperBound<=', threshold = 4200)
-under3500cal <- ds.length('E3$SEX', type = 'split')
-ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800)
-afterIntake <- ds.length('E4$SEX', type = 'split')
+ds.subset(x = 'L2', subset = 'E3', logicalOperator = 'adjustedUpperBound<=', threshold = 4200, datasources = opals)
+under3500cal <- ds.length('E3$SEX', type = 'split', datasources = opals)
+ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800, datasources = opals)
+afterIntake <- ds.length('E4$SEX', type = 'split', datasources = opals)
 
 # Setup an additional proxy ID column for each study 
 for(i in 1:length(opals)){
@@ -85,9 +85,9 @@ for(i in 1:length(opals)){
   eval(parse(text=work2))
 }
 rm(i)
-ds.cbind(x=c('newStartDate','D2'), newobj='D3')
-ds.assign(toAssign = 'D3$FUP_OBJ', newobj = 'newEndDate')
-ds.cbind(x=c('newEndDate','D3'), newobj='D5')
+ds.cbind(x=c('newStartDate','D2'), newobj='D3', datasources = opals)
+ds.assign(toAssign = 'D3$FUP_OBJ', newobj = 'newEndDate', datasources = opals)
+ds.cbind(x=c('newEndDate','D3'), newobj='D5', datasources = opals)
 
 # Adding in the weights as described by Dr. Burton
 ds.asNumeric('D5$CASE_OBJ', newobj = "caseNums")
@@ -138,18 +138,18 @@ my_vars_all = c("AGE_BASE", "CASE_OBJ", "TOTAL",
 my_vars_all <- c('ID', my_vars_all) #because datashield doesnt like single column subsets
 
 # quicker complete cases
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all)
-ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE)
-length_complete = ds.length('D4$SEX')
-length_complete_split = ds.length("D4$SEX", type = "split")
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D4', completeCases = TRUE, datasources = opals)
+length_complete = ds.length('D4$SEX', datasources = opals)
+length_complete_split = ds.length("D4$SEX", type = "split", datasources = opals)
 
-## Dataframe to hold length figures
+# # Dataframe to hold length figures
 # model_all_len <- data.frame()
 # model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake)
 # for (i in 2:length(my_vars_all)){
 #   print(my_vars_all[1:i])
-#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i])
-#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE)
+#   ds.subset(x = 'D6', subset = 'E6', cols =  my_vars_all[1:i], datasources = opals)
+#   ds.subset(x = 'E6', subset = 'E7', completeCases = TRUE, datasources = opals)
 #   thingToBind = vector("numeric")
 #   print(i)
 #   for (k in 1:num_studies){
