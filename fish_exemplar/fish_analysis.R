@@ -33,7 +33,7 @@ datashield.logout(opals)
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
            "FUP_OBJ", "FUP_OBJ_SELF", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG",  "FIBER", "SUG_BEVS", "WAIST", "SUPPLEMENTS", 
-           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "AGE_BASE", "MEAT", "COMORBID")
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "AGE_BASE", "MEAT", "COMORBID", "BMI_CAT")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 # opals <- datashield.login(logins=logindata_all,assign=TRUE, directory = '/home/shared/certificates/fish') # for all available variables
 
@@ -792,34 +792,37 @@ model_overweight_rem = model_overweight[[2]]
 # | |  | | (_) | (_| |  __/ | | \_/ |
 # \_|  |_/\___/ \__,_|\___|_| \_____/
 
+# To limit the loss of participants we will only look variables we are investigating (from Silvia)
+my_vars_all = c("TOTAL", "CASE_OBJ", "AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", 
+                "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+
+# quicker complete cases
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals)
+
+# Exposure: total fish (g/d) at baseline
+# Outcome: CASE_OBJ
+# Confounders: Age, sex, education, smoking, physical activity, BMI, co-morbidities
+# To assess the impact of each confounder we will also run models including each confounder separately.
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+
 # Present analyses by geographical area (Central area, Eastern area, Western area)
 # subset opals list by geographic area then carry out regression for each one on their own.
 opals_central = opals[c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
                         "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
                         "InterAct_denmark", "NOWAC", "SMC", "Whitehall")]
 opals_western = opals[c("ELSA", "WHI")]
-opals_eastern = opals[c("NHAPC", "JPHC")]
-
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-#my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID","E_INTAKE", 
-#                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
-
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
-
+opals_eastern = opals[c("NHAPC", "JPHC", "AusDiab")]
+opals_eastern = opals[c("NHAPC", "AusDiab")]
 # Assign country code to each of the studies
 # Adding in the weights as described by Dr. Burton
 ######################################################
 # central area
 ######################################################
-length_central = ds.length('D4$SEX', datasources = opals_central)
-for(i in 1:length(opals_central)){
-  ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_central[i])
-  ds.asFactor(x = "geocode", newobj = "geocode", datasources = opals_central[i])
-}
-rm(i) # removal of i as it is not scoped within the loop
-ds.cbind(x=c('geocode','D4'), newobj='D4')
-
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_central_surv.svg')
 model_6central = model_6central = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_central)
@@ -829,15 +832,6 @@ model_6central_rem = model_6central[[2]]
 ######################################################
 # eastern area
 ######################################################
-length_eastern = ds.length('D4$SEX', datasources = opals_eastern)
-for(i in 1:length(opals_eastern)){
-  ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_eastern[i])
-  ds.asFactor(x = "geocode", newobj = "geocode", datasources = opals_eastern[i])
-}
-rm(i) # removal of i as it is not scoped within the loop
-ds.cbind(x=c('geocode','D4'), newobj='D4')
-
-
 ref_table = 'D4'
 mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
 model_6eastern = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_eastern)
@@ -847,16 +841,8 @@ model_6eastern_rem = model_6eastern[[2]]
 ######################################################
 # western area
 ######################################################
-length_central = ds.length('D4$SEX', datasources = opals_western)
-for(i in 1:length(opals_western)){
-  ds.assign(toAssign = "newStartDate + 1", newobj = "geocode", datasources = opals_western[i])
-  ds.asFactor(x = "geocode", newobj = "geocode", datasources = opals_western[i])
-}
-rm(i) # removal of i as it is not scoped within the loop
-ds.cbind(x=c('geocode','D4'), newobj='D4')
-
 ref_table = 'D4'
-mypath = file.path('~', 'plots', 'model_6_eastern_surv.svg')
+mypath = file.path('~', 'plots', 'model_6_western_surv.svg')
 model_6western = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals_western)
 model_6western_all = model_6western[[1]]
 model_6western_rem = model_6western[[2]]
@@ -866,9 +852,9 @@ model_6western_rem = model_6western[[2]]
 # and then look at the coefficients here.
 # we can just use the regression coefficients created out of the values and 
 # then do local linear regression to see the relationship between the variables.
-central_estimates = extractExposureCoefficientGroup(outcome = "censor", exposure = "TOTAL", data_table = model_6central_all, studies = opals_central)
-western_estimates = extractExposureCoefficientGroup(outcome = "censor", exposure = "TOTAL", data_table = model_6western_all, studies = opals_western)
-eastern_estimates = extractExposureCoefficientGroup(outcome = "censor", exposure = "TOTAL", data_table = model_6eastern_all, studies = opals_eastern)
+central_estimates = extractExposureCoefficientGroup(outcome = "CASE_OBJ", exposure = "TOTAL", data_table = model_6central_all, studies = opals_central)
+western_estimates = extractExposureCoefficientGroup(outcome = "CASE_OBJ", exposure = "TOTAL", data_table = model_6western_all, studies = opals_western)
+eastern_estimates = extractExposureCoefficientGroup(outcome = "CASE_OBJ", exposure = "TOTAL", data_table = model_6eastern_all, studies = opals_eastern)
 all_estimates = c(central_estimates, western_estimates, eastern_estimates)
 central_codes = rep(1, times = length(opals_central))
 western_codes = rep(2, times = length(opals_western))
