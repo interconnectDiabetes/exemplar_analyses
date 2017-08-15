@@ -664,9 +664,3 @@ extractExposureCoefficientGroup <- function(outcome, exposure, data_table, studi
   } 
   return(exp(resulting_coefficients))
 }
-
-metaRegression <- function(outcome, exposure) {
-	return (NULL)
-}
-
-
