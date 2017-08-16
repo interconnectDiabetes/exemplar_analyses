@@ -14,8 +14,8 @@ setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC d
 # AGE_BASE
 dfa = read.csv2(file = "Y00/DATA/csv/aaref.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
-age_base = subset.data.frame(dfa, select = c(EXAMAGE, PID))
-age_base1 = subset.data.frame(dfb, select = c(A01AGE1, PID))
+EXAMAGE = subset.data.frame(dfa, select = c(EXAMAGE, PID))
+A01AGE1 = subset.data.frame(dfb, select = c(A01AGE1, PID))
 
 # TYPE_DIAB
 
@@ -23,9 +23,9 @@ age_base1 = subset.data.frame(dfb, select = c(A01AGE1, PID))
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "Y00/DATA/csv/aaf09gen.csv", header = TRUE, sep = ",")
 dfc = read.csv2(file = "Y00/DATA/csv/aachem.csv", header = TRUE, sep = ",")
-a08diab = subset.data.frame(dfa, select = c(A08DIAB, PID))
-a09dibst = subset.data.frame(dfb, select = c(A09DIBST, PID))
-al3glu = subset.data.frame(dfb, select = c(AL3_GLU, PID))
+A08DIAB = subset.data.frame(dfa, select = c(A08DIAB, PID))
+A09DIBST = subset.data.frame(dfb, select = c(A09DIBST, PID))
+AL3_GLU = subset.data.frame(dfb, select = c(AL3_GLU, PID))
 
 
 # CASE_OBJ and CASE_OBJ_SELF
@@ -207,11 +207,11 @@ total = subset.data.frame(dfa, select = c(A06FISH, PID))
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 # SEX
 dfa = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
-sex = subset.data.frame(dfa, select = c(A01SEX, PID))
+A01SEX = subset.data.frame(dfa, select = c(A01SEX, PID))
 
 # BMI_CAT
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",")
-bmicat = subset.data.frame(dfa, select = c(A20BMI, PID))
+A20BMI = subset.data.frame(dfa, select = c(A20BMI, PID))
              
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
@@ -223,22 +223,22 @@ bmicat = subset.data.frame(dfa, select = c(A20BMI, PID))
 # Education a bit weird have to or them
 dfa = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "Y00/DATA/csv/aaf03.csv", header = TRUE, sep = ",")
-education = subset.data.frame(dfa, select = c(A01ED1, PID))
-education1 = subset.data.frame(dfb, select = c(A03ED, PID))
+A01ED1 = subset.data.frame(dfa, select = c(A01ED1, PID))
+A03ED = subset.data.frame(dfb, select = c(A03ED, PID))
 
 # Smoking also or them
 dfa = read.csv2(file = "Y00/DATA/csv/aaf10.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
-smoking = subset.data.frame(dfa, select = c(A10SMOKE, PID))
-smoking1 = subset.data.frame(dfb, select = c(A01SMNOW, PID))
+A10SMOKE = subset.data.frame(dfa, select = c(A10SMOKE, PID))
+A01SMNOW = subset.data.frame(dfb, select = c(A01SMNOW, PID))
 
 # PA
 dfa = read.csv2(file = "Y00/DATA/csv/aaf10.csv", header = TRUE, sep = ",")
-pa = subset.data.frame(dfa, select = c(A19MODWK, PID))
+A19MODWK = subset.data.frame(dfa, select = c(A19MODWK, PID))
 
 # ALCOHOL
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06a.csv", header = TRUE, sep = ",")
-pa = subset.data.frame(dfa, select = c(A06ALCHL, PID))
+A06ALCHL = subset.data.frame(dfa, select = c(A06ALCHL, PID))
 
 # FAM_DIAB
 dfa = read.csv2(file = "Y00/DATA/csv/aaf11.csv", header = TRUE, sep = ",")
@@ -246,34 +246,34 @@ famdiab = subset.data.frame(dfa, select = c(A11MDIAB,A11FDIAB,A11BDIAB, A11SDIAB
 
 # MI
 dfa = read.csv2(file = "Y00/DATA/csv/aaf09gen.csv", header = TRUE, sep = ",")
-pa = subset.data.frame(dfa, select = c(A09HRTAK, PID))
+A09HRTAK = subset.data.frame(dfa, select = c(A09HRTAK, PID))
 
 # STROKE
 # nothing here mate
 
 # CANCER
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
-cancer = subset.data.frame(dfa, select = c(A08CANCR, PID))
+A08CANCR = subset.data.frame(dfa, select = c(A08CANCR, PID))
 
 # HYPERTENSION
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
-hyper = subset.data.frame(dfa, select = c(A08HBP, PID))
+A08HBP = subset.data.frame(dfa, select = c(A08HBP, PID))
 
 # E_INTAKE
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06a.csv", header = TRUE, sep = ",")
-e_intake = subset.data.frame(dfa, select = c(A06CALO, PID))
+A06CALO = subset.data.frame(dfa, select = c(A06CALO, PID))
 
 # FRUIT
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06mj.csv", header = TRUE, sep = ",")
-fruit = subset.data.frame(dfa, select = c(A06FRUIT, PID))
+A06FRUIT = subset.data.frame(dfa, select = c(A06FRUIT, PID))
 
 # VEG
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06mj.csv", header = TRUE, sep = ",")
-veg = subset.data.frame(dfa, select = c(A06VEGETABLE, PID))
+A06VEGETABLE = subset.data.frame(dfa, select = c(A06VEGETABLE, PID))
 
 # FIBER
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06a.csv", header = TRUE, sep = ",")
-fiber = subset.data.frame(dfa, select = c(A06FIBER, PID))
+A06FIBER = subset.data.frame(dfa, select = c(A06FIBER, PID))
 
 # RED_MEAT
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",")
@@ -285,15 +285,15 @@ proc = subset.data.frame(dfa, select = c(A06MCF0200,A06MCF0100 , PID))
 
 # SUG_BEVS
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",")
-sugbev = subset.data.frame(dfa, select = c(A06BVS0400, PID))
+A06BVS0400 = subset.data.frame(dfa, select = c(A06BVS0400, PID))
 
 # MEDS
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
-meds = subset.data.frame(dfa, select = c(A08BPMED, PID))
+A08BPMED = subset.data.frame(dfa, select = c(A08BPMED, PID))
 
 # WAIST
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",")
-waist = subset.data.frame(dfa, select = c(A20WST, PID))
+A20WST = subset.data.frame(dfa, select = c(A20WST, PID))
 
 #################################################################################################################
 #################################################################################################################
