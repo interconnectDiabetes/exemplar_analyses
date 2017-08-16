@@ -101,36 +101,77 @@ H08MEDDIAA = NULL
 
 # AGE_END_OBJ 
 # AGE_END_OBJ_SELF
-dfd = read.csv2(file = "Y00/DATA/csv/baf09dib.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/baref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/caf08.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "Y00/DATA/csv/baf09dib.csv", header = TRUE, sep = ",")
+dfb = read.csv2(file = "Y00/DATA/csv/baref.csv", header = TRUE, sep = ",")
+B09DIBAG = subset.data.frame(dfaz, select = c(B09DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfc = read.csv2(file = "Y00/DATA/csv/caf08.csv", header = TRUE, sep = ",")
 dfd = read.csv2(file = "Y00/DATA/csv/caref.csv", header = TRUE, sep = ",")
+C08DIBAG = subset.data.frame(dfaz, select = c(C08DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
 dfe = read.csv2(file = "Y00/DATA/csv/daf08.csv", header = TRUE, sep = ",")
 dff = read.csv2(file = "Y00/DATA/csv/daref.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/eaf08.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/earef.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/faf08.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/faref.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/gaf08.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/garef.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/haf08.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/haref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/baref.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/baref.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/caref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/caref.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/daref.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/daref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/earef.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/earef.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/faref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/faref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/garef.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y00/DATA/csv/garef.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "Y00/DATA/csv/haref.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "Y00/DATA/csv/haref.csv", header = TRUE, sep = ",")
-                                           
-#  _____                                         
+D08DIBAG = subset.data.frame(dfaz, select = c(D08DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfg = read.csv2(file = "Y00/DATA/csv/eaf08.csv", header = TRUE, sep = ",")
+dfh = read.csv2(file = "Y00/DATA/csv/earef.csv", header = TRUE, sep = ",")
+E08DIBAG = subset.data.frame(dfaz, select = c(E08DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfi = read.csv2(file = "Y00/DATA/csv/faf08.csv", header = TRUE, sep = ",")
+dfj = read.csv2(file = "Y00/DATA/csv/faref.csv", header = TRUE, sep = ",")
+F08DIBAG = subset.data.frame(dfaz, select = c(F08DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfk = read.csv2(file = "Y00/DATA/csv/gaf08.csv", header = TRUE, sep = ",")
+dfl = read.csv2(file = "Y00/DATA/csv/garef.csv", header = TRUE, sep = ",")
+G08DIBAG = subset.data.frame(dfaz, select = c(G08DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfm = read.csv2(file = "Y00/DATA/csv/haf08.csv", header = TRUE, sep = ",")
+dfn = read.csv2(file = "Y00/DATA/csv/haref.csv", header = TRUE, sep = ",")
+H08DIBAG = subset.data.frame(dfaz, select = c(H08DIBAG, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfo = read.csv2(file = "Y00/DATA/csv/baref.csv", header = TRUE, sep = ",")
+dfp = read.csv2(file = "Y00/DATA/csv/baref.csv", header = TRUE, sep = ",")
+EX2_AGE = subset.data.frame(dfaz, select = c(EX2_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfq = read.csv2(file = "Y00/DATA/csv/caref.csv", header = TRUE, sep = ",")
+dfr = read.csv2(file = "Y00/DATA/csv/caref.csv", header = TRUE, sep = ",")
+EX3_AGE = subset.data.frame(dfaz, select = c(EX3_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfs = read.csv2(file = "Y00/DATA/csv/daref.csv", header = TRUE, sep = ",")
+dft = read.csv2(file = "Y00/DATA/csv/daref.csv", header = TRUE, sep = ",")
+EX4_AGE = subset.data.frame(dfaz, select = c(EX4_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfu = read.csv2(file = "Y00/DATA/csv/earef.csv", header = TRUE, sep = ",")
+dfv = read.csv2(file = "Y00/DATA/csv/earef.csv", header = TRUE, sep = ",")
+EX5_AGE = subset.data.frame(dfaz, select = c(EX5_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfw = read.csv2(file = "Y00/DATA/csv/faref.csv", header = TRUE, sep = ",")
+dfx = read.csv2(file = "Y00/DATA/csv/faref.csv", header = TRUE, sep = ",")
+EX6_AGE = subset.data.frame(dfaz, select = c(EX6_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfy = read.csv2(file = "Y00/DATA/csv/garef.csv", header = TRUE, sep = ",")
+dfz = read.csv2(file = "Y00/DATA/csv/garef.csv", header = TRUE, sep = ",")
+EX7_AGE = subset.data.frame(dfaz, select = c(EX7_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+
+dfaa = read.csv2(file = "Y00/DATA/csv/haref.csv", header = TRUE, sep = ",")
+dfab = read.csv2(file = "Y00/DATA/csv/haref.csv", header = TRUE, sep = ",")
+EX8_AGE = subset.data.frame(dfaz, select = c(EX8_AGE, PID))
+EXAMAGE = subset.data.frame(dfaa, select = c(EXAMAGE, PID))
+                                          
+# _____                                         
 # |  ___|                                        
 # | |____  ___ __   ___  ___ _   _ _ __ ___  ___ 
 # |  __\ \/ / '_ \ / _ \/ __| | | | '__/ _ \/ __|
