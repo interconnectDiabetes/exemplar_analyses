@@ -34,7 +34,7 @@ dfb = read.csv2(file = "Y02/DATA/csv/baf09dib.csv", header = TRUE, sep = ",")
 dfc = read.csv2(file = "Y02/DATA/csv/baref.csv", header = TRUE, sep = ",")
 B08DIAB = subset.data.frame(dfa, select = c(B08DIAB, PID))
 B09DIBAG = subset.data.frame(dfb, select = c(B09DIBAG, PID))
-EXAMAGE2 = subset.data.frame(dfc, select = c(EXAMAGE, PID))
+EXAMAGE = subset.data.frame(dfc, select = c(EXAMAGE, PID))
 
 dfd = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
 dfe = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
@@ -91,7 +91,7 @@ dfaa = read.csv2(file = "Y25/DATA/csv/haf08.csv", header = TRUE, sep = ",")
 dfab = read.csv2(file = "Y25/DATA/csv/haref.csv", header = TRUE, sep = ",")
 dfac = read.csv2(file = "Y25/DATA/csv/haglu.csv", header = TRUE, sep = ",")
 dfad = read.csv2(file = "Y25/DATA/csv/haglu.csv", header = TRUE, sep = ",")
-H08DIAB = subset.data.frame(dfaz, select = c(H08DIAB, PID))
+H08DIAB = subset.data.frame(dfz, select = c(H08DIAB, PID))
 H08DIBAG = subset.data.frame(dfaa, select = c(H08DIBAG, PID))
 EXAMAGE = subset.data.frame(dfab, select = c(EXAMAGE, PID))
 HL7GLU = subset.data.frame(dfac, select = c(HL7GLU, PID))
@@ -167,7 +167,7 @@ EX7_AGE = subset.data.frame(dfy, select = c(EX7_AGE, PID))
 EXAMAGE = subset.data.frame(dfz, select = c(EXAMAGE, PID))
 
 dfaa = read.csv2(file = "Y25/DATA/csv/haref.csv", header = TRUE, sep = ",")
-dfab = read.csv2(file = "Y25/DATA/csv/haref.csv", header = TRUE, sep = ",")
+dfab = read.csv2(file = "Y02/DATA/csv/baref.csv", header = TRUE, sep = ",")
 EX8_AGE = subset.data.frame(dfaa, select = c(EX8_AGE, PID))
 EXAMAGE = subset.data.frame(dfab, select = c(EXAMAGE, PID))
                                           
@@ -295,8 +295,17 @@ A08BPMED = subset.data.frame(dfa, select = c(A08BPMED, PID))
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",")
 A20WST = subset.data.frame(dfa, select = c(A20WST, PID))
 
+rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl, dfm, dfn, dfo, dfp, dfq, 
+	dfr, dfs, dft, dfu, dfv, dfw, dfx, dfy, dfz, dfaa, dfab, dfac, dfad)
+
+
 #################################################################################################################
 #################################################################################################################
 #################################################################################################################
-dataframes_list = list()
-cardia = Reduce(function(...) merge(..., all=TRUE), dataframes_list)
+dataframes_list = list(EXAMAGE,A01AGE1,A08DIAB,A09DIBST,AL3_GLU,B08DIAB,B09DIBAG,C08DIAB,C08DIBAG,
+	D08DIAB,D08DIBAG,DL7GLU,E08DIAB,E08DIBAG,EL7GLU,EL7GLU2H,F08DIAB,F08DIBAG,FL7GLU,FDIABMED,
+	G08DIAB,G08DIBAG,GL7GLU,GL7GLU2H,G83LDIA,H08DIAB,H08DIBAG,HL7GLU,HL7GLU2H,H08MEDDIAA,EX2_AGE,
+	EX3_AGE,EX4_AGE,EX5_AGE,EX6_AGE,EX7_AGE,EX8_AGE,fatty,fried,lean,nonfish,total,A01SEX,A20BMI,
+	A01ED1,A03ED,A10SMOKE,A01SMNOW,A19MODWK,A06ALCHL,famdiab,A09HRTAK,A08CANCR,A08HBP,A06CALO,
+	A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST)
+cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
