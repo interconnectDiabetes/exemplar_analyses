@@ -25,7 +25,7 @@ dfb = read.csv2(file = "Y00/DATA/csv/aaf09gen.csv", header = TRUE, sep = ",")
 dfc = read.csv2(file = "Y00/DATA/csv/aachem.csv", header = TRUE, sep = ",")
 A08DIAB = subset.data.frame(dfa, select = c(A08DIAB, PID))
 A09DIBST = subset.data.frame(dfb, select = c(A09DIBST, PID))
-AL3_GLU = subset.data.frame(dfb, select = c(AL3_GLU, PID))
+AL3_GLU = subset.data.frame(dfc, select = c(AL3_GLU, PID))
 
 
 # CASE_OBJ and CASE_OBJ_SELF
@@ -34,7 +34,7 @@ dfb = read.csv2(file = "Y02/DATA/csv/baf09dib.csv", header = TRUE, sep = ",")
 dfc = read.csv2(file = "Y02/DATA/csv/baref.csv", header = TRUE, sep = ",")
 B08DIAB = subset.data.frame(dfa, select = c(B08DIAB, PID))
 B09DIBAG = subset.data.frame(dfb, select = c(B09DIBAG, PID))
-EXAMAGE = subset.data.frame(dfc, select = c(EXAMAGE, PID))
+EXAMAGE2 = subset.data.frame(dfc, select = c(EXAMAGE, PID))
 
 dfd = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
 dfe = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
@@ -106,8 +106,8 @@ dfb = read.csv2(file = "Y02/DATA/csv/baref.csv", header = TRUE, sep = ",")
 B09DIBAG = subset.data.frame(dfa, select = c(B09DIBAG, PID))
 EXAMAGE = subset.data.frame(dfb, select = c(EXAMAGE, PID))
 
-dfc = read.csv2(file = "Y02/DATA/csv/caf08.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "Y02/DATA/csv/caref.csv", header = TRUE, sep = ",")
+dfc = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
+dfd = read.csv2(file = "Y05/DATA/csv/caref.csv", header = TRUE, sep = ",")
 C08DIBAG = subset.data.frame(dfc, select = c(C08DIBAG, PID))
 EXAMAGE = subset.data.frame(dfd, select = c(EXAMAGE, PID))
 
@@ -233,7 +233,7 @@ A10SMOKE = subset.data.frame(dfa, select = c(A10SMOKE, PID))
 A01SMNOW = subset.data.frame(dfb, select = c(A01SMNOW, PID))
 
 # PA
-dfa = read.csv2(file = "Y00/DATA/csv/aaf10.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "Y00/DATA/csv/aaf19.csv", header = TRUE, sep = ",")
 A19MODWK = subset.data.frame(dfa, select = c(A19MODWK, PID))
 
 # ALCOHOL
@@ -298,3 +298,5 @@ A20WST = subset.data.frame(dfa, select = c(A20WST, PID))
 #################################################################################################################
 #################################################################################################################
 #################################################################################################################
+dataframes_list = list()
+cardia = Reduce(function(...) merge(..., all=TRUE), dataframes_list)
