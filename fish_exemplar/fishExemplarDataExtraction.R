@@ -237,7 +237,10 @@ total = subset.data.frame(dfa, select = c(A06FISH, PID))
 dfa = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
 A01SEX = subset.data.frame(dfa, select = c(A01SEX, PID))
 
-# BMI_CAT
+H08DIAB$H08DIAB = as.factor(H08DIAB$H08DIAB)
+levels(x = H08DIAB$H08DIAB) = c("Male","Female")
+
+# BMI
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",")
 A20BMI = subset.data.frame(dfa, select = c(A20BMI, PID))
              
@@ -254,11 +257,21 @@ dfb = read.csv2(file = "Y00/DATA/csv/aaf03.csv", header = TRUE, sep = ",")
 A01ED1 = subset.data.frame(dfa, select = c(A01ED1, PID))
 A03ED = subset.data.frame(dfb, select = c(A03ED, PID))
 
+A01ED1$A01ED1 = as.factor(A01ED1$A01ED1)
+A03ED$A03ED = as.factor(A03ED$A03ED)
+
+
 # Smoking also or them
 dfa = read.csv2(file = "Y00/DATA/csv/aaf10.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
 A10SMOKE = subset.data.frame(dfa, select = c(A10SMOKE, PID))
 A01SMNOW = subset.data.frame(dfb, select = c(A01SMNOW, PID))
+
+A10SMOKE$A10SMOKE = as.factor(A10SMOKE$A10SMOKE)
+levels(x = A10SMOKE$A10SMOKE) = c("No","Yes")
+
+A01SMNOW$A01SMNOW = as.factor(A01SMNOW$A01SMNOW)
+levels(x = A01SMNOW$A01SMNOW) = c("No","Yes")
 
 # PA
 dfa = read.csv2(file = "Y00/DATA/csv/aaf19.csv", header = TRUE, sep = ",")
@@ -271,6 +284,10 @@ A06ALCHL = subset.data.frame(dfa, select = c(A06ALCHL, PID))
 # FAM_DIAB
 dfa = read.csv2(file = "Y00/DATA/csv/aaf11.csv", header = TRUE, sep = ",")
 famdiab = subset.data.frame(dfa, select = c(A11MDIAB,A11FDIAB,A11BDIAB, A11SDIAB, PID))
+
+E08DIAB$E08DIAB = as.factor(E08DIAB$E08DIAB)
+levels(x = E08DIAB$E08DIAB) = c("No","Yes", "Not Sure")
+
 
 # MI
 dfa = read.csv2(file = "Y00/DATA/csv/aaf09gen.csv", header = TRUE, sep = ",")
