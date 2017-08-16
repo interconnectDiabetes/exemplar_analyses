@@ -47,7 +47,7 @@ dfg = read.csv2(file = "Y07/DATA/csv/daf08.csv", header = TRUE, sep = ",")
 dfh = read.csv2(file = "Y07/DATA/csv/daf08.csv", header = TRUE, sep = ",")
 dfi = read.csv2(file = "Y07/DATA/csv/daref.csv", header = TRUE, sep = ",")
 dfj = read.csv2(file = "Y07/DATA/csv/daglu.csv", header = TRUE, sep = ",")
-D08DIAB = subset.data.frame(dfg, select = c(D08DIBAG, PID))
+D08DIAB = subset.data.frame(dfg, select = c(D08DIAB, PID))
 D08DIBAG = subset.data.frame(dfh, select = c(D08DIBAG, PID))
 EXAMAGE = subset.data.frame(dfi, select = c(EXAMAGE, PID))
 DL7GLU = subset.data.frame(dfj, select = c(DL7GLU, PID))
@@ -304,8 +304,9 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl, dfm, dfn, dfo, df
 #################################################################################################################
 dataframes_list = list(EXAMAGE,A01AGE1,A08DIAB,A09DIBST,AL3_GLU,B08DIAB,B09DIBAG,C08DIAB,C08DIBAG,
 	D08DIAB,D08DIBAG,DL7GLU,E08DIAB,E08DIBAG,EL7GLU,EL7GLU2H,F08DIAB,F08DIBAG,FL7GLU,FDIABMED,
-	G08DIAB,G08DIBAG,GL7GLU,GL7GLU2H,G83LDIA,H08DIAB,H08DIBAG,HL7GLU,HL7GLU2H,H08MEDDIAA,EX2_AGE,
+	G08DIAB,G08DIBAG,GL7GLU,GL7GLU2H,H08DIAB,H08DIBAG,HL7GLU,HL7GLU2H,EX2_AGE,
 	EX3_AGE,EX4_AGE,EX5_AGE,EX6_AGE,EX7_AGE,EX8_AGE,fatty,fried,lean,nonfish,total,A01SEX,A20BMI,
 	A01ED1,A03ED,A10SMOKE,A01SMNOW,A19MODWK,A06ALCHL,famdiab,A09HRTAK,A08CANCR,A08HBP,A06CALO,
 	A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST)
+
 cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
