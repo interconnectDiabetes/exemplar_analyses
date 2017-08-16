@@ -27,6 +27,11 @@ A08DIAB = subset.data.frame(dfa, select = c(A08DIAB, PID))
 A09DIBST = subset.data.frame(dfb, select = c(A09DIBST, PID))
 AL3_GLU = subset.data.frame(dfc, select = c(AL3_GLU, PID))
 
+A08DIAB$A08DIAB = as.factor(A08DIAB$A08DIAB)
+levels(x = A08DIAB$A08DIAB) = c("No","Yes", "Not Sure")
+
+A09DIBST$A09DIBST = as.factor(A09DIBST$A09DIBST)
+levels(x = A09DIBST$A09DIBST) = c("Still Have","Under Control", "Cured or Gone") 
 
 # CASE_OBJ and CASE_OBJ_SELF
 dfa = read.csv2(file = "Y02/DATA/csv/baf08v2.csv", header = TRUE, sep = ",")
@@ -36,12 +41,18 @@ B08DIAB = subset.data.frame(dfa, select = c(B08DIAB, PID))
 B09DIBAG = subset.data.frame(dfb, select = c(B09DIBAG, PID))
 EXAMAGE = subset.data.frame(dfc, select = c(EXAMAGE, PID))
 
+B08DIAB$B08DIAB = as.factor(B08DIAB$B08DIAB)
+levels(x = B08DIAB$B08DIAB) = c("No","Yes", "Not Sure")
+
 dfd = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
 dfe = read.csv2(file = "Y05/DATA/csv/caf08.csv", header = TRUE, sep = ",")
 dff = read.csv2(file = "Y05/DATA/csv/caref.csv", header = TRUE, sep = ",")
 C08DIAB = subset.data.frame(dfd, select = c(C08DIAB, PID))
 C08DIBAG = subset.data.frame(dfe, select = c(C08DIBAG, PID))
 EXAMAGE = subset.data.frame(dff, select = c(EXAMAGE, PID))
+
+C08DIAB$C08DIAB = as.factor(C08DIAB$C08DIAB)
+levels(x = C08DIAB$C08DIAB) = c("No","Yes", "Not Sure")
 
 dfg = read.csv2(file = "Y07/DATA/csv/daf08.csv", header = TRUE, sep = ",")
 dfh = read.csv2(file = "Y07/DATA/csv/daf08.csv", header = TRUE, sep = ",")
@@ -51,6 +62,9 @@ D08DIAB = subset.data.frame(dfg, select = c(D08DIAB, PID))
 D08DIBAG = subset.data.frame(dfh, select = c(D08DIBAG, PID))
 EXAMAGE = subset.data.frame(dfi, select = c(EXAMAGE, PID))
 DL7GLU = subset.data.frame(dfj, select = c(DL7GLU, PID))
+
+D08DIAB$D08DIAB = as.factor(D08DIAB$D08DIAB)
+levels(x = D08DIAB$D08DIAB) = c("No","Yes", "Not Sure")
 
 dfk = read.csv2(file = "Y10/DATA/csv/eaf08.csv", header = TRUE, sep = ",")
 dfl = read.csv2(file = "Y10/DATA/csv/eaf08.csv", header = TRUE, sep = ",")
@@ -63,6 +77,9 @@ EXAMAGE = subset.data.frame(dfm, select = c(EXAMAGE, PID))
 EL7GLU = subset.data.frame(dfn, select = c(EL7GLU, PID))
 EL7GLU2H = subset.data.frame(dfo, select = c(EL7GLU2H, PID))
 
+E08DIAB$E08DIAB = as.factor(E08DIAB$E08DIAB)
+levels(x = E08DIAB$E08DIAB) = c("No","Yes", "Not Sure")
+
 dfp = read.csv2(file = "Y15/DATA/csv/faf08.csv", header = TRUE, sep = ",")
 dfq = read.csv2(file = "Y15/DATA/csv/faf08.csv", header = TRUE, sep = ",")
 dfr = read.csv2(file = "Y15/DATA/csv/faref.csv", header = TRUE, sep = ",")
@@ -73,6 +90,12 @@ F08DIBAG = subset.data.frame(dfq, select = c(F08DIBAG, PID))
 EXAMAGE = subset.data.frame(dfr, select = c(EXAMAGE, PID))
 FL7GLU = subset.data.frame(dfs, select = c(FL7GLU, PID))
 FDIABMED = subset.data.frame(dft, select = c(FDIABMED, PID))
+
+F08DIAB$F08DIAB = as.factor(F08DIAB$F08DIAB)
+levels(x = F08DIAB$F08DIAB) = c("No","Yes", "Not Sure")
+
+FDIABMED$FDIABMED = as.factor(FDIABMED$FDIABMED)
+levels(x = FDIABMED$FDIABMED) = c("No","Yes")
 
 dfu = read.csv2(file = "Y20/DATA/csv/gaf08.csv", header = TRUE, sep = ",")
 dfv = read.csv2(file = "Y20/DATA/csv/gaf08.csv", header = TRUE, sep = ",")
@@ -86,6 +109,9 @@ GL7GLU = subset.data.frame(dfx, select = c(GL7GLU, PID))
 GL7GLU2H = subset.data.frame(dfy, select = c(GL7GLU2H, PID))
 G83LDIA = NULL
 
+G08DIAB$G08DIAB = as.factor(G08DIAB$G08DIAB)
+levels(x = G08DIAB$G08DIAB) = c("No","Yes", "Not Sure")
+
 dfz = read.csv2(file = "Y25/DATA/csv/haf08.csv", header = TRUE, sep = ",")
 dfaa = read.csv2(file = "Y25/DATA/csv/haf08.csv", header = TRUE, sep = ",")
 dfab = read.csv2(file = "Y25/DATA/csv/haref.csv", header = TRUE, sep = ",")
@@ -98,6 +124,8 @@ HL7GLU = subset.data.frame(dfac, select = c(HL7GLU, PID))
 HL7GLU2H = subset.data.frame(dfad, select = c(HL7GLU2H, PID))
 H08MEDDIAA = NULL
 
+H08DIAB$H08DIAB = as.factor(H08DIAB$H08DIAB)
+levels(x = H08DIAB$H08DIAB) = c("No","Yes", "Not Sure")
 
 # AGE_END_OBJ 
 # AGE_END_OBJ_SELF
@@ -254,6 +282,8 @@ A09HRTAK = subset.data.frame(dfa, select = c(A09HRTAK, PID))
 # CANCER
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
 A08CANCR = subset.data.frame(dfa, select = c(A08CANCR, PID))
+A08CANCR$A08CANCR = as.factor(A08CANCR$A08CANCR)
+levels(x = A08CANCR$A08CANCR) = c("No","Yes", "Not Sure") 
 
 # HYPERTENSION
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
