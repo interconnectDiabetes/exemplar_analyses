@@ -236,9 +236,8 @@ total = subset.data.frame(dfa, select = c(A06FISH, PID))
 # SEX
 dfa = read.csv2(file = "Y00/DATA/csv/aaf01.csv", header = TRUE, sep = ",")
 A01SEX = subset.data.frame(dfa, select = c(A01SEX, PID))
-
-H08DIAB$H08DIAB = as.factor(H08DIAB$H08DIAB)
-levels(x = H08DIAB$H08DIAB) = c("Male","Female")
+A01SEX$A01SEX = as.factor(A01SEX$A01SEX)
+levels(x = A01SEX$A01SEX) = c("Male","Female")
 
 # BMI
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",")
@@ -268,10 +267,8 @@ A10SMOKE = subset.data.frame(dfa, select = c(A10SMOKE, PID))
 A01SMNOW = subset.data.frame(dfb, select = c(A01SMNOW, PID))
 
 A10SMOKE$A10SMOKE = as.factor(A10SMOKE$A10SMOKE)
-levels(x = A10SMOKE$A10SMOKE) = c("No","Yes")
-
+levels(x = A10SMOKE$A10SMOKE) = c("Non Smokers","Ex Smokers", "Smokers")
 A01SMNOW$A01SMNOW = as.factor(A01SMNOW$A01SMNOW)
-levels(x = A01SMNOW$A01SMNOW) = c("No","Yes")
 
 # PA
 dfa = read.csv2(file = "Y00/DATA/csv/aaf19.csv", header = TRUE, sep = ",")
@@ -368,3 +365,7 @@ dataframes_list = list(EXAMAGE,A01AGE1,A08DIAB,A09DIBST,AL3_GLU,B08DIAB,B09DIBAG
 	A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST)
 
 cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
+
+colnames(cardia)[1] <- "ID"
+
+save(cardia,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df.Rdata")
