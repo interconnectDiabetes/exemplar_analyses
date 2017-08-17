@@ -285,13 +285,20 @@ A06ALCHL = subset.data.frame(dfa, select = c(A06ALCHL, PID))
 dfa = read.csv2(file = "Y00/DATA/csv/aaf11.csv", header = TRUE, sep = ",")
 famdiab = subset.data.frame(dfa, select = c(A11MDIAB,A11FDIAB,A11BDIAB, A11SDIAB, PID))
 
-E08DIAB$E08DIAB = as.factor(E08DIAB$E08DIAB)
-levels(x = E08DIAB$E08DIAB) = c("No","Yes", "Not Sure")
-
+famdiab$A11MDIAB = as.factor(famdiab$A11MDIAB)
+levels(x = famdiab$A11MDIAB) = c("No","Yes", "Not Sure")
+famdiab$A11FDIAB = as.factor(famdiab$A11FDIAB)
+levels(x = famdiab$A11FDIAB) = c("No","Yes", "Not Sure")
+famdiab$A11BDIAB = as.factor(famdiab$A11BDIAB)
+levels(x = famdiab$A11BDIAB) = c("No","Yes", "Not Sure")
+famdiab$A11SDIAB = as.factor(famdiab$A11SDIAB)
+levels(x = famdiab$A11SDIAB) = c("No","Yes", "Not Sure")
 
 # MI
 dfa = read.csv2(file = "Y00/DATA/csv/aaf09gen.csv", header = TRUE, sep = ",")
 A09HRTAK = subset.data.frame(dfa, select = c(A09HRTAK, PID))
+A09HRTAK$A09HRTAK = as.factor(A09HRTAK$A09HRTAK)
+levels(x = A09HRTAK$A09HRTAK) = c("No","Yes", "Not Sure")
 
 # STROKE
 # nothing here mate
@@ -305,6 +312,8 @@ levels(x = A08CANCR$A08CANCR) = c("No","Yes", "Not Sure")
 # HYPERTENSION
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
 A08HBP = subset.data.frame(dfa, select = c(A08HBP, PID))
+A08HBP$A08HBP = as.factor(A08HBP$A08HBP)
+levels(x = A08HBP$A08HBP) = c("No","Yes", "Not Sure") 
 
 # E_INTAKE
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06a.csv", header = TRUE, sep = ",")
@@ -337,6 +346,8 @@ A06BVS0400 = subset.data.frame(dfa, select = c(A06BVS0400, PID))
 # MEDS
 dfa = read.csv2(file = "Y00/DATA/csv/aaf08v2.csv", header = TRUE, sep = ",")
 A08BPMED = subset.data.frame(dfa, select = c(A08BPMED, PID))
+A08BPMED$A08BPMED = as.factor(A08BPMED$A08BPMED)
+levels(x = A08BPMED$A08BPMED) = c("No","Yes", "Not Sure")
 
 # WAIST
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",")
