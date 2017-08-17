@@ -145,7 +145,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
     exceptions = c("SEX", "WAIST", "SUPPLEMENTS")
   }
   else if (studyName == "AusDiab") {
-    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS", "E_INTAKE")
+    exceptions = c("FATTY", "LEAN", "NONFISH", "FIBER", "SUG_BEVS", "FRESH", "SALT", "SSD", "SUPPLEMENTS")
   }
   else if (studyName == "JPHC") {
     exceptions = c("SUPPLEMENTS", "WAIST", "EDUCATION")
@@ -270,7 +270,7 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 }
 
 
-tunedLexisB <- function(ref_table, study) {
+tunedLexisB <- function(ref_table, my_outcome, my_exit_col, study) {
 	# does a tuned Lexis B on one study can be used in a parallel loop to run
 	# multiple lexis b at once
 	# TODO check prerequisites with dsExists
@@ -281,8 +281,8 @@ tunedLexisB <- function(ref_table, study) {
 	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(0.1)), opals = study)
 	idColString = paste0(ref_table, '$', 'ID')
 	entryColString = paste0(ref_table, '$', 'newStartDate')
-	exitColString = paste0(ref_table, '$', 'newEndDate')
-	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
+	exitColString = paste0(ref_table, '$', my_exit_col)
+	statusColString = paste0(ref_table, '$', my_outcome)
 
 	if (studyName == "InterAct_germany"){ 
 	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
@@ -352,7 +352,7 @@ tunedLexisB <- function(ref_table, study) {
 }
 
 
-tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
+tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
 	temp <- ds.summary('D$TOTAL', datasources = studies)
@@ -372,7 +372,7 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 	par(ps=10)
 
 	for (study in c(1:length(studies))) {
-		tunedLexisB(ref_table, studies[study])
+		tunedLexisB(ref_table, my_outcome, my_exit_col, studies[study])
 	}
 	
 	ds.asNumeric('A$CENSOR','censor', datasources = studies)

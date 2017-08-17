@@ -60,10 +60,13 @@ for(i in 1:length(opals)){
   eval(parse(text=work2))
 }
 
-ds.assign(toAssign = 'D$AGE_END_OBJ-D$AGE_BASE', newobj = 'FUP_OBJ')
-ds.assign(toAssign = 'D$AGE_END_OBJ_SELF-D$AGE_BASE', newobj = 'FUP_OBJ_SELF')
+# now FUP is a proper variable, not derived
+#ds.assign(toAssign = 'D$AGE_END_OBJ-D$AGE_BASE', newobj = 'FUP_OBJ')
+#ds.assign(toAssign = 'D$AGE_END_OBJ_SELF-D$AGE_BASE', newobj = 'FUP_OBJ_SELF')
 
-ds.cbind(x=c('newStartDate','FUP_OBJ', 'FUP_OBJ_SELF','D'), newobj='D1')
+#ds.cbind(x=c('newStartDate','FUP_OBJ', 'FUP_OBJ_SELF','D'), newobj='D1')
+
+ds.cbind(x=c('newStartDate','D'), newobj='D1')
 
 # remove participants with prevalent diabetes and type 1
 ds.subset(x = 'D1', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
