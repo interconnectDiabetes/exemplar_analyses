@@ -185,68 +185,54 @@ BMI01$BMI01 = as.numeric(as.character(BMI01$BMI01))
 #  \____/\___/|_| |_|_| \___/ \__,_|_| |_|\__,_|\___|_|  |___/
 
 # Education a bit weird have to or them
-dfa = read.csv2(file = "v1/aaf01.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v1/aaf03.csv", header = TRUE, sep = ",")
-A01ED1 = subset.data.frame(dfa, select = c(A01ED1, PID))
-A03ED = subset.data.frame(dfb, select = c(A03ED, PID))
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+ELEVEL02 = subset.data.frame(dfa, select = c(ELEVEL02, PID))
+ELEVEL02$ELEVEL02 = as.factor(ELEVEL02$ELEVEL02)
 
-A01ED1$A01ED1 = as.factor(A01ED1$A01ED1)
-A03ED$A03ED = as.factor(A03ED$A03ED)
-
-
-# Smoking also or them
-dfa = read.csv2(file = "v1/aaf10.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v1/aaf01.csv", header = TRUE, sep = ",")
-A10SMOKE = subset.data.frame(dfa, select = c(A10SMOKE, PID))
-A01SMNOW = subset.data.frame(dfb, select = c(A01SMNOW, PID))
-
-A10SMOKE$A10SMOKE = as.factor(A10SMOKE$A10SMOKE)
-levels(x = A10SMOKE$A10SMOKE) = c("Non Smokers","Ex Smokers", "Smokers")
-A01SMNOW$A01SMNOW = as.factor(A01SMNOW$A01SMNOW)
-
+# Smoking
 # PA
-dfa = read.csv2(file = "v1/aaf19.csv", header = TRUE, sep = ",")
-A19MODWK = subset.data.frame(dfa, select = c(A19MODWK, PID))
-A19MODWK$A19MODWK = as.numeric(as.character(A19MODWK$A19MODWK))
 
 # ALCOHOL
-dfa = read.csv2(file = "v1/aaf06a.csv", header = TRUE, sep = ",")
-A06ALCHL = subset.data.frame(dfa, select = c(A06ALCHL, PID))
-A06ALCHL$A06ALCHL = as.numeric(as.character(A06ALCHL$A06ALCHL))
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+ETHANL03 = subset.data.frame(dfa, select = c(ETHANL03, PID))
+ETHANL03$ETHANL03 = as.numeric(as.character(ETHANL03$ETHANL03))
 
 # FAM_DIAB
-dfa = read.csv2(file = "v1/aaf11.csv", header = TRUE, sep = ",")
-famdiab = subset.data.frame(dfa, select = c(A11MDIAB,A11FDIAB,A11BDIAB, A11SDIAB, PID))
-
-famdiab$A11MDIAB = as.factor(famdiab$A11MDIAB)
-levels(x = famdiab$A11MDIAB) = c("No","Yes", "Not Sure")
-famdiab$A11FDIAB = as.factor(famdiab$A11FDIAB)
-levels(x = famdiab$A11FDIAB) = c("No","Yes", "Not Sure")
-famdiab$A11BDIAB = as.factor(famdiab$A11BDIAB)
-levels(x = famdiab$A11BDIAB) = c("No","Yes", "Not Sure")
-famdiab$A11SDIAB = as.factor(famdiab$A11SDIAB)
-levels(x = famdiab$A11SDIAB) = c("No","Yes", "Not Sure")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+famdiab = subset.data.frame(dfa, select = c(MOMHISTORYDIA, DADHISTORYDIA, PID))
+famdiab$MOMHISTORYDIA = as.factor(famdiab$MOMHISTORYDIA)
+levels(x = famdiab$MOMHISTORYDIA) = c("No","Yes", "Not Sure")
+famdiab$DADHISTORYDIA = as.factor(famdiab$DADHISTORYDIA)
+levels(x = famdiab$DADHISTORYDIA) = c("No","Yes", "Not Sure")
 
 # MI
-dfa = read.csv2(file = "v1/aaf09gen.csv", header = TRUE, sep = ",")
-A09HRTAK = subset.data.frame(dfa, select = c(A09HRTAK, PID))
-A09HRTAK$A09HRTAK = as.factor(A09HRTAK$A09HRTAK)
-levels(x = A09HRTAK$A09HRTAK) = c("No","Yes", "Not Sure")
+dfa = read.csv2(file = "v1/mhxa02.csv", header = TRUE, sep = ",")
+dfb = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+MHXA28 = subset.data.frame(dfa, select = c(MHXA28, PID))
+MHXA28$MHXA28 = as.factor(MHXA28$MHXA28)
+levels(x = MHXA28$MHXA28) = c("No","Unsure", "Yes")
+
+HOM10C = subset.data.frame(dfb, select = c(HOM10C, PID))
+HOM10C$HOM10C = as.factor(HOM10C$HOM10C)
+levels(x = HOM10C$HOM10C) = c("No","Unsure", "Yes")
 
 # STROKE
-# nothing here mate
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+HOM10D = subset.data.frame(dfa, select = c(HOM10D, PID))
+HOM10D$HOM10D = as.factor(HOM10D$HOM10D)
+levels(x = HOM10D$HOM10D) = c("No","Unsure", "Yes")
 
 # CANCER
-dfa = read.csv2(file = "v1/aaf08v2.csv", header = TRUE, sep = ",")
-A08CANCR = subset.data.frame(dfa, select = c(A08CANCR, PID))
-A08CANCR$A08CANCR = as.factor(A08CANCR$A08CANCR)
-levels(x = A08CANCR$A08CANCR) = c("No","Yes", "Not Sure") 
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+HOM10F = subset.data.frame(dfa, select = c(HOM10F, PID))
+HOM10F$HOM10F = as.factor(HOM10F$HOM10F)
+levels(x = HOM10F$HOM10F) = c("No","Unsure", "Yes")
 
 # HYPERTENSION
-dfa = read.csv2(file = "v1/aaf08v2.csv", header = TRUE, sep = ",")
-A08HBP = subset.data.frame(dfa, select = c(A08HBP, PID))
-A08HBP$A08HBP = as.factor(A08HBP$A08HBP)
-levels(x = A08HBP$A08HBP) = c("No","Yes", "Not Sure") 
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+HOM10A = subset.data.frame(dfa, select = c(HOM10A, PID))
+HOM10A$HOM10A = as.factor(HOM10A$HOM10A)
+levels(x = HOM10A$HOM10A) = c("No","Unsure", "Yes")
 
 # E_INTAKE
 dfa = read.csv2(file = "v1/aaf06a.csv", header = TRUE, sep = ",")
