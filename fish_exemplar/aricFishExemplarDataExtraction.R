@@ -167,15 +167,15 @@ levels(x = DTIA34$DTIA34) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 # | |  | | (_) | (_| | | | | |  __/ |  \__ \
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 # SEX
-dfa = read.csv2(file = "v1/aaf01.csv", header = TRUE, sep = ",")
-A01SEX = subset.data.frame(dfa, select = c(A01SEX, PID))
-A01SEX$A01SEX = as.factor(A01SEX$A01SEX)
-levels(x = A01SEX$A01SEX) = c("Male","Female")
+dfa = read.csv2(file = "v1/derive47.csv", header = TRUE, sep = ",")
+GENDER = subset.data.frame(dfa, select = c(GENDER, PID))
+GENDER$GENDER = as.factor(GENDER$GENDER)
+levels(x = GENDER$GENDER) = c("Male","Female")
 
 # BMI
-dfa = read.csv2(file = "v1/aaf20.csv", header = TRUE, sep = ",")
-A20BMI = subset.data.frame(dfa, select = c(A20BMI, PID))
-total$A06FISH = as.numeric(as.character(total$A06FISH))
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+BMI01 = subset.data.frame(dfa, select = c(BMI01, PID))
+BMI01$BMI01 = as.numeric(as.character(BMI01$BMI01))
              
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
