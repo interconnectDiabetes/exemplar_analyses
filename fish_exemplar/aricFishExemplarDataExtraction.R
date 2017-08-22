@@ -331,7 +331,6 @@ HYPTMDCODE01 = subset.data.frame(dfa, select = c(HYPTMDCODE01, PID))
 HYPTMDCODE01$HYPTMDCODE01 = as.factor(HYPTMDCODE01$HYPTMDCODE01)
 levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("No","Yes", "Not Sure")
 
-# WAIST
 dfa = read.csv2(file = "v1/anta.csv", header = TRUE, sep = ",")
 ANTA07A = subset.data.frame(dfa, select = c(ANTA07A, PID))
 ANTA07A$ANTA07A = as.numeric(as.character(ANTA07A$ANTA07A))
@@ -342,17 +341,16 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 #################################################################################################################
 #################################################################################################################
 #################################################################################################################
-dataframes_list = list(EXAMAGE,A01AGE1,A08DIAB,A09DIBST,AL3_GLU,B08DIAB,B09DIBAG,C08DIAB,C08DIBAG,
-	D08DIAB,D08DIBAG,DL7GLU,E08DIAB,E08DIBAG,EL7GLU,EL7GLU2H,F08DIAB,F08DIBAG,FL7GLU,FDIABMED,
-	G08DIAB,G08DIBAG,GL7GLU,GL7GLU2H,H08DIAB,H08DIBAG,HL7GLU,HL7GLU2H,EX2_AGE,
-	EX3_AGE,EX4_AGE,EX5_AGE,EX6_AGE,EX7_AGE,EX8_AGE,fatty,fried,lean,nonfish,total,A01SEX,A20BMI,
-	A01ED1,A03ED,A10SMOKE,A01SMNOW,A19MODWK,A06ALCHL,famdiab,A09HRTAK,A08CANCR,A08HBP,A06CALO,
-	A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST)
+dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
+	LIP23,MSRF33C,V2AGE22,V1AGE01,V3AGE31,V4AGE41,V5AGE51,V2DAYS,V3DAYS,V4DAYS,V5DATE51_DAYS,DTIA35,DTIA36,DTIA37,
+	DTIA34,GENDER,BMI01,ELEVEL02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
+	bevs,HYPTMDCODE01,ANTA07A)
 
-cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
-colnames(cardia)[1] <- "ID"
+aric = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
+colnames(aric)[1] <- "ID"
 
-cardia_tibble = as_tibble(cardia)
-save(cardia,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df.Rdata")
-write_dta(data = cardia_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_new.dta")
+aric_tibble = as_tibble(aric)
+# WAIST
+save(aric,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df.Rdata")
+write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_new.dta")
 
