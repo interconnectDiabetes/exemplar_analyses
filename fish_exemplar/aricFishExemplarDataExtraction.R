@@ -15,8 +15,8 @@ setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC d
 
 # AGE_BASE
 dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
-V1AGE01 = subset.data.frame(dfb, select = c(V1AGE01, ID_C))
-# V1AGE01$V1AGE01 = as.numeric(as.character(V1AGE01$V1AGE01))
+V1AGE01 = subset.data.frame(dfa, select = c(V1AGE01, ID_C))
+V1AGE01$V1AGE01 = as.numeric(as.character(V1AGE01$V1AGE01))
 
 # TYPE_DIAB we assume all to be t2
 
@@ -24,30 +24,30 @@ V1AGE01 = subset.data.frame(dfb, select = c(V1AGE01, ID_C))
 dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "v1/msra.csv", header = TRUE, sep = ",")
 dfc = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
-# HOM10E = subset.data.frame(dfa, select = c(HOM10E, ID_C))
-# MSRA08F = subset.data.frame(dfb, select = c(MSRA08F, ID_C))
-# GLUCOS01 = subset.data.frame(dfc, select = c(GLUCOS01, ID_C))
+HOM10E = subset.data.frame(dfa, select = c(HOM10E, ID_C))
+MSRA08F = subset.data.frame(dfb, select = c(MSRA08F, ID_C))
+GLUCOS01 = subset.data.frame(dfc, select = c(GLUCOS01, ID_C))
 
-HOM10E$HOM10E = as.factor(HOM10E$HOM10E)
-levels(x = HOM10E$HOM10E) = c("No","Yes", "Not Sure")
+# HOM10E$HOM10E = as.factor(HOM10E$HOM10E)
+# levels(x = HOM10E$HOM10E) = c("EmptySpace", "No", "Unsure", "Yes")
 # MSRA08F$MSRA08F = as.factor(MSRA08F$MSRA08F)
-# levels(x = MSRA08F$MSRA08F) = c("No","Yes", "Not Sure")
+# levels(x = MSRA08F$MSRA08F) = c("EmptySpace", "No", "Unsure", "Yes")
 # GLUCOS01$GLUCOS01 = as.numeric(as.character(GLUCOS01$GLUCOS01))
 
 # CASE_OBJ and CASE_OBJ_SELF
-dfa = read.csv2(file = "v1/chmb.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v1/hhxb.csv", header = TRUE, sep = ",")
-dfc = read.csv2(file = "v1/msrb.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "v1/licc04.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "v1/phxa04.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "v1/msrc04.csv", header = TRUE, sep = ",")
-dfg = read.csv2(file = "v1/lipd04.csv", header = TRUE, sep = ",")
-dfh = read.csv2(file = "v1/phxb04.csv", header = TRUE, sep = ",")
-dfi = read.csv2(file = "v1/msrd04.csv", header = TRUE, sep = ",")
-dfj = read.csv2(file = "v1/derv.csv", header = TRUE, sep = ",")
-dfk = read.csv2(file = "v1/msr.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v2/chmb.csv", header = TRUE, sep = ",")
+dfb = read.csv2(file = "v2/hhxb.csv", header = TRUE, sep = ",")
+dfc = read.csv2(file = "v2/msrb.csv", header = TRUE, sep = ",")
+dfd = read.csv2(file = "v3/lipc04.csv", header = TRUE, sep = ",")
+dfe = read.csv2(file = "v3/phxa04.csv", header = TRUE, sep = ",")
+dff = read.csv2(file = "v3/msrc04.csv", header = TRUE, sep = ",")
+dfg = read.csv2(file = "v4/lipd04.csv", header = TRUE, sep = ",")
+dfh = read.csv2(file = "v4/phxb04.csv", header = TRUE, sep = ",")
+dfi = read.csv2(file = "v4/msrd04.csv", header = TRUE, sep = ",")
+dfj = read.csv2(file = "v5/derv.csv", header = TRUE, sep = ",")
+dfk = read.csv2(file = "v5/msr.csv", header = TRUE, sep = ",")
 CHMB07 = subset.data.frame(dfa, select = c(CHMB07, ID_C))
-HXB05D = subset.data.frame(dfb, select = c(HXB05D, ID_C))
+HHXB05D = subset.data.frame(dfb, select = c(HHXB05D, ID_C))
 MSRB24F = subset.data.frame(dfc, select = c(MSRB24F, ID_C))
 LIPC4A = subset.data.frame(dfd, select = c(LIPC4A, ID_C))
 PHXA8K = subset.data.frame(dfe, select = c(PHXA8K, ID_C))
@@ -55,48 +55,48 @@ MSRC24G = subset.data.frame(dff, select = c(MSRC24G, ID_C))
 LIPD4A = subset.data.frame(dfg, select = c(LIPD4A, ID_C))
 PHXB6C = subset.data.frame(dfh, select = c(PHXB6C, ID_C))
 MSRD24G = subset.data.frame(dfi, select = c(MSRD24G, ID_C))
-LIP23 = subset.data.frame(dfj, select = c(LIP23, ID_C))
+LIP23 = subset.data.frame(dfj, select = c(FASTING_GLUCOSE, ID_C))
 MSRF33C = subset.data.frame(dfk, select = c(MSRF33C, ID_C))
 
 # CHMB07$CHMB07 = as.numeric(as.character(CHMB07$CHMB07))
 # HXB05D$HXB05D = as.factor(HXB05D$HXB05D)
-# levels(x = HXB05D$HXB05D) = c("No","Yes", "Not Sure")
+# levels(x = HXB05D$HXB05D) = c("EmptySpace", "No", "Unsure", "Yes")
 # MSRB24F$MSRB24F = as.factor(MSRB24F$MSRB24F)
-# levels(x = MSRB24F$MSRB24F) = c("No","Yes", "Not Sure")
+# levels(x = MSRB24F$MSRB24F) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # LIPC4A$LIPC4A = as.numeric(as.character(LIPC4A$LIPC4A))
 # PHXA8K$HXB05D = as.factor(PHXA8K$PHXA8K)
-# levels(x = PHXA8K$PHXA8K) = c("No","Yes", "Not Sure")
+# levels(x = PHXA8K$PHXA8K) = c("EmptySpace", "No", "Unsure", "Yes")
 # MSRC24G$MSRC24G = as.factor(MSRC24G$MSRC24G)
-# levels(x = MSRC24G$MSRC24G) = c("No","Yes", "Not Sure")
+# levels(x = MSRC24G$MSRC24G) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # LIPD4A$LIPD4A = as.numeric(as.character(LIPD4A$LIPD4A))
 # PHXB6C$PHXB6C = as.factor(PHXB6C$PHXB6C)
-# levels(x = PHXB6C$PHXB6C) = c("No","Yes", "Not Sure")
+# levels(x = PHXB6C$PHXB6C) = c("EmptySpace", "No", "Unsure", "Yes")
 # MSRD24G$MSRD24G = as.factor(MSRD24G$MSRD24G)
-# levels(x = MSRD24G$MSRD24G) = c("No","Yes", "Not Sure")
+# levels(x = MSRD24G$MSRD24G) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # LIPD4A$LIPD4A = as.numeric(as.character(LIPD4A$LIPD4A))
 # PHXB6C$PHXB6C = as.factor(PHXB6C$PHXB6C)
-# levels(x = PHXB6C$PHXB6C) = c("No","Yes", "Not Sure")
+# levels(x = PHXB6C$PHXB6C) = c("EmptySpace", "No", "Unsure", "Yes")
 
 
 # AGE_END_OBJ 
 # AGE_END_OBJ_SELF
-dfa = read.csv2(file = "v1/derive2_10.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v2/derive2_10.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
-dfc = read.csv2(file = "v1/derive37.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "v1/derive47.csv", header = TRUE, sep = ",")
-dfg = read.csv2(file = "v1/derive51.csv", header = TRUE, sep = ",")
-dfi = read.csv2(file = "v1/derive2_10.csv", header = TRUE, sep = ",")
-dfj = read.csv2(file = "v1/derive37.csv", header = TRUE, sep = ",")
-dfk = read.csv2(file = "v1/derive47.csv", header = TRUE, sep = ",")
-dfl = read.csv2(file = "v1/derive51.csv", header = TRUE, sep = ",")
+dfc = read.csv2(file = "v3/derive37.csv", header = TRUE, sep = ",")
+dfe = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",")
+dfg = read.csv2(file = "v5/derive51.csv", header = TRUE, sep = ",")
+dfi = read.csv2(file = "v2/derive2_10.csv", header = TRUE, sep = ",")
+dfj = read.csv2(file = "v3/derive37.csv", header = TRUE, sep = ",")
+dfk = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",")
+dfl = read.csv2(file = "v5/derive51.csv", header = TRUE, sep = ",")
 V2AGE22 = subset.data.frame(dfa, select = c(V2AGE22, ID_C))
 V1AGE01 = subset.data.frame(dfb, select = c(V1AGE01, ID_C))
 V3AGE31 = subset.data.frame(dfc, select = c(V3AGE31, ID_C))
 V4AGE41 = subset.data.frame(dfe, select = c(V4AGE41, ID_C))
-V5AGE51 = subset.data.frame(dfg, select = c(V1AGE01, ID_C))
+V5AGE51 = subset.data.frame(dfg, select = c(V5AGE51, ID_C))
 V2DAYS = subset.data.frame(dfi, select = c(V2DAYS, ID_C))
 V3DAYS = subset.data.frame(dfj, select = c(V3DAYS, ID_C))
 V4DAYS = subset.data.frame(dfk, select = c(V4DAYS, ID_C))
@@ -158,7 +158,7 @@ DTIA34 = subset.data.frame(dfa, select = c(DTIA34, ID_C))
 # | |  | | (_) | (_| | | | | |  __/ |  \__ \
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 # SEX
-dfa = read.csv2(file = "v1/derive47.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",")
 GENDER = subset.data.frame(dfa, select = c(GENDER, ID_C))
 # GENDER$GENDER = as.factor(GENDER$GENDER)
 # levels(x = GENDER$GENDER) = c("Male","Female")
@@ -192,38 +192,38 @@ ETHANL03 = subset.data.frame(dfa, select = c(ETHANL03, ID_C))
 dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
 famdiab = subset.data.frame(dfa, select = c(MOMHISTORYDIA, DADHISTORYDIA, ID_C))
 # famdiab$MOMHISTORYDIA = as.factor(famdiab$MOMHISTORYDIA)
-# levels(x = famdiab$MOMHISTORYDIA) = c("No","Yes", "Not Sure")
+# levels(x = famdiab$MOMHISTORYDIA) = c("EmptySpace", "No", "Unsure", "Yes")
 # famdiab$DADHISTORYDIA = as.factor(famdiab$DADHISTORYDIA)
-# levels(x = famdiab$DADHISTORYDIA) = c("No","Yes", "Not Sure")
+# levels(x = famdiab$DADHISTORYDIA) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # MI
 dfa = read.csv2(file = "v1/mhxa02.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
 MHXA28 = subset.data.frame(dfa, select = c(MHXA28, ID_C))
 # MHXA28$MHXA28 = as.factor(MHXA28$MHXA28)
-# levels(x = MHXA28$MHXA28) = c("No","Unsure", "Yes")
+# levels(x = MHXA28$MHXA28) = c("EmptySpace", "No", "Unsure", "Yes")
 
 HOM10C = subset.data.frame(dfb, select = c(HOM10C, ID_C))
 # HOM10C$HOM10C = as.factor(HOM10C$HOM10C)
-# levels(x = HOM10C$HOM10C) = c("No","Unsure", "Yes")
+# levels(x = HOM10C$HOM10C) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # STROKE
 dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
 HOM10D = subset.data.frame(dfa, select = c(HOM10D, ID_C))
 # HOM10D$HOM10D = as.factor(HOM10D$HOM10D)
-# levels(x = HOM10D$HOM10D) = c("No","Unsure", "Yes")
+# levels(x = HOM10D$HOM10D) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # CANCER
 dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
 HOM10F = subset.data.frame(dfa, select = c(HOM10F, ID_C))
 # HOM10F$HOM10F = as.factor(HOM10F$HOM10F)
-# levels(x = HOM10F$HOM10F) = c("No","Unsure", "Yes")
+# levels(x = HOM10F$HOM10F) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # HYPERTENSION
 dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
 HOM10A = subset.data.frame(dfa, select = c(HOM10A, ID_C))
 # HOM10A$HOM10A = as.factor(HOM10A$HOM10A)
-# levels(x = HOM10A$HOM10A) = c("No","Unsure", "Yes")
+# levels(x = HOM10A$HOM10A) = c("EmptySpace", "No", "Unsure", "Yes")
 
 # E_INTAKE
 dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",")
@@ -324,10 +324,10 @@ bevs = subset.data.frame(dfa, select = c(DTIA64, DTIA65, ID_C))
 dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
 HYPTMDCODE01 = subset.data.frame(dfa, select = c(HYPTMDCODE01, ID_C))
 # HYPTMDCODE01$HYPTMDCODE01 = as.factor(HYPTMDCODE01$HYPTMDCODE01)
-# levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("No","Yes", "Not Sure")
+# levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("EmptySpace", "No", "Unsure", "Yes")
 
 dfa = read.csv2(file = "v1/anta.csv", header = TRUE, sep = ",")
-# ANTA07A = subset.data.frame(dfa, select = c(ANTA07A, ID_C))
+ANTA07A = subset.data.frame(dfa, select = c(ANTA07A, ID_C))
 # ANTA07A$ANTA07A = as.numeric(as.character(ANTA07A$ANTA07A))
 
 rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
@@ -336,7 +336,7 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 #################################################################################################################
 #################################################################################################################
 #################################################################################################################
-dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
+dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HHXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
 	LIP23,MSRF33C,V2AGE22,V1AGE01,V3AGE31,V4AGE41,V5AGE51,V2DAYS,V3DAYS,V4DAYS,V5DATE51_DAYS,DTIA35,DTIA36,DTIA37,
 	DTIA34,GENDER,BMI01,ELEVEL02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
 	bevs,HYPTMDCODE01,ANTA07A)
@@ -346,6 +346,6 @@ colnames(aric)[1] <- "ID"
 
 aric_tibble = as_tibble(aric)
 # WAIST
-save(aric,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df.Rdata")
-write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_new.dta")
+save(aric,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_r.Rdata")
+write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_fish.dta")
 
