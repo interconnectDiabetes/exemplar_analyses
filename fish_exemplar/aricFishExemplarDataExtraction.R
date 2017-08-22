@@ -287,43 +287,56 @@ veg$DTIA25 = as.factor(veg$DTIA25)
 levels(x = veg$DTIA25) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 
+# DAIRY
+
 # FIBER
-dfa = read.csv2(file = "v1/aaf06a.csv", header = TRUE, sep = ",")
-A06FIBER = subset.data.frame(dfa, select = c(A06FIBER, PID))
-A06FIBER$A06FIBER = as.numeric(as.character(A06FIBER$A06FIBER))
+dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",")
+DFIB = subset.data.frame(dfa, select = c(DFIB, PID))
+DFIB$DFIB = as.numeric(as.character(DFIB$DFIB))
 
 # RED_MEAT
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-red = subset.data.frame(dfa, select = c(A06MRF0100,A06MRF0200,A06MRF0300, A06MRF0400, PID))
-red$A06MRF0100 = as.numeric(as.character(red$A06MRF0100))
-red$A06MRF0200 = as.numeric(as.character(red$A06MRF0200))
-red$A06MRF0300 = as.numeric(as.character(red$A06MRF0300))
-red$A06MRF0400 = as.numeric(as.character(red$A06MRF0400))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+red = subset.data.frame(dfa, select = c(DTIA32, DTIA33, PID))
+red$DTIA32 = as.factor(red$DTIA32)
+levels(x = red$DTIA32) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+red$DTIA33 = as.factor(red$DTIA33)
+levels(x = red$DTIA33) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+
 
 # PROC-MEAT
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-proc = subset.data.frame(dfa, select = c(A06MCF0200,A06MCF0100 , PID))
-proc$A06MCF0200 = as.numeric(as.character(proc$A06MCF0200))
-proc$A06MCF0100 = as.numeric(as.character(proc$A06MCF0100))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+proc = subset.data.frame(dfa, select = c(DTIA28,DTIA29,DTIA30, DTIA31, PID))
+proc$DTIA28 = as.factor(proc$DTIA28)
+levels(x = proc$DTIA28) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA29 = as.factor(proc$DTIA29)
+levels(x = proc$DTIA29) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA30 = as.factor(proc$DTIA30)
+levels(x = proc$DTIA30) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA31 = as.factor(proc$DTIA31)
+levels(x = proc$DTIA31) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
 
 # SUG_BEVS
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-A06BVS0400 = subset.data.frame(dfa, select = c(A06BVS0400, PID))
-A06BVS0400$A06BVS0400 = as.numeric(as.character(A06BVS0400$A06BVS0400))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+bevs = subset.data.frame(dfa, select = c(DTIA64, DTIA65, PID))
+bevs$DTIA64 = as.factor(bevs$DTIA64)
+levels(x = bevs$DTIA64) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+bevs$DTIA65 = as.factor(bevs$DTIA65)
+levels(x = bevs$DTIA65) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # MEDS
-dfa = read.csv2(file = "v1/aaf08v2.csv", header = TRUE, sep = ",")
-A08BPMED = subset.data.frame(dfa, select = c(A08BPMED, PID))
-A08BPMED$A08BPMED = as.factor(A08BPMED$A08BPMED)
-levels(x = A08BPMED$A08BPMED) = c("No","Yes", "Not Sure")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+HYPTMDCODE01 = subset.data.frame(dfa, select = c(HYPTMDCODE01, PID))
+HYPTMDCODE01$HYPTMDCODE01 = as.factor(HYPTMDCODE01$HYPTMDCODE01)
+levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("No","Yes", "Not Sure")
 
 # WAIST
-dfa = read.csv2(file = "v1/aaf20.csv", header = TRUE, sep = ",")
-A20WST = subset.data.frame(dfa, select = c(A20WST, PID))
-A20WST$A20WST = as.numeric(as.character(A20WST$A20WST))
+dfa = read.csv2(file = "v1/anta.csv", header = TRUE, sep = ",")
+ANTA07A = subset.data.frame(dfa, select = c(ANTA07A, PID))
+ANTA07A$ANTA07A = as.numeric(as.character(ANTA07A$ANTA07A))
 
-rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl, dfm, dfn, dfo, dfp, dfq, 
-	dfr, dfs, dft, dfu, dfv, dfw, dfx, dfy, dfz, dfaa, dfab, dfac, dfad)
+rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 
 
 #################################################################################################################
