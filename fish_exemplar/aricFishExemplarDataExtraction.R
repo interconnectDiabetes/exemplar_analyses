@@ -127,29 +127,38 @@ V5DATE51_DAYS$V5DATE51_DAYS = as.numeric(as.character(V5DATE51_DAYS$V5DATE51_DAY
 #           | |                                  
 #           |_|                                  
 # FATTY
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-fatty = subset.data.frame(dfa, select = c(A06MFF0100, PID))
-fatty$A06MFF0100 = as.numeric(as.character(fatty$A06MFF0100))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+DTIA35 = subset.data.frame(dfa, select = c(DTIA35, PID))
+DTIA35$DTIA35 = as.numeric(as.character(DTIA35$DTIA35))
+DTIA35$DTIA35 = as.factor(DTIA35$DTIA35)
+levels(x = DTIA35$DTIA35) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+# FRESH 
 # FRIED
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-fried = subset.data.frame(dfa, select = c(A06MFF0200, A06MSF0100, PID))
-fried$A06MFF0200 = as.numeric(as.character(fried$A06MFF0200))
-fried$A06MSF0100 = as.numeric(as.character(fried$A06MSF0100))
 
 # LEAN
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-lean = subset.data.frame(dfa, select = c(A06MFL0100, PID))
-lean$A06MFL0100 = as.numeric(as.character(lean$A06MFL0100))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+DTIA36 = subset.data.frame(dfa, select = c(DTIA36, PID))
+DTIA36$DTIA36 = as.numeric(as.character(DTIA36$DTIA36))
+DTIA36$DTIA36 = as.factor(DTIA36$DTIA36)
+levels(x = DTIA36$DTIA36) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # NONFISH
-dfa = read.csv2(file = "v1/aaf06fg.csv", header = TRUE, sep = ",")
-nonfish = subset.data.frame(dfa, select = c(A06MSL0100, PID))
-nonfish$A06MSL0100 = as.numeric(as.character(nonfish$A06MSL0100))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+DTIA37 = subset.data.frame(dfa, select = c(DTIA37, PID))
+DTIA37$DTIA37 = as.numeric(as.character(DTIA37$DTIA37))
+DTIA37$DTIA37 = as.factor(DTIA37$DTIA37)
+levels(x = DTIA37$DTIA37) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+# SALT
+# SSD 
 
 # TOTAL
-dfa = read.csv2(file = "v1/aaf06mj.csv", header = TRUE, sep = ",")
-total = subset.data.frame(dfa, select = c(A06FISH, PID))
-total$A06FISH = as.numeric(as.character(total$A06FISH))
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+DTIA34 = subset.data.frame(dfa, select = c(DTIA34, PID))
+DTIA34$DTIA34 = as.numeric(as.character(DTIA34$DTIA34))
+DTIA34$DTIA34 = as.factor(DTIA34$DTIA34)
+levels(x = DTIA34$DTIA34) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # ___  ___          _ _  __ _               
 # |  \/  |         | (_)/ _(_)              
