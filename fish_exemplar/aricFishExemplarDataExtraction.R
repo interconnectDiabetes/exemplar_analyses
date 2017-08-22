@@ -88,18 +88,11 @@ levels(x = PHXB6C$PHXB6C) = c("No","Yes", "Not Sure")
 
 # AGE_END_OBJ 
 # AGE_END_OBJ_SELF
-if NON-CASE = (V2AGE22- V1AGE01) or (V3AGE31 - V1AGE01)
- or (V4AGE41 - V1AGE01) or (V5AGE51 - V1AGE01) 
- maybe use V2DAYS, V3DAYS, V4DAYS, V5DAYS (aka V5DATE51_DAYS)
-
 dfa = read.csv2(file = "v1/derive2_10.csv", header = TRUE, sep = ",")
 dfb = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
 dfc = read.csv2(file = "v1/derive37.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
 dfe = read.csv2(file = "v1/derive47.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
 dfg = read.csv2(file = "v1/derive51.csv", header = TRUE, sep = ",")
-dfh = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
 dfi = read.csv2(file = "v1/derive2_10.csv", header = TRUE, sep = ",")
 dfj = read.csv2(file = "v1/derive37.csv", header = TRUE, sep = ",")
 dfk = read.csv2(file = "v1/derive47.csv", header = TRUE, sep = ",")
@@ -107,15 +100,23 @@ dfl = read.csv2(file = "v1/derive51.csv", header = TRUE, sep = ",")
 V2AGE22 = subset.data.frame(dfa, select = c(V2AGE22, PID))
 V1AGE01 = subset.data.frame(dfb, select = c(V1AGE01, PID))
 V3AGE31 = subset.data.frame(dfc, select = c(V3AGE31, PID))
-V1AGE01 = subset.data.frame(dfd, select = c(V1AGE01, PID))
 V4AGE41 = subset.data.frame(dfe, select = c(V4AGE41, PID))
-V1AGE01 = subset.data.frame(dff, select = c(V1AGE01, PID))
 V5AGE51 = subset.data.frame(dfg, select = c(V1AGE01, PID))
-V1AGE01 = subset.data.frame(dfh, select = c(V1AGE01, PID))
 V2DAYS = subset.data.frame(dfi, select = c(V2DAYS, PID))
 V3DAYS = subset.data.frame(dfj, select = c(V3DAYS, PID))
 V4DAYS = subset.data.frame(dfk, select = c(V4DAYS, PID))
 V5DATE51_DAYS = subset.data.frame(dfl, select = c(V5DATE51_DAYS, PID))
+
+V2AGE22$V2AGE22 = as.numeric(as.character(V2AGE22$V2AGE22))
+V1AGE01$V1AGE01 = as.numeric(as.character(V1AGE01$V1AGE01))
+V3AGE31$V3AGE31 = as.numeric(as.character(V3AGE31$V3AGE31))
+V4AGE41$V4AGE41 = as.numeric(as.character(V4AGE41$V4AGE41))
+V5AGE51$V5AGE51 = as.numeric(as.character(V5AGE51$V5AGE51))
+V2DAYS$V2DAYS = as.numeric(as.character(V2DAYS$V2DAYS))
+V3DAYS$V3DAYS = as.numeric(as.character(V3DAYS$V3DAYS))
+V4DAYS$V4DAYS = as.numeric(as.character(V4DAYS$V4DAYS))
+V5DATE51_DAYS$V5DATE51_DAYS = as.numeric(as.character(V5DATE51_DAYS$V5DATE51_DAYS))
+
 
 # _____                                         
 # |  ___|                                        
