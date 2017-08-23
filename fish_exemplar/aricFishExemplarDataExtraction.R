@@ -233,14 +233,14 @@ TCAL$TCAL = as.numeric(as.character(TCAL$TCAL))
 # FRUIT
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 fruit = subset.data.frame(dfa, select = c(DTIA11,DTIA12,DTIA13, DTIA14, ID_C))
-# fruit$DTIA11 = as.factor(fruit$DTIA11)
-# levels(x = fruit$DTIA11) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# fruit$DTIA12 = as.factor(fruit$DTIA12)
-# levels(x = fruit$DTIA12) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# fruit$DTIA13 = as.factor(fruit$DTIA13)
-# levels(x = fruit$DTIA13) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# fruit$DTIA14 = as.factor(fruit$DTIA14)
-# levels(x = fruit$DTIA14) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+fruit$DTIA11 = as.factor(fruit$DTIA11)
+levels(x = fruit$DTIA11) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+fruit$DTIA12 = as.factor(fruit$DTIA12)
+levels(x = fruit$DTIA12) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+fruit$DTIA13 = as.factor(fruit$DTIA13)
+levels(x = fruit$DTIA13) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+fruit$DTIA14 = as.factor(fruit$DTIA14)
+levels(x = fruit$DTIA14) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 
 
@@ -248,38 +248,38 @@ fruit = subset.data.frame(dfa, select = c(DTIA11,DTIA12,DTIA13, DTIA14, ID_C))
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 veg = subset.data.frame(dfa, select = c(DTIA15,DTIA16,DTIA17, DTIA18, DTIA19, DTIA20, DTIA21, 
 	DTIA22, DTIA23, DTIA24, DTIA25, ID_C))
-# veg$DTIA15 = as.factor(veg$DTIA15)
-# levels(x = veg$DTIA15) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA15 = as.factor(veg$DTIA15)
+levels(x = veg$DTIA15) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA16 = as.factor(veg$DTIA16)
-# levels(x = veg$DTIA16) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA16 = as.factor(veg$DTIA16)
+levels(x = veg$DTIA16) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA17 = as.factor(veg$DTIA17)
-# levels(x = veg$DTIA17) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA17 = as.factor(veg$DTIA17)
+levels(x = veg$DTIA17) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA18 = as.factor(veg$DTIA18)
-# levels(x = veg$DTIA18) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA18 = as.factor(veg$DTIA18)
+levels(x = veg$DTIA18) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA19 = as.factor(veg$DTIA19)
-# levels(x = veg$DTIA19) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA19 = as.factor(veg$DTIA19)
+levels(x = veg$DTIA19) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA20 = as.factor(veg$DTIA20)
-# levels(x = veg$DTIA20) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA20 = as.factor(veg$DTIA20)
+levels(x = veg$DTIA20) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA21 = as.factor(veg$DTIA21)
-# levels(x = veg$DTIA21) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA21 = as.factor(veg$DTIA21)
+levels(x = veg$DTIA21) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA22 = as.factor(veg$DTIA22)
-# levels(x = veg$DTIA22) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA22 = as.factor(veg$DTIA22)
+levels(x = veg$DTIA22) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA23 = as.factor(veg$DTIA23)
-# levels(x = veg$DTIA23) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA23 = as.factor(veg$DTIA23)
+levels(x = veg$DTIA23) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA24 = as.factor(veg$DTIA24)
-# levels(x = veg$DTIA24) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA24 = as.factor(veg$DTIA24)
+levels(x = veg$DTIA24) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-# veg$DTIA25 = as.factor(veg$DTIA25)
-# levels(x = veg$DTIA25) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+veg$DTIA25 = as.factor(veg$DTIA25)
+levels(x = veg$DTIA25) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 
 # DAIRY
@@ -287,48 +287,48 @@ veg = subset.data.frame(dfa, select = c(DTIA15,DTIA16,DTIA17, DTIA18, DTIA19, DT
 # FIBER
 dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DFIB = subset.data.frame(dfa, select = c(DFIB, ID_C))
-# DFIB$DFIB = as.numeric(as.character(DFIB$DFIB))
+DFIB$DFIB = as.numeric(as.character(DFIB$DFIB))
 
 # RED_MEAT
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 red = subset.data.frame(dfa, select = c(DTIA32, DTIA33, ID_C))
-# red$DTIA32 = as.factor(red$DTIA32)
-# levels(x = red$DTIA32) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# red$DTIA33 = as.factor(red$DTIA33)
-# levels(x = red$DTIA33) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+red$DTIA32 = as.factor(red$DTIA32)
+levels(x = red$DTIA32) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+red$DTIA33 = as.factor(red$DTIA33)
+levels(x = red$DTIA33) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 
 
 # PROC-MEAT
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 proc = subset.data.frame(dfa, select = c(DTIA28,DTIA29,DTIA30, DTIA31, ID_C))
-# proc$DTIA28 = as.factor(proc$DTIA28)
-# levels(x = proc$DTIA28) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# proc$DTIA29 = as.factor(proc$DTIA29)
-# levels(x = proc$DTIA29) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# proc$DTIA30 = as.factor(proc$DTIA30)
-# levels(x = proc$DTIA30) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# proc$DTIA31 = as.factor(proc$DTIA31)
-# levels(x = proc$DTIA31) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA28 = as.factor(proc$DTIA28)
+levels(x = proc$DTIA28) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA29 = as.factor(proc$DTIA29)
+levels(x = proc$DTIA29) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA30 = as.factor(proc$DTIA30)
+levels(x = proc$DTIA30) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+proc$DTIA31 = as.factor(proc$DTIA31)
+levels(x = proc$DTIA31) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 
 # SUG_BEVS
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 bevs = subset.data.frame(dfa, select = c(DTIA64, DTIA65, ID_C))
-# bevs$DTIA64 = as.factor(bevs$DTIA64)
-# levels(x = bevs$DTIA64) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
-# bevs$DTIA65 = as.factor(bevs$DTIA65)
-# levels(x = bevs$DTIA65) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+bevs$DTIA64 = as.factor(bevs$DTIA64)
+levels(x = bevs$DTIA64) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+bevs$DTIA65 = as.factor(bevs$DTIA65)
+levels(x = bevs$DTIA65) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # MEDS
 dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 HYPTMDCODE01 = subset.data.frame(dfa, select = c(HYPTMDCODE01, ID_C))
-# HYPTMDCODE01$HYPTMDCODE01 = as.factor(HYPTMDCODE01$HYPTMDCODE01)
-# levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("No", "Unsure", "Yes")
+HYPTMDCODE01$HYPTMDCODE01 = as.factor(HYPTMDCODE01$HYPTMDCODE01)
+levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("No", "Yes")
 
 dfa = read.csv2(file = "v1/anta.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 ANTA07A = subset.data.frame(dfa, select = c(ANTA07A, ID_C))
-# ANTA07A$ANTA07A = as.numeric(as.character(ANTA07A$ANTA07A))
+ANTA07A$ANTA07A = as.numeric(as.character(ANTA07A$ANTA07A))
 
 rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 
