@@ -23,17 +23,29 @@ library(metafor)
 setwd("/home/l_pms69/exemplar_analyses/")
 #setwd("/home/l_trpb2/git/exemplar_analyses/")
 
+# Source in the Extra functions for analysis
+source("fish_exemplar/helperFunctions.R")
+source("fish_exemplar/survival_analysis_dsFunctions.R")
 # Retrieve Credential Details
 source("creds/fish_exemplar_creds.R")
 setwd("~")
 
+# Logout in case there was any older session in place and login with chosen variables
 datashield.logout(opals)
+rm(opals_model2)
+rm(opals_fatty)
+rm(opals_fresh)
+rm(opals_fried)
+rm(opals_lean)
+rm(opals_nonfish)
+rm(opals_salt)
+rm(opals_ssd)
+
 
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
-           "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
-           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
-           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
-
+           "FUP_OBJ", "FUP_OBJ_SELF", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
+           "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG",  "FIBER", "SUG_BEVS", "WAIST", "SUPPLEMENTS", 
+           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "AGE_BASE", "MEAT", "COMORBID", "BMI_CAT")
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
 # # To include all possible variables uncomment this line and and comment out previus line
@@ -43,12 +55,11 @@ opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, 
 ########################### SET UP DATA  ######################################
 ###############################################################################
 # all participants
-all_participants <- ds.length('D$TOTAL')
-all_participants_split <- ds.length('D$TOTAL',type = 'split')
-
+all_participants <- ds.length('D$TOTAL', datasources = opals)
+all_participants_split <- ds.length('D$TOTAL',type = 'split', datasources = opals)
 
 # Set studynames and numstudies
-temp <- ds.summary('D$TOTAL')
+temp <- ds.summary('D$TOTAL', datasources = opals)
 study_names <- names(temp)
 num_studies <- length(temp)
 rm(temp)
@@ -97,9 +108,9 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 
 # Loop to produce E4 and model_all_len for descriptive stats
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
-my_vars_all = c("AGE_BASE", "CASE_OBJ_SELF", "CASE_OBJ","AGE_END_OBJ", "FATTY", "FRESH", "FRIED", "LEAN", "NONFISH", "SALT", "SSD", "TOTAL",
-	"SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", "COMORBID", "E_INTAKE", "FRUIT",
-	"VEG", "FIBER", "MEAT", "SUG_BEVS")
+my_vars_all = c("AGE_BASE",  "CASE_OBJ_SELF", "CASE_OBJ", "FUP_OBJ", "FUP_OBJ_SELF", "FATTY", "FRESH", "FRIED", 
+                "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", 
+                "COMORBID", "E_INTAKE", "FRUIT", "VEG", "FIBER", "MEAT", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
 
 
