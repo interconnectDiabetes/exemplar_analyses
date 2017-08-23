@@ -14,38 +14,38 @@ setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC d
 #  \___/ \__,_|\__\___\___/|_| |_| |_|\___||___/ 
 
 # AGE_BASE
-dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 V1AGE01 = subset.data.frame(dfa, select = c(V1AGE01, ID_C))
 V1AGE01$V1AGE01 = as.numeric(as.character(V1AGE01$V1AGE01))
 
 # TYPE_DIAB we assume all to be t2
 
 # PREV_DIAB
-dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v1/msra.csv", header = TRUE, sep = ",")
-dfc = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfb = read.csv2(file = "v1/msra.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfc = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 HOM10E = subset.data.frame(dfa, select = c(HOM10E, ID_C))
 MSRA08F = subset.data.frame(dfb, select = c(MSRA08F, ID_C))
 GLUCOS01 = subset.data.frame(dfc, select = c(GLUCOS01, ID_C))
 
-# HOM10E$HOM10E = as.factor(HOM10E$HOM10E)
-# levels(x = HOM10E$HOM10E) = c("EmptySpace", "No", "Unsure", "Yes")
-# MSRA08F$MSRA08F = as.factor(MSRA08F$MSRA08F)
-# levels(x = MSRA08F$MSRA08F) = c("EmptySpace", "No", "Unsure", "Yes")
-# GLUCOS01$GLUCOS01 = as.numeric(as.character(GLUCOS01$GLUCOS01))
+HOM10E$HOM10E = as.factor(HOM10E$HOM10E)
+levels(x = HOM10E$HOM10E) = c("No", "Unsure", "Yes")
+MSRA08F$MSRA08F = as.factor(MSRA08F$MSRA08F)
+levels(x = MSRA08F$MSRA08F) = c("No", "Unsure", "Yes")
+GLUCOS01$GLUCOS01 = as.numeric(as.character(GLUCOS01$GLUCOS01))
 
 # CASE_OBJ and CASE_OBJ_SELF
-dfa = read.csv2(file = "v2/chmb.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v2/hhxb.csv", header = TRUE, sep = ",")
-dfc = read.csv2(file = "v2/msrb.csv", header = TRUE, sep = ",")
-dfd = read.csv2(file = "v3/lipc04.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "v3/phxa04.csv", header = TRUE, sep = ",")
-dff = read.csv2(file = "v3/msrc04.csv", header = TRUE, sep = ",")
-dfg = read.csv2(file = "v4/lipd04.csv", header = TRUE, sep = ",")
-dfh = read.csv2(file = "v4/phxb04.csv", header = TRUE, sep = ",")
-dfi = read.csv2(file = "v4/msrd04.csv", header = TRUE, sep = ",")
-dfj = read.csv2(file = "v5/derv.csv", header = TRUE, sep = ",")
-dfk = read.csv2(file = "v5/msr.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v2/chmb.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfb = read.csv2(file = "v2/hhxb.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfc = read.csv2(file = "v2/msrb.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfd = read.csv2(file = "v3/lipc04.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfe = read.csv2(file = "v3/phxa04.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dff = read.csv2(file = "v3/msrc04.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfg = read.csv2(file = "v4/lipd04.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfh = read.csv2(file = "v4/phxb04.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfi = read.csv2(file = "v4/msrd04.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfj = read.csv2(file = "v5/derv.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfk = read.csv2(file = "v5/msr.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 CHMB07 = subset.data.frame(dfa, select = c(CHMB07, ID_C))
 HHXB05D = subset.data.frame(dfb, select = c(HHXB05D, ID_C))
 MSRB24F = subset.data.frame(dfc, select = c(MSRB24F, ID_C))
@@ -58,40 +58,40 @@ MSRD24G = subset.data.frame(dfi, select = c(MSRD24G, ID_C))
 LIP23 = subset.data.frame(dfj, select = c(FASTING_GLUCOSE, ID_C))
 MSRF33C = subset.data.frame(dfk, select = c(MSRF33C, ID_C))
 
-# CHMB07$CHMB07 = as.numeric(as.character(CHMB07$CHMB07))
-# HXB05D$HXB05D = as.factor(HXB05D$HXB05D)
-# levels(x = HXB05D$HXB05D) = c("EmptySpace", "No", "Unsure", "Yes")
-# MSRB24F$MSRB24F = as.factor(MSRB24F$MSRB24F)
-# levels(x = MSRB24F$MSRB24F) = c("EmptySpace", "No", "Unsure", "Yes")
+CHMB07$CHMB07 = as.numeric(as.character(CHMB07$CHMB07))
+HHXB05D$HHXB05D = as.factor(HHXB05D$HHXB05D)
+levels(x = HHXB05D$HHXB05D) = c("No", "Unsure", "Yes")
+MSRB24F$MSRB24F = as.factor(MSRB24F$MSRB24F)
+levels(x = MSRB24F$MSRB24F) = c("No", "Unsure", "Yes")
 
-# LIPC4A$LIPC4A = as.numeric(as.character(LIPC4A$LIPC4A))
-# PHXA8K$HXB05D = as.factor(PHXA8K$PHXA8K)
-# levels(x = PHXA8K$PHXA8K) = c("EmptySpace", "No", "Unsure", "Yes")
-# MSRC24G$MSRC24G = as.factor(MSRC24G$MSRC24G)
-# levels(x = MSRC24G$MSRC24G) = c("EmptySpace", "No", "Unsure", "Yes")
+LIPC4A$LIPC4A = as.numeric(as.character(LIPC4A$LIPC4A))
+PHXA8K$HXB05D = as.factor(PHXA8K$PHXA8K)
+levels(x = PHXA8K$PHXA8K) = c("No", "Unsure", "Yes")
+MSRC24G$MSRC24G = as.factor(MSRC24G$MSRC24G)
+levels(x = MSRC24G$MSRC24G) = c("No", "Unsure", "Yes")
 
-# LIPD4A$LIPD4A = as.numeric(as.character(LIPD4A$LIPD4A))
-# PHXB6C$PHXB6C = as.factor(PHXB6C$PHXB6C)
-# levels(x = PHXB6C$PHXB6C) = c("EmptySpace", "No", "Unsure", "Yes")
-# MSRD24G$MSRD24G = as.factor(MSRD24G$MSRD24G)
-# levels(x = MSRD24G$MSRD24G) = c("EmptySpace", "No", "Unsure", "Yes")
+LIPD4A$LIPD4A = as.numeric(as.character(LIPD4A$LIPD4A))
+PHXB6C$PHXB6C = as.factor(PHXB6C$PHXB6C)
+levels(x = PHXB6C$PHXB6C) = c("No", "Unsure", "Yes")
+MSRD24G$MSRD24G = as.factor(MSRD24G$MSRD24G)
+levels(x = MSRD24G$MSRD24G) = c("No", "Unsure", "Yes")
 
-# LIPD4A$LIPD4A = as.numeric(as.character(LIPD4A$LIPD4A))
-# PHXB6C$PHXB6C = as.factor(PHXB6C$PHXB6C)
-# levels(x = PHXB6C$PHXB6C) = c("EmptySpace", "No", "Unsure", "Yes")
+LIPD4A$LIPD4A = as.numeric(as.character(LIPD4A$LIPD4A))
+PHXB6C$PHXB6C = as.factor(PHXB6C$PHXB6C)
+levels(x = PHXB6C$PHXB6C) = c("No", "Unsure", "Yes")
 
 
 # AGE_END_OBJ 
 # AGE_END_OBJ_SELF
-dfa = read.csv2(file = "v2/derive2_10.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
-dfc = read.csv2(file = "v3/derive37.csv", header = TRUE, sep = ",")
-dfe = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",")
-dfg = read.csv2(file = "v5/derive51.csv", header = TRUE, sep = ",")
-dfi = read.csv2(file = "v2/derive2_10.csv", header = TRUE, sep = ",")
-dfj = read.csv2(file = "v3/derive37.csv", header = TRUE, sep = ",")
-dfk = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",")
-dfl = read.csv2(file = "v5/derive51.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v2/derive2_10.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfb = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfc = read.csv2(file = "v3/derive37.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfe = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfg = read.csv2(file = "v5/derive51.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfi = read.csv2(file = "v2/derive2_10.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfj = read.csv2(file = "v3/derive37.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfk = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfl = read.csv2(file = "v5/derive51.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 V2AGE22 = subset.data.frame(dfa, select = c(V2AGE22, ID_C))
 V1AGE01 = subset.data.frame(dfb, select = c(V1AGE01, ID_C))
 V3AGE31 = subset.data.frame(dfc, select = c(V3AGE31, ID_C))
@@ -102,15 +102,15 @@ V3DAYS = subset.data.frame(dfj, select = c(V3DAYS, ID_C))
 V4DAYS = subset.data.frame(dfk, select = c(V4DAYS, ID_C))
 V5DATE51_DAYS = subset.data.frame(dfl, select = c(V5DATE51_DAYS, ID_C))
 
-# V2AGE22$V2AGE22 = as.numeric(as.character(V2AGE22$V2AGE22))
-# V1AGE01$V1AGE01 = as.numeric(as.character(V1AGE01$V1AGE01))
-# V3AGE31$V3AGE31 = as.numeric(as.character(V3AGE31$V3AGE31))
-# V4AGE41$V4AGE41 = as.numeric(as.character(V4AGE41$V4AGE41))
-# V5AGE51$V5AGE51 = as.numeric(as.character(V5AGE51$V5AGE51))
-# V2DAYS$V2DAYS = as.numeric(as.character(V2DAYS$V2DAYS))
-# V3DAYS$V3DAYS = as.numeric(as.character(V3DAYS$V3DAYS))
-# V4DAYS$V4DAYS = as.numeric(as.character(V4DAYS$V4DAYS))
-# V5DATE51_DAYS$V5DATE51_DAYS = as.numeric(as.character(V5DATE51_DAYS$V5DATE51_DAYS))
+V2AGE22$V2AGE22 = as.numeric(as.character(V2AGE22$V2AGE22))
+V1AGE01$V1AGE01 = as.numeric(as.character(V1AGE01$V1AGE01))
+V3AGE31$V3AGE31 = as.numeric(as.character(V3AGE31$V3AGE31))
+V4AGE41$V4AGE41 = as.numeric(as.character(V4AGE41$V4AGE41))
+V5AGE51$V5AGE51 = as.numeric(as.character(V5AGE51$V5AGE51))
+V2DAYS$V2DAYS = as.numeric(as.character(V2DAYS$V2DAYS))
+V3DAYS$V3DAYS = as.numeric(as.character(V3DAYS$V3DAYS))
+V4DAYS$V4DAYS = as.numeric(as.character(V4DAYS$V4DAYS))
+V5DATE51_DAYS$V5DATE51_DAYS = as.numeric(as.character(V5DATE51_DAYS$V5DATE51_DAYS))
 
 
 # _____                                         
@@ -122,34 +122,34 @@ V5DATE51_DAYS = subset.data.frame(dfl, select = c(V5DATE51_DAYS, ID_C))
 #           | |                                  
 #           |_|                                  
 # FATTY
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DTIA35 = subset.data.frame(dfa, select = c(DTIA35, ID_C))
-# DTIA35$DTIA35 = as.factor(DTIA35$DTIA35)
-# levels(x = DTIA35$DTIA35) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+DTIA35$DTIA35 = as.factor(DTIA35$DTIA35)
+levels(x = DTIA35$DTIA35) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # FRESH 
 # FRIED
 
 # LEAN
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DTIA36 = subset.data.frame(dfa, select = c(DTIA36, ID_C))
-# DTIA36$DTIA36 = as.factor(DTIA36$DTIA36)
-# levels(x = DTIA36$DTIA36) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+DTIA36$DTIA36 = as.factor(DTIA36$DTIA36)
+levels(x = DTIA36$DTIA36) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # NONFISH
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DTIA37 = subset.data.frame(dfa, select = c(DTIA37, ID_C))
-# DTIA37$DTIA37 = as.factor(DTIA37$DTIA37)
-# levels(x = DTIA37$DTIA37) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+DTIA37$DTIA37 = as.factor(DTIA37$DTIA37)
+levels(x = DTIA37$DTIA37) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # SALT
 # SSD 
 
 # TOTAL
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DTIA34 = subset.data.frame(dfa, select = c(DTIA34, ID_C))
-# DTIA34$DTIA34 = as.factor(DTIA34$DTIA34)
-# levels(x = DTIA34$DTIA34) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+DTIA34$DTIA34 = as.factor(DTIA34$DTIA34)
+levels(x = DTIA34$DTIA34) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # ___  ___          _ _  __ _               
 # |  \/  |         | (_)/ _(_)              
@@ -158,15 +158,15 @@ DTIA34 = subset.data.frame(dfa, select = c(DTIA34, ID_C))
 # | |  | | (_) | (_| | | | | |  __/ |  \__ \
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 # SEX
-dfa = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v4/derive47.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 GENDER = subset.data.frame(dfa, select = c(GENDER, ID_C))
-# GENDER$GENDER = as.factor(GENDER$GENDER)
-# levels(x = GENDER$GENDER) = c("Male","Female")
+GENDER$GENDER = as.factor(GENDER$GENDER)
+levels(x = GENDER$GENDER) = c("FEMALE","MALE")
 
 # BMI
-dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 BMI01 = subset.data.frame(dfa, select = c(BMI01, ID_C))
-# BMI01$BMI01 = as.numeric(as.character(BMI01$BMI01))
+BMI01$BMI01 = as.numeric(as.character(BMI01$BMI01))
              
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
@@ -176,62 +176,62 @@ BMI01 = subset.data.frame(dfa, select = c(BMI01, ID_C))
 #  \____/\___/|_| |_|_| \___/ \__,_|_| |_|\__,_|\___|_|  |___/
 
 # Education a bit weird have to or them
-dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 ELEVEL02 = subset.data.frame(dfa, select = c(ELEVEL02, ID_C))
-# ELEVEL02$ELEVEL02 = as.factor(ELEVEL02$ELEVEL02)
+ELEVEL02$ELEVEL02 = as.factor(ELEVEL02$ELEVEL02)
 
 # Smoking
 # PA
 
 # ALCOHOL
-dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 ETHANL03 = subset.data.frame(dfa, select = c(ETHANL03, ID_C))
-# ETHANL03$ETHANL03 = as.numeric(as.character(ETHANL03$ETHANL03))
+ETHANL03$ETHANL03 = as.numeric(as.character(ETHANL03$ETHANL03))
 
 # FAM_DIAB
-dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 famdiab = subset.data.frame(dfa, select = c(MOMHISTORYDIA, DADHISTORYDIA, ID_C))
-# famdiab$MOMHISTORYDIA = as.factor(famdiab$MOMHISTORYDIA)
-# levels(x = famdiab$MOMHISTORYDIA) = c("EmptySpace", "No", "Unsure", "Yes")
-# famdiab$DADHISTORYDIA = as.factor(famdiab$DADHISTORYDIA)
-# levels(x = famdiab$DADHISTORYDIA) = c("EmptySpace", "No", "Unsure", "Yes")
+famdiab$MOMHISTORYDIA = as.factor(famdiab$MOMHISTORYDIA)
+levels(x = famdiab$MOMHISTORYDIA) = c("No", "Yes")
+famdiab$DADHISTORYDIA = as.factor(famdiab$DADHISTORYDIA)
+levels(x = famdiab$DADHISTORYDIA) = c("No", "Yes")
 
 # MI
-dfa = read.csv2(file = "v1/mhxa02.csv", header = TRUE, sep = ",")
-dfb = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/mhxa02.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfb = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 MHXA28 = subset.data.frame(dfa, select = c(MHXA28, ID_C))
-# MHXA28$MHXA28 = as.factor(MHXA28$MHXA28)
-# levels(x = MHXA28$MHXA28) = c("EmptySpace", "No", "Unsure", "Yes")
+MHXA28$MHXA28 = as.factor(MHXA28$MHXA28)
+levels(x = MHXA28$MHXA28) = c("No", "Unsure", "Yes")
 
 HOM10C = subset.data.frame(dfb, select = c(HOM10C, ID_C))
-# HOM10C$HOM10C = as.factor(HOM10C$HOM10C)
-# levels(x = HOM10C$HOM10C) = c("EmptySpace", "No", "Unsure", "Yes")
+HOM10C$HOM10C = as.factor(HOM10C$HOM10C)
+levels(x = HOM10C$HOM10C) = c("No", "Unsure", "Yes")
 
 # STROKE
-dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 HOM10D = subset.data.frame(dfa, select = c(HOM10D, ID_C))
-# HOM10D$HOM10D = as.factor(HOM10D$HOM10D)
-# levels(x = HOM10D$HOM10D) = c("EmptySpace", "No", "Unsure", "Yes")
+HOM10D$HOM10D = as.factor(HOM10D$HOM10D)
+levels(x = HOM10D$HOM10D) = c("No", "Unsure", "Yes")
 
 # CANCER
-dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 HOM10F = subset.data.frame(dfa, select = c(HOM10F, ID_C))
-# HOM10F$HOM10F = as.factor(HOM10F$HOM10F)
-# levels(x = HOM10F$HOM10F) = c("EmptySpace", "No", "Unsure", "Yes")
+HOM10F$HOM10F = as.factor(HOM10F$HOM10F)
+levels(x = HOM10F$HOM10F) = c("No", "Unsure", "Yes")
 
 # HYPERTENSION
-dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/hom.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 HOM10A = subset.data.frame(dfa, select = c(HOM10A, ID_C))
-# HOM10A$HOM10A = as.factor(HOM10A$HOM10A)
-# levels(x = HOM10A$HOM10A) = c("EmptySpace", "No", "Unsure", "Yes")
+HOM10A$HOM10A = as.factor(HOM10A$HOM10A)
+levels(x = HOM10A$HOM10A) = c("No", "Unsure", "Yes")
 
 # E_INTAKE
-dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 TCAL = subset.data.frame(dfa, select = c(TCAL, ID_C))
-# TCAL$TCAL = as.numeric(as.character(TCAL$TCAL))
+TCAL$TCAL = as.numeric(as.character(TCAL$TCAL))
 
 # FRUIT
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 fruit = subset.data.frame(dfa, select = c(DTIA11,DTIA12,DTIA13, DTIA14, ID_C))
 # fruit$DTIA11 = as.factor(fruit$DTIA11)
 # levels(x = fruit$DTIA11) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
@@ -245,7 +245,7 @@ fruit = subset.data.frame(dfa, select = c(DTIA11,DTIA12,DTIA13, DTIA14, ID_C))
 
 
 # VEG
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 veg = subset.data.frame(dfa, select = c(DTIA15,DTIA16,DTIA17, DTIA18, DTIA19, DTIA20, DTIA21, 
 	DTIA22, DTIA23, DTIA24, DTIA25, ID_C))
 # veg$DTIA15 = as.factor(veg$DTIA15)
@@ -285,12 +285,12 @@ veg = subset.data.frame(dfa, select = c(DTIA15,DTIA16,DTIA17, DTIA18, DTIA19, DT
 # DAIRY
 
 # FIBER
-dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DFIB = subset.data.frame(dfa, select = c(DFIB, ID_C))
 # DFIB$DFIB = as.numeric(as.character(DFIB$DFIB))
 
 # RED_MEAT
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 red = subset.data.frame(dfa, select = c(DTIA32, DTIA33, ID_C))
 # red$DTIA32 = as.factor(red$DTIA32)
 # levels(x = red$DTIA32) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
@@ -300,7 +300,7 @@ red = subset.data.frame(dfa, select = c(DTIA32, DTIA33, ID_C))
 
 
 # PROC-MEAT
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 proc = subset.data.frame(dfa, select = c(DTIA28,DTIA29,DTIA30, DTIA31, ID_C))
 # proc$DTIA28 = as.factor(proc$DTIA28)
 # levels(x = proc$DTIA28) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
@@ -313,7 +313,7 @@ proc = subset.data.frame(dfa, select = c(DTIA28,DTIA29,DTIA30, DTIA31, ID_C))
 
 
 # SUG_BEVS
-dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 bevs = subset.data.frame(dfa, select = c(DTIA64, DTIA65, ID_C))
 # bevs$DTIA64 = as.factor(bevs$DTIA64)
 # levels(x = bevs$DTIA64) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
@@ -321,12 +321,12 @@ bevs = subset.data.frame(dfa, select = c(DTIA64, DTIA65, ID_C))
 # levels(x = bevs$DTIA65) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # MEDS
-dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 HYPTMDCODE01 = subset.data.frame(dfa, select = c(HYPTMDCODE01, ID_C))
 # HYPTMDCODE01$HYPTMDCODE01 = as.factor(HYPTMDCODE01$HYPTMDCODE01)
-# levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("EmptySpace", "No", "Unsure", "Yes")
+# levels(x = HYPTMDCODE01$HYPTMDCODE01) = c("No", "Unsure", "Yes")
 
-dfa = read.csv2(file = "v1/anta.csv", header = TRUE, sep = ",")
+dfa = read.csv2(file = "v1/anta.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 ANTA07A = subset.data.frame(dfa, select = c(ANTA07A, ID_C))
 # ANTA07A$ANTA07A = as.numeric(as.character(ANTA07A$ANTA07A))
 
