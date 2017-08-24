@@ -181,7 +181,15 @@ ELEVEL02 = subset.data.frame(dfa, select = c(ELEVEL02, ID_C))
 ELEVEL02$ELEVEL02 = as.factor(ELEVEL02$ELEVEL02)
 
 # Smoking
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+CIGT01 = subset.data.frame(dfa, select = c(CIGT01, ID_C))
+CIGT01$CIGT01 = as.factor(CIGT01$CIGT01)
+levels(x = CIGT01$CIGT01) = c("Current Smoker", "Former Smoker", "Never Smoker", "Unknown")
+
 # PA
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+SPRT_I02 = subset.data.frame(dfa, select = c(SPRT_I02, ID_C))
+SPRT_I02$SPRT_I02 = as.numeric(as.character(SPRT_I02$SPRT_I02))
 
 # ALCOHOL
 dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -338,7 +346,7 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 #################################################################################################################
 dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HHXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
 	LIP23,MSRF33C,V2AGE22,V1AGE01,V3AGE31,V4AGE41,V5AGE51,V2DAYS,V3DAYS,V4DAYS,V5DATE51_DAYS,DTIA35,DTIA36,DTIA37,
-	DTIA34,GENDER,BMI01,ELEVEL02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
+	DTIA34,GENDER,BMI01,ELEVEL02,CIGT01,SPRT_I02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
 	bevs,HYPTMDCODE01,ANTA07A)
 
 aric = Reduce(function(...) merge(..., by="ID_C", all=TRUE), dataframes_list)
@@ -347,5 +355,5 @@ colnames(aric)[1] <- "ID"
 aric_tibble = as_tibble(aric)
 # WAIST
 save(aric,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_r.Rdata")
-write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_fish.dta")
+write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_new_fish.dta")
 
