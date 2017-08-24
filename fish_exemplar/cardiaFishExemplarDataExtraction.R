@@ -278,7 +278,7 @@ levels(x = A01SEX$A01SEX) = c("Male","Female")
 # BMI
 dfa = read.csv2(file = "Y00/DATA/csv/aaf20.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 A20BMI = subset.data.frame(dfa, select = c(A20BMI, PID))
-total$A06FISH = as.numeric(as.character(total$A06FISH))
+A20BMI$A20BMI = as.numeric(as.character(A20BMI$A20BMI))
              
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
@@ -420,5 +420,5 @@ colnames(cardia)[1] <- "ID"
 
 cardia_tibble = as_tibble(cardia)
 save(cardia,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df.Rdata")
-write_dta(data = cardia_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_new.dta")
+write_dta(data = cardia_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_fishnew.dta")
 
