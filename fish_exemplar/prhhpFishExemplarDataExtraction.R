@@ -5,13 +5,71 @@ library(tibble) # for easier dataframes, and rather the saving to dta
 library(haven)
 setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/Data")
 
-
 #  _____       _                                 
 # |  _  |     | |                                
 # | | | |_   _| |_ ___ ___  _ __ ___   ___  ___  
 # | | | | | | | __/ __/ _ \| '_ ` _ \ / _ \/ __| 
 # \ \_/ / |_| | || (_| (_) | | | | | |  __/\__ \ 
 #  \___/ \__,_|\__\___\___/|_| |_| |_|\___||___/ 
+
+# AGE_BASE
+
+dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA17 = subset.data.frame(dfa, select = c(PA17, NEWID))
+PA17$PA17 = as.numeric(as.character(PA17$PA17))
+
+dfa = read.csv2(file = "prevent.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PE3 = subset.data.frame(dfa, select = c(PE3, NEWID))
+PE3$PE3 = as.numeric(as.character(PE3$PE3))
+
+# TYPE_DIAB
+# PREV_DIAB
+dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+prevalence = subset.data.frame(dfa, select = c(PA118, PA119, PA199, PA214, PA211, NEWID))
+
+prevalence$PA118 = as.factor(prevalence$PA118)
+prevalence$PA119 = as.factor(prevalence$PA119)
+prevalence$PA214 = as.factor(prevalence$PA214)
+prevalence$PA199 = as.factor(prevalence$PA199)
+levels(x = prevalence$PA118) = c("No", "Yes", "Unsure")
+levels(x = prevalence$PA119) = c("No", "Diet Treatment", "Oral Medication", "Insulin Treatment")
+levels(x = prevalence$PA214) = c("No", "Yes", "Unsure")
+levels(x = prevalence$PA199) = c("No", "Yes", "Unsure")
+prevalence$PA211 = as.numeric(as.character(prevalence$PA211))
+
+# CASE_OBJ # CASE_OBJ_SELF
+dfa = read.csv2(file = "prexam2.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfb = read.csv2(file = "prexam3.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+pb = subset.data.frame(dfa, select = c(PB146, PB160, NEWID))
+pc = subset.data.frame(dfb, select = c(PC106, PC21, PC22, PC120, PC119, NEWID))
+
+pb$PB146 = as.factor(pb$PB146)
+pc$PC106 = as.factor(pc$PC106)
+pc$PC21 = as.factor(pc$PC21)
+pc$PC22 = as.factor(pc$PC22)
+pc$PC120 = as.factor(pc$PC120)
+pb$PB160 = as.numeric(as.character(pb$PB160))
+pc$PC119 = as.numeric(as.character(pc$PC119))
+levels(x = pb$PB146) = c("No", "Yes", "Unsure")
+levels(x = pc$PC106) = c("No", "Yes", "Unsure")
+levels(x = pc$PC21) = c("No", "Yes", "Unsure")
+levels(x = pc$PC22) = c("No", "Yes", "Unsure")
+levels(x = pc$PC120) = c("No", "Yes")
+
+# AGE_END_OBJ
+# AGE_END_OBJ_SELF
+dfa = read.csv2(file = "prexam2.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfb = read.csv2(file = "prexam3.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfc = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+pb = subset.data.frame(dfc, select = c(PA17, NEWID))
+pb = subset.data.frame(dfa, select = c(PB216, PB13, NEWID))
+pc = subset.data.frame(dfb, select = c(PC121, PC5, NEWID))
+
+# pa$PA17 = as.numeric(as.character(pa$PA17))
+pb$PB216 = as.numeric(as.character(pb$PB216))
+pb$PB13 = as.numeric(as.character(pb$PB13))
+pc$PC121 = as.numeric(as.character(pc$PC121))
+pc$PC5 = as.numeric(as.character(pc$PC5))
 
 # _____                                         
 # |  ___|                                        
@@ -21,8 +79,21 @@ setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC d
 # \____/_/\_\ .__/ \___/|___/\__,_|_|  \___||___/
 #           | |                                  
 #           |_|                                  
-# FATTY
 
+# FATTY
+# FRESH
+# FRIED
+# LEAN
+
+# NONFISH
+dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA229 = subset.data.frame(dfa, select = c(PA229, NEWID))
+PA229$PA229 = as.numeric(as.character(PA229$PA229))
+
+# SALT
+
+# SSD
+# TOTAL
 
 # ___  ___          _ _  __ _               
 # |  \/  |         | (_)/ _(_)              
@@ -31,7 +102,11 @@ setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC d
 # | |  | | (_) | (_| | | | | |  __/ |  \__ \
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 
-             
+# SEX
+# BMI
+# GEOG_AREA
+
+         
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
 # | /  \/ ___  _ __ | |_ ___  _   _ _ __   __| | ___ _ __ ___ 
@@ -39,7 +114,26 @@ setwd("V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC d
 # | \__/\ (_) | | | | || (_) | |_| | | | | (_| |  __/ |  \__ \
 #  \____/\___/|_| |_|_| \___/ \__,_|_| |_|\__,_|\___|_|  |___/
 
-
+# EDUCATION
+# SMOKING
+# PA
+# ALCOHOL
+# FAM_DIAB
+# MI
+# STROKE
+# CANCER
+# HYPERTENSION
+# E_INTAKE
+# COV_FRUIT
+# COV_VEG
+# COV_DAIRY
+# COV_FIBER
+# COV_RED_MEAT
+# COV_PROC_MEAT
+# COV_SUG_BEVS
+# MEDS
+# WAIST
+# SUPPLEMENTS
 
 
 #################################################################################################################
