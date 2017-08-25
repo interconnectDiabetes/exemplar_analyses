@@ -238,6 +238,10 @@ dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",", stringsAsFact
 TCAL = subset.data.frame(dfa, select = c(TCAL, ID_C))
 TCAL$TCAL = as.numeric(as.character(TCAL$TCAL))
 
+dfa = read.csv2(file = "v1/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+TOTCAL03 = subset.data.frame(dfa, select = c(TOTCAL03, ID_C))
+TOTCAL03$TOTCAL03 = as.numeric(as.character(TOTCAL03$TOTCAL03))
+
 # FRUIT
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 fruit = subset.data.frame(dfa, select = c(DTIA11,DTIA12,DTIA13, DTIA14, ID_C))
@@ -293,9 +297,10 @@ levels(x = veg$DTIA25) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 # DAIRY
 
 # FIBER
-dfa = read.csv2(file = "v1/totnutx.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dfa = read.csv2(file = "v1/anut2.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DFIB = subset.data.frame(dfa, select = c(DFIB, ID_C))
 DFIB$DFIB = as.numeric(as.character(DFIB$DFIB))
+
 
 # RED_MEAT
 dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -347,7 +352,7 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HHXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
 	LIP23,MSRF33C,V2AGE22,V1AGE01,V3AGE31,V4AGE41,V5AGE51,V2DAYS,V3DAYS,V4DAYS,V5DATE51_DAYS,DTIA35,DTIA36,DTIA37,
 	DTIA34,GENDER,BMI01,ELEVEL02,CIGT01,SPRT_I02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
-	bevs,HYPTMDCODE01,ANTA07A)
+	bevs,HYPTMDCODE01,ANTA07A, TOTCAL03)
 
 aric = Reduce(function(...) merge(..., by="ID_C", all=TRUE), dataframes_list)
 colnames(aric)[1] <- "ID"
@@ -355,5 +360,5 @@ colnames(aric)[1] <- "ID"
 aric_tibble = as_tibble(aric)
 # WAIST
 save(aric,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_r.Rdata")
-write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_new_fish.dta")
+write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric.dta")
 
