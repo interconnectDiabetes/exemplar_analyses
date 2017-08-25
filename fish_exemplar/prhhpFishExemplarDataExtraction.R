@@ -93,7 +93,14 @@ PA229$PA229 = as.numeric(as.character(PA229$PA229))
 # SALT
 
 # SSD
+dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA228 = subset.data.frame(dfa, select = c(PA228, NEWID))
+PA228$PA228 = as.numeric(as.character(PA228$PA228))
+
 # TOTAL
+dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA227 = subset.data.frame(dfa, select = c(PA227, NEWID))
+PA227$PA227 = as.numeric(as.character(PA227$PA227))
 
 # ___  ___          _ _  __ _               
 # |  \/  |         | (_)/ _(_)              
