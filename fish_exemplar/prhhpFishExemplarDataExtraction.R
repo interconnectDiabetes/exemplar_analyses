@@ -84,19 +84,15 @@ pc$PC5 = as.numeric(as.character(pc$PC5))
 # FRESH
 # FRIED
 # LEAN
-
 # NONFISH
 dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA229 = subset.data.frame(dfa, select = c(PA229, NEWID))
 PA229$PA229 = as.numeric(as.character(PA229$PA229))
-
 # SALT
-
 # SSD
 dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA228 = subset.data.frame(dfa, select = c(PA228, NEWID))
 PA228$PA228 = as.numeric(as.character(PA228$PA228))
-
 # TOTAL
 dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA227 = subset.data.frame(dfa, select = c(PA227, NEWID))
@@ -109,8 +105,11 @@ PA227$PA227 = as.numeric(as.character(PA227$PA227))
 # | |  | | (_) | (_| | | | | |  __/ |  \__ \
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 
-# SEX
+# SEX all dudes
 # BMI
+dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+BMI1 = subset.data.frame(dfa, select = c(BMI1, NEWID))
+BMI1$BMI1 = as.numeric(as.character(BMI1$BMI1))
 # GEOG_AREA
 
          
