@@ -161,15 +161,10 @@ PA228 = PA228 * 20;
 sum = PA227 + PA229 + PA228;
 
 
-
-
-
-
-
-
-// sex
+// sex all men
 
 // bmi
+bmi = $('BMI01').value();
 
 // bmi_cat
 
