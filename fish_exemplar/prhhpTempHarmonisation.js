@@ -93,12 +93,11 @@ if (PB146 == null && PB160 == null && PC106 == null && PC21 == null && PC22 == n
 } 
 
 // FUP obj and fup self
-if case= (PB216/2) or (PC121/2) 
-if non-case=  (PB13 - PA17) or (PC5 - PA17)
 
 PB216 = $('PB216').value();
 PC121 = $('PC121').value();
 PB13 = $('PB13').value();
+PC5 = $('PC5').value();
 PA17 = $('PA17').value();
 
 PB146 = $('PB146').value();
@@ -120,10 +119,10 @@ if (PB146 == null && PB160 == null && PC106 == null && PC21 == null && PC22 == n
 } 
 
 if (case_sign == 1){
-  if (PB216 == null && PB121 == null){
+  if (PB216 == null && PC121 == null){
     fup = -1;
   } else {
-    fup = Math.max((PB216/2), (PB121/2));
+    fup = Math.max((PB216/2), (PC121/2));
   }
 } else if (case_sign == 0) {
   if (PB13 == null && PA17 == null && PC5 == null) {
@@ -137,20 +136,36 @@ if (case_sign == 1){
 
 
 // fatty
-
 // fresh
-
 // fried
-
 // lean
 
 // nonfish
+PA229 = $('PA229').value();
+PA229 = PA229 * 28.3;
 
-// salt
+//salt
 
 // ssd
+PA228 = $('PA228').value();
+PA228 = PA228 * 20;
 
 // total
+PA227 = $('PA227').value();
+PA227 = PA227 * 28.3;
+PA229 = $('PA229').value();
+PA229 = PA229 * 28.3;
+PA228 = $('PA228').value();
+PA228 = PA228 * 20;
+
+sum = PA227 + PA229 + PA228;
+
+
+
+
+
+
+
 
 // sex
 
