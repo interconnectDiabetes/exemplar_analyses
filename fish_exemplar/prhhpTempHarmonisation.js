@@ -164,10 +164,10 @@ sum = PA227 + PA229 + PA228;
 // sex all men
 
 // bmi
-bmi = $('BMI01').value();
+bmi = $('BMI1').value();
 
 // bmi_cat
-bmi = $('BMI01').value();
+bmi = $('BMI1').value();
 if (bmi >= 25){
   bmi_cat = 1;
 } else if (bmi > 0 && bmi < 25){
@@ -189,7 +189,7 @@ pa = $('PA52').value();
 pa = $('PA78').value();
 
 // FAM_DIAB
-famhist = $('PA78').value();
+famhist = $('PE34').value();
 
 if (famhist == 0){
   fam_diab = 0;

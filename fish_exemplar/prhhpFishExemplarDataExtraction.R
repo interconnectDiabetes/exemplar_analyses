@@ -170,8 +170,8 @@ levels(x = PE66$PE66) = c("0", "1", "2", "9999")
 
 # E_INTAKE
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA62 = subset.data.frame(dfa, select = c(PA62, NEWID))
-PA62$PA62 = as.numeric(as.character(PA62$PA62))
+PA63 = subset.data.frame(dfa, select = c(PA63, NEWID))
+PA63$PA63 = as.numeric(as.character(PA63$PA63))
 
 # COV_FRUIT
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -245,7 +245,7 @@ rm(dfa, dfb, dfc)
 #################################################################################################################
 #################################################################################################################
 dataframes_list = list(PA17,PE3,prevalence,case_b,case_c,age_end_b,age_end_c,
-	PA229,PA228,PA227,BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PE66,PA62,PA237,
+	PA229,PA228,PA227,BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PE66,PA63,PA237,
 	PA238,PA239,PA233,PA235,PA236,PA77,PA221,PA223,PA224,PA225,PA250,PA125)
 
 prhhp = Reduce(function(...) merge(..., by="NEWID", all=TRUE), dataframes_list)
@@ -255,5 +255,5 @@ prhhp$ID = as.character(prhhp$ID)
 prhhp_tibble = as_tibble(prhhp)
 # WAIST
 save(prhhp,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp.Rdata")
-write_dta(data = prhhp_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp.dta")
+write_dta(data = prhhp_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_new.dta")
 
