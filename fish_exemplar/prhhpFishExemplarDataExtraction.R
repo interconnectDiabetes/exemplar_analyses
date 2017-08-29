@@ -123,7 +123,7 @@ BMI1$BMI1 = as.numeric(as.character(BMI1$BMI1))
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA28 = subset.data.frame(dfa, select = c(PA28, NEWID))
 PA28$PA28 = as.factor(PA28$PA28)
-levels(x = P28$P28) = c("0", "1", "2", "3", "4", "5", "6", "9999")
+levels(x = PA28$PA28) = c("0", "1", "2", "3", "4", "5", "6", "9999")
 
 # SMOKING
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -162,10 +162,10 @@ levels(x = PA194$PA194) = c("0", "1", "2", "9999")
 # CANCER
 
 # HYPERTENSION
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA194 = subset.data.frame(dfa, select = c(PA194, NEWID))
-PA194$PA194 = as.factor(PA194$PA194)
-levels(x = PA194$PA194) = c("0", "1", "2", "9999")
+dfa = read.csv2(file = 'prevent.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PE66 = subset.data.frame(dfa, select = c(PE66, NEWID))
+PE66$PE66 = as.factor(PE66$PE66)
+levels(x = PE66$PE66) = c("0", "1", "2", "9999")
 
 
 # E_INTAKE
@@ -239,16 +239,18 @@ levels(x = PA125$PA125) = c("0", "1", "2", "9999")
 # WAIST
 # SUPPLEMENTS
 
+rm(dfa, dfb, dfc)
 
 #################################################################################################################
 #################################################################################################################
 #################################################################################################################
 dataframes_list = list(PA17,PE3,prevalence,case_b,case_c,age_end_b,age_end_c,
-	PA229,PA228,PA227,BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PA194,PA62,PA237,
+	PA229,PA228,PA227,BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PE66,PA62,PA237,
 	PA238,PA239,PA233,PA235,PA236,PA77,PA221,PA223,PA224,PA225,PA250,PA125)
 
-prhhp = Reduce(function(...) merge(..., by="ID_C", all=TRUE), dataframes_list)
+prhhp = Reduce(function(...) merge(..., by="NEWID", all=TRUE), dataframes_list)
 colnames(prhhp)[1] <- "ID"
+prhhp$ID = as.character(prhhp$ID)
 
 prhhp_tibble = as_tibble(prhhp)
 # WAIST
