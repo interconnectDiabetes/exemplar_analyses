@@ -110,7 +110,7 @@ ds.cbind(x=c('fakeIds','E4'), newobj='E5')
 # Note that this doesnt actually handle well if a study has lost all its participants before this section
 my_vars_all = c("AGE_BASE",  "CASE_OBJ_SELF", "CASE_OBJ", "FUP_OBJ", "FUP_OBJ_SELF", "FATTY", "FRESH", "FRIED", 
                 "LEAN", "NONFISH", "SALT", "SSD", "TOTAL", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL", 
-                "COMORBID", "E_INTAKE", "FRUIT", "VEG", "FIBER", "MEAT", "SUG_BEVS", "newEndDate", "newStartDate", "burtonWeights")
+                "COMORBID", "E_INTAKE", "FRUIT", "VEG", "FIBER", "MEAT", "SUG_BEVS")
 my_vars_all <- c('fakeIds', my_vars_all) #because datashield doesnt like single column subsets
 
 
