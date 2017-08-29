@@ -122,7 +122,7 @@ if (case_sign == 1){
   if (PB216 == null && PC121 == null){
     fup = -1;
   } else {
-    fup = Math.max((PB216/2), (PC121/2));
+    fup = Math.min((PB216/2), (PC121/2));
   }
 } else if (case_sign == 0) {
   if (PB13 == null && PA17 == null && PC5 == null) {
@@ -167,45 +167,204 @@ sum = PA227 + PA229 + PA228;
 bmi = $('BMI01').value();
 
 // bmi_cat
+bmi = $('BMI01').value();
+if (bmi >= 25){
+  bmi_cat = 1;
+} else if (bmi > 0 && bmi < 25){
+  bmi_cat = 0;
+} else {
+  bmi_cat = -1;
+}
 
 // EDUCATION
+education = $('PA28').value();
 
 // SMOKING
+smoking = $('PA42').value();
 
 // PA
+pa = $('PA52').value();
 
 // ALCOHOL
+pa = $('PA78').value();
 
 // FAM_DIAB
+famhist = $('PA78').value();
+
+if (famhist == 0){
+  fam_diab = 0;
+} else if (famhist == 1 || famhist == 2 || famhist == 3) {
+  fam_diab = 1;
+} else {
+  fam_diab = -1;
+}
+
 
 // MI
 
-// STROKE
+mi = $('PA60').value();
 
-// CANCR
+if (mi == 2){
+  miout = 1;
+} else if (mi == 0 || mi == 1 || mi == 3) {
+  miout = 0;
+} else {
+  miout = -1;
+}
+
+// STROKE
+stroke = $('PA194').value();
+
+if (stroke == 1){
+  stro = 1;
+} else if (stroke == 0 || stroke == 2) {
+  stro = 0;
+} else {
+  stro = -1;
+}
+
+// CANCER NOT RECORDED
 
 // HYPERTENSION
+hypertension = $('PE66').value();
+
+if (hypertension == 1){
+  hype = 1;
+} else if (hypertension == 0 || hypertension == 2) {
+  hype = 0;
+} else {
+  hype = -1;
+}
 
 // E_INTAKE
+etake = $('PA63').value();
 
 // COV_FRUIT
+a = $('PA237').value();
+b = $('PA238').value();
+c = $('PA239').value();
+
+if (a == null && b == null && c == null) {
+  sum = -1;
+} else {
+  sum = a+b+c;
+}
 
 // COV_VEG
+a = $('PA233').value();
+b = $('PA235').value();
+c = $('PA236').value();
+
+if (a == null && b == null && c == null) {
+  sum = -1;
+} else {
+  sum = a+b+c;
+}
 
 // COV_FIBER
+fiber = $('PA77').value();
 
 // COV_RED_MEAT
+a = $('PA221').value();
+b = $('PA223').value();
+
+if (a == null && b == null ) {
+  sum = -1;
+} else {
+  sum = a+b;
+}
 
 // COV_PROC_MEAT
+a = $('PA224').value();
+b = $('PA225').value();
+
+if (a == null && b == null ) {
+  sum = -1;
+} else {
+  sum = a+b;
+}
 
 // COV_SUG_BEVS
+bevs = $('PA250').value();
 
 // MEDS
+meds = $('PA125').value();
+
+if (meds == 1){
+  hype = 1;
+} else if (meds == 0 || meds == 2) {
+  hype = 0;
+} else {
+  hype = -1;
+}
+
 
 // WAIST
-
 // SUPPLEMENTS
 
 // COMORBID
 
+//hypertension
+hypertension = $('PE66').value();
+
+if (hypertension == 1){
+  hype = 1;
+} else if (hypertension == 0 || hypertension == 2) {
+  hype = 0;
+} else {
+  hype = -1;
+}
+
+//mi
+mi = $('PA60').value();
+
+if (mi == 2){
+  miout = 1;
+} else if (mi == 0 || mi == 1 || mi == 3) {
+  miout = 0;
+} else {
+  miout = -1;
+}
+
+//stroke
+stroke = $('PA194').value();
+
+if (stroke == 1){
+  stro = 1;
+} else if (stroke == 0 || stroke == 2) {
+  stro = 0;
+} else {
+  stro = -1;
+}
+
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+if (hype == -1 && stro == -1 && miout == -1 ) {
+  output = -1;
+} else if (hype == 1 || stro == 1 || miout == 1) {
+  output = 1;
+} else{
+  output = 0;
+}
+
+output;
+
+
 // MEAT
+reda = $('PA221').value();
+redb = $('PA223').value();
+
+if (reda == null && redb == null ) {
+  sum_red = -1;
+} else {
+  sum_red = reda+redb;
+}
+
+proca = $('PA224').value();
+procb = $('PA225').value();
+
+if (proca == null && procb == null ) {
+  sum_proc = -1;
+} else {
+  sum_proc = proca+procb;
+}
