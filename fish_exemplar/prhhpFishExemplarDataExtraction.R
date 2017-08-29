@@ -60,12 +60,9 @@ levels(x = pc$PC120) = c("No", "Yes")
 # AGE_END_OBJ_SELF
 dfa = read.csv2(file = "prexam2.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 dfb = read.csv2(file = "prexam3.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-dfc = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-pb = subset.data.frame(dfc, select = c(PA17, NEWID))
 pb = subset.data.frame(dfa, select = c(PB216, PB13, NEWID))
 pc = subset.data.frame(dfb, select = c(PC121, PC5, NEWID))
 
-# pa$PA17 = as.numeric(as.character(pa$PA17))
 pb$PB216 = as.numeric(as.character(pb$PB216))
 pb$PB13 = as.numeric(as.character(pb$PB13))
 pc$PC121 = as.numeric(as.character(pc$PC121))
@@ -106,10 +103,12 @@ PA227$PA227 = as.numeric(as.character(PA227$PA227))
 # \_|  |_/\___/ \__,_|_|_| |_|\___|_|  |___/
 
 # SEX all dudes
+
 # BMI
 dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 BMI1 = subset.data.frame(dfa, select = c(BMI1, NEWID))
 BMI1$BMI1 = as.numeric(as.character(BMI1$BMI1))
+
 # GEOG_AREA
 
          
@@ -121,12 +120,45 @@ BMI1$BMI1 = as.numeric(as.character(BMI1$BMI1))
 #  \____/\___/|_| |_|_| \___/ \__,_|_| |_|\__,_|\___|_|  |___/
 
 # EDUCATION
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA28 = subset.data.frame(dfa, select = c(PA28, NEWID))
+PA28$PA28 = as.factor(PA28$PA28)
+levels(x = P28$P28) = c("0", "1", "2", "3", "4", "5", "6", "9999")
+
 # SMOKING
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA42 = subset.data.frame(dfa, select = c(PA42, NEWID))
+PA42$PA42 = as.factor(PA42$PA42)
+levels(x = PA42$PA42) = c("0", "1", "2", "9999")
+
 # PA
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA52 = subset.data.frame(dfa, select = c(PA52, NEWID))
+PA52$PA52 = as.numeric(as.character(PA52$PA52))
+
 # ALCOHOL
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA78 = subset.data.frame(dfa, select = c(PA78, NEWID))
+PA78$PA78 = as.numeric(as.character(PA78$PA78))
+
 # FAM_DIAB
+dfa = read.csv2(file = 'prevent.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PE34 = subset.data.frame(dfa, select = c(PE34, NEWID))
+PE34$PE34 = as.factor(PE34$PE34)
+levels(x = PE34$PE34) = c("0", "1", "2", "3", "9999")
+
 # MI
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA60 = subset.data.frame(dfa, select = c(PA60, NEWID))
+PA60$PA60 = as.factor(PA60$PA60)
+levels(x = PA60$PA60) = c("0", "1", "2", "3", "9999")
+
 # STROKE
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA60 = subset.data.frame(dfa, select = c(PA60, NEWID))
+PA60$PA60 = as.factor(PA60$PA60)
+levels(x = PA60$PA60) = c("0", "1", "2", "9999")
+
 # CANCER
 # HYPERTENSION
 # E_INTAKE
