@@ -155,21 +155,87 @@ levels(x = PA60$PA60) = c("0", "1", "2", "3", "9999")
 
 # STROKE
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA60 = subset.data.frame(dfa, select = c(PA60, NEWID))
-PA60$PA60 = as.factor(PA60$PA60)
-levels(x = PA60$PA60) = c("0", "1", "2", "9999")
+PA194 = subset.data.frame(dfa, select = c(PA194, NEWID))
+PA194$PA194 = as.factor(PA194$PA194)
+levels(x = PA194$PA194) = c("0", "1", "2", "9999")
 
 # CANCER
+
 # HYPERTENSION
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA194 = subset.data.frame(dfa, select = c(PA194, NEWID))
+PA194$PA194 = as.factor(PA194$PA194)
+levels(x = PA194$PA194) = c("0", "1", "2", "9999")
+
+
 # E_INTAKE
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA62 = subset.data.frame(dfa, select = c(PA62, NEWID))
+PA62$PA62 = as.numeric(as.character(PA62$PA62))
+
 # COV_FRUIT
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA237 = subset.data.frame(dfa, select = c(PA237, NEWID))
+PA237$PA237 = as.numeric(as.character(PA237$PA237))
+
+dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA238 = subset.data.frame(dfb, select = c(PA238, NEWID))
+PA238$PA238 = as.numeric(as.character(PA238$PA238))
+
+dfc = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA239 = subset.data.frame(dfc, select = c(PA239, NEWID))
+PA239$PA239 = as.numeric(as.character(PA239$PA239))
+
+
 # COV_VEG
-# COV_DAIRY
-# COV_FIBER
-# COV_RED_MEAT
-# COV_PROC_MEAT
-# COV_SUG_BEVS
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA233 = subset.data.frame(dfa, select = c(PA233, NEWID))
+PA233$PA233 = as.numeric(as.character(PA233$PA233))
+
+dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA235 = subset.data.frame(dfb, select = c(PA235, NEWID))
+PA235$PA235 = as.numeric(as.character(PA235$PA235))
+
+dfc = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA236 = subset.data.frame(dfc, select = c(PA236, NEWID))
+PA236$PA236 = as.numeric(as.character(PA236$PA236))
+
+# DAIRY
+
+# FIBER
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA77 = subset.data.frame(dfa, select = c(PA77, NEWID))
+PA77$PA77 = as.numeric(as.character(PA77$PA77))
+
+# RED_MEAT
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA221 = subset.data.frame(dfa, select = c(PA221, NEWID))
+PA221$PA221 = as.numeric(as.character(PA221$PA221))
+
+dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA223 = subset.data.frame(dfb, select = c(PA223, NEWID))
+PA223$PA223 = as.numeric(as.character(PA223$PA223))
+
+# PROC_MEAT
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA224 = subset.data.frame(dfa, select = c(PA224, NEWID))
+PA224$PA224 = as.numeric(as.character(PA224$PA224))
+
+dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA225 = subset.data.frame(dfb, select = c(PA225, NEWID))
+PA225$PA225 = as.numeric(as.character(PA225$PA225))
+
+# SUG_BEVS
+dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA250 = subset.data.frame(dfb, select = c(PA250, NEWID))
+PA250$PA250 = as.numeric(as.character(PA250$PA250))
+
 # MEDS
+dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA125 = subset.data.frame(dfa, select = c(PA125, NEWID))
+PA125$PA125 = as.factor(PA125$PA125)
+levels(x = PA125$PA125) = c("0", "1", "2", "9999")
+
 # WAIST
 # SUPPLEMENTS
 
