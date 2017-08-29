@@ -243,10 +243,9 @@ levels(x = PA125$PA125) = c("0", "1", "2", "9999")
 #################################################################################################################
 #################################################################################################################
 #################################################################################################################
-dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HHXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
-	LIP23,MSRF33C,V2AGE22,V1AGE01,V3AGE31,V4AGE41,V5AGE51,V2DAYS,V3DAYS,V4DAYS,V5DATE51_DAYS,DTIA35,DTIA36,DTIA37,
-	DTIA34,GENDER,BMI01,ELEVEL02,CIGT01,SPRT_I02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
-	bevs,HYPTMDCODE01,ANTA07A, TOTCAL03)
+dataframes_list = list(PA17,PE3,prevalence,case_b,case_c,age_end_b,age_end_c,
+	PA229,PA228,PA227,BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PA194,PA62,PA237,
+	PA238,PA239,PA233,PA235,PA236,PA77,PA221,PA223,PA224,PA225,PA250,PA125)
 
 prhhp = Reduce(function(...) merge(..., by="ID_C", all=TRUE), dataframes_list)
 colnames(prhhp)[1] <- "ID"
