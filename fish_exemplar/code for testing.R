@@ -169,6 +169,14 @@ ds.asFactor('A$TIME.PERIOD','tid.f', datasources = opals[my_study])
 ds.summary('tid.f', datasources = opals[my_study])
 ds.summary('A$TIME.PERIOD', datasources = opals[my_study])
 
+CASE_OBJ_SELF ~ 0 + tid.f + A$FRIED + A$AGE_BASE + A$SEX + 
+  A$EDUCATION + A$SMOKING + A$PA + A$BMI + A$COMORBID + A$E_INTAKE + 
+  A$ALCOHOL + A$FIBER + A$MEAT + A$FRUIT + A$VEG + A$SUG_BEVS
+
+results = ds.glm(formula = 'CASE_OBJ_SELF_censor ~ 0 + tid.f + A$FRIED + A$AGE_BASE + A$SEX + 
+  A$EDUCATION + A$SMOKING + A$PA + A$BMI + A$COMORBID + A$E_INTAKE + 
+                 A$ALCOHOL + A$FIBER + A$MEAT + A$FRUIT + A$VEG + A$SUG_BEVS', data = 'A', family = 'poisson', datasources=opals[my_study], offset = 'logSurvivalA', weights = 'A$burtonWeights', maxit=100)
+
 results = ds.glm(formula = 'A$CASE_OBJ~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$E_INTAKE+A$ALCOHOL+A$FIBER+A$MEAT+A$FRUIT+A$VEG+A$SUG_BEVS', data = 'A', family = 'binomial', datasources=opals[my_study], maxit=100)
 results = ds.glm(formula = 'A$CASE_OBJ~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$ALCOHOL+A$FIBER+A$MEAT+A$FRUIT+A$VEG', data = 'A', family = 'binomial', datasources=opals[my_study], maxit=100)
 results = ds.glm(formula = 'A$CASE_OBJ~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$E_INTAKE', data = 'A', family = 'binomial', datasources=opals[my_study], maxit=100)

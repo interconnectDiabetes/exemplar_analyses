@@ -32,7 +32,7 @@ datashield.logout(opals)
 myvars = c('TOTAL', 'NONFISH', 'FRESH', 'LEAN', 'FATTY', "SALT", "SSD", "FRIED", 'CASE_OBJ', "CASE_OBJ_SELF", "PREV_DIAB", "TYPE_DIAB", 
            "AGE_BASE", "AGE_END","MI", "STROKE", "CANCER", "HYPERTENSION", "SEX", "BMI", "EDUCATION", "SMOKING", "PA", "ALCOHOL",
            "FAM_DIAB", "E_INTAKE", "FRUIT", "VEG", "DAIRY", "FIBER", "RED_MEAT" , "PROC_MEAT", "SUG_BEVS", "MEDS", "WAIST", "SUPPLEMENTS", 
-           "AGE_END_OBJ_SELF", "AGE_END_OBJ", "MEAT", "COMORBID")
+           "FUP_OBJ_SELF", "FUP_OBJ", "MEAT", "COMORBID")
 
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, directory = '/home/shared/certificates/fish')
 
@@ -202,29 +202,29 @@ famdiabMissing  = ds.numNA('D$FAM_DIAB')
 eintakeMissing = ds.numNA('D$E_INTAKE')
 fruitMissing = ds.numNA('D$FRUIT')
 vegMissing = ds.numNA('D$VEG')
-dairyMissing  = ds.numNA('D$DAIRY')
 fiberMissing = ds.numNA('D$FIBER')
 redmeatMissing = ds.numNA('D$RED_MEAT')
 procmeatMissing = ds.numNA('D$PROC_MEAT')
 sugbevsMissing = ds.numNA('D$SUG_BEVS')
-medsMissing = ds.numNA('D$MEDS')
 waistMissing = ds.numNA('D$WAIST')
 supplementsMissing = ds.numNA('D$SUPPLEMENTS')
-conf_missing_table = data.frame(cbind(study_names, fullNum, agebaseMissing, ageendMissing, sexMissing, bmiMissing, educationMissing, smokingMissing, paMissing, alcoholMissing,
-  famdiabMissing, eintakeMissing, fruitMissing, vegMissing, dairyMissing, fiberMissing, redmeatMissing, procmeatMissing, sugbevsMissing, medsMissing, 
+conf_missing_table = data.frame(cbind(study_names, fullNum, agebaseMissing, sexMissing, bmiMissing, educationMissing, smokingMissing, paMissing, alcoholMissing,
+  famdiabMissing, eintakeMissing, fruitMissing, vegMissing,  fiberMissing, redmeatMissing, procmeatMissing, sugbevsMissing, 
   waistMissing, supplementsMissing))
-colnames(conf_missing_table) <- c('Study Name', 'Total in Study', 'agebaseMissing', 'ageendMissing', 'sexMissing', 'bmiMissing', 'educationMissing', 'smokingMissing', 'paMissing', 'alcoholMissing',
-  'famdiabMissing', 'eintakeMissing', 'fruitMissing', 'vegMissing', 'dairyMissing', 'fiberMissing', 'redmeatMissing', 'procmeatMissing', 'sugbevsMissing', 'medsMissing', 
+colnames(conf_missing_table) <- c('Study Name', 'Total in Study', 'agebaseMissing', 'sexMissing', 'bmiMissing', 'educationMissing', 'smokingMissing', 'paMissing', 'alcoholMissing',
+  'famdiabMissing', 'eintakeMissing', 'fruitMissing', 'vegMissing',  'fiberMissing', 'redmeatMissing', 'procmeatMissing', 'sugbevsMissing',
   'waistMissing', 'supplementsMissing')
 
 #---------------------------------------------------------
 # Outcomes Missing Checker
 caseobjMissing = ds.numNA('D$CASE_OBJ')
 caseobjselfMissing = ds.numNA('D$CASE_OBJ_SELF')
+fupobjMissing = ds.numNA('D$FUP_OBJ')
+fupobjselfMissing = ds.numNA('D$FUP_OBJ_SELF')
 prevdiabMissing = ds.numNA('D$PREV_DIAB')
 typediabMissing = ds.numNA('D$TYPE_DIAB')
-outcomes_missings_table = data.frame(cbind(study_names, fullNum, caseobjMissing, caseobjselfMissing, prevdiabMissing, typediabMissing))
-colnames(outcomes_missings_table) <- c('Study Name', 'Total in Study', 'caseobjMissing', 'caseobjselfMissing', 'prevdiabMissing', 'typediabMissing')
+outcomes_missings_table = data.frame(cbind(study_names, fullNum, caseobjMissing, caseobjselfMissing, prevdiabMissing, typediabMissing, fupobjselfMissing, fupobjMissing))
+colnames(outcomes_missings_table) <- c('Study Name', 'Total in Study', 'caseobjMissing', 'caseobjselfMissing', 'prevdiabMissing', 'typediabMissing', 'fupobjselfMissing', 'fupobjMissing')
 
 
 
