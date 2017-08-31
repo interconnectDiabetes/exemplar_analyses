@@ -153,6 +153,18 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
   else if (studyName == "WHI") {
     exceptions = c("SEX", "SUPPLEMENTS")
   }
+  else if (studyName == "CARDIA") {
+    exceptions = c("SUPPLEMENTS")
+  }
+  else if (studyName == "ARIC") {
+    exceptions = c("SUPPLEMENTS")
+  }
+  else if (studyName == "MESA") {
+    exceptions = c("SUPPLEMENTS")
+  }
+  else if (studyName == "PRHHP") {
+    exceptions = c("SUPPLEMENTS")
+  }
 	else {
 		exceptions = c()
 	}
