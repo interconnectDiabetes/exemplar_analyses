@@ -129,6 +129,9 @@ ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = 
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['JPHC'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['WHI'])
 ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['CARDIA'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['ARIC'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['PRHHP'])
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['MESA'])
 ds.cbind(x=c('burtonWeights','D5'), newobj='D6')
 
 # put in any dummy columns for the studies with completely missing columns

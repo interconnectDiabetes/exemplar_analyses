@@ -163,7 +163,7 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
     exceptions = c("SUPPLEMENTS")
   }
   else if (studyName == "PRHHP") {
-    exceptions = c("SUPPLEMENTS")
+    exceptions = c("SUPPLEMENTS", "SEX")
   }
 	else {
 		exceptions = c()
@@ -350,6 +350,12 @@ tunedLexisB <- function(ref_table, my_outcome, my_exit_col, study) {
 	}
 	else if (studyName == "JPHC"){ 
 	  interval_width =  c(1,1,1,1,0.5,2.5)
+	}
+	else if (studyName == "ARIC"){
+	  interval_width =  c(2,2,2,2,2,2,2,2,2,2,2,2)
+	}
+	else if (studyName == "MESA"){
+	  interval_width =  c(1,1,1,1,1,1,1,1)
 	}
 	else {
 	  interval_width =  c(1)

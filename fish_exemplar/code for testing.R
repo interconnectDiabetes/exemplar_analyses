@@ -139,6 +139,8 @@ my_study = 'JPHC'
 my_study = 'WHI'
 my_study = 'InterAct_france'
 my_study = 'AusDiab'
+my_study = 'ARIC'
+my_study = 'PRHHP'
 
 # and expand the dataset using the ds.lexis b command
 datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(0.1)), opals = opals[my_study])
@@ -159,7 +161,7 @@ ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals[my_
 # To assess the impact of each confounder we will also run models including each confounder separately.
 
 
-ds.lexis.b(data='D8', intervalWidth =  c(1,1,1,1,1,1,1,1.5,1,1,1,2), idCol = 'D8$ID', entryCol = 'D8$newStartDate', 
+ds.lexis.b(data='D8', intervalWidth =  c(2,2,2,2,2,2,2,2,2,2,2,2), idCol = 'D8$ID', entryCol = 'D8$newStartDate', 
            exitCol = 'D8$newEndDate', statusCol = 'D8$CASE_OBJ', expandDF = 'A', datasources = opals[my_study])
 
 ds.asNumeric('A$CENSOR','censor', datasources = opals[my_study])
@@ -187,7 +189,7 @@ results = ds.glm(formula = 'A$CASE_OBJ~A$TOTAL+A$AGE_BASE+A$PA+A$E_INTAKE+A$ALCO
 results = ds.glm(formula = 'A$CASE_OBJ~0+tid.f+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$E_INTAKE', data = 'A', family = 'binomial', datasources=opals[my_study], maxit=100)
 
 results = ds.glm(formula = 'censor~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$E_INTAKE+A$ALCOHOL+A$FIBER+A$MEAT+A$FRUIT+A$VEG+A$SUG_BEVS', data = 'A', family = 'poisson', datasources=opals[my_study], offset = 'logSurvivalA', weights = 'A$burtonWeights', maxit=100)
-results = ds.glm(formula = 'censor~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$ALCOHOL+A$FIBER+A$MEAT+A$FRUIT+A$VEG+A$SUG_BEVS', data = 'A', family = 'poisson', datasources=opals[my_study], offset = 'logSurvivalA', weights = 'A$burtonWeights', maxit=100)
+results = ds.glm(formula = 'censor~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID', data = 'A', family = 'poisson', datasources=opals[my_study], offset = 'logSurvivalA', weights = 'A$burtonWeights', maxit=100)
 results = ds.glm(formula = 'censor~0+tid.f+A$E_INTAKE', data = 'A', family = 'poisson', datasources=opals[my_study], offset = 'logSurvivalA', weights = 'A$burtonWeights', maxit=100)
 
 results = ds.glm(formula = 'censor~0+tid.f+A$TOTAL+A$AGE_BASE+A$SEX+A$EDUCATION+A$SMOKING+A$PA+A$BMI+A$COMORBID+A$E_INTAKE+A$ALCOHOL+A$MEAT+A$FRUIT+A$VEG', data = 'A', family = 'poisson', datasources=opals[my_study], offset = 'logSurvivalA', weights = 'A$burtonWeights', maxit=100)
