@@ -505,12 +505,6 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 
 
 
-
-
-
-
-
-
 # ___  ___          _      _   _____   _____     _        _ _____ _     _       
 # |  \/  |         | |    | | / __  \ |_   _|   | |      | |  _  | |   (_)      
 # | .  . | ___   __| | ___| | `' / /'   | | ___ | |_ __ _| | | | | |__  _       
@@ -519,8 +513,62 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # \_|  |_/\___/ \__,_|\___|_| \_____/   \_/\___/ \__\__,_|_|\___/|_.__/| |      
 #                                                                     _/ |      
 #                                                                    |__/       
+studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","CARDIA","Whitehall")]
+opals_model2 = opals[studies_model2]
 
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+#my_outcome = c('CASE_OBJ_SELF')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_exit_col = c('newEndDate')
+#my_exit_col = c('newEndDate_SELF')
 
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_model2)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_model2)
+length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = opals_model2)
+
+# Analysis
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
+model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_model2)
+model_2_alltuned = model_2[[1]]
+model_2_remtuned = model_2[[2]]
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_survivaltuned.csv')
+
+# ___  ___          _      _   _____   _____     _        _ _____      _  __    
+# |  \/  |         | |    | | / __  \ |_   _|   | |      | /  ___|    | |/ _|   
+# | .  . | ___   __| | ___| | `' / /'   | | ___ | |_ __ _| \ `--.  ___| | |_    
+# | |\/| |/ _ \ / _` |/ _ \ |   / /     | |/ _ \| __/ _` | |`--. \/ _ \ |  _|   
+# | |  | | (_) | (_| |  __/ | ./ /___   | | (_) | || (_| | /\__/ /  __/ | |     
+# \_|  |_/\___/ \__,_|\___|_| \_____/   \_/\___/ \__\__,_|_\____/ \___|_|_|     
+
+studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","CARDIA","Whitehall")]
+opals_model2 = opals[studies_model2]
+
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ_SELF')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_exit_col = c('newEndDate_SELF')
+
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_model2)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_model2)
+length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = opals_model2)
+
+# Analysis
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
+model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_model2)
+model_2_alltuned = model_2[[1]]
+model_2_remtuned = model_2[[2]]
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_survivaltuned.csv') 
 
 # ___  ___          _      _   _____   _____                                    
 # |  \/  |         | |    | | / __  \ |  __ \                                   
@@ -540,16 +588,7 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # \_|  |_/\___/ \__,_|\___|_| \_____/  \_/\_\\__,_|\__,_|_|   \__|_|_|\___|     
                                                                               
                                                                               
-
-
-# ___  ___          _      _   _____   _____     _        _ _____      _  __    
-# |  \/  |         | |    | | / __  \ |_   _|   | |      | /  ___|    | |/ _|   
-# | .  . | ___   __| | ___| | `' / /'   | | ___ | |_ __ _| \ `--.  ___| | |_    
-# | |\/| |/ _ \ / _` |/ _ \ |   / /     | |/ _ \| __/ _` | |`--. \/ _ \ |  _|   
-# | |  | | (_) | (_| |  __/ | ./ /___   | | (_) | || (_| | /\__/ /  __/ | |     
-# \_|  |_/\___/ \__,_|\___|_| \_____/   \_/\___/ \__\__,_|_\____/ \___|_|_|     
-                                                                              
-                                                                              
+                                                                                                                                                          
 
 
 # ___  ___          _      _   _____  ______    _   _         ___________   ___ 
