@@ -229,7 +229,42 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # | |  | | (_) | (_| |  __/ | _| |_ | |_\ \  __/ (_) |                        
 # \_|  |_/\___/ \__,_|\___|_| \___/  \____/\___|\___/                         
                                                                             
-                                                                            
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ_SELF')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+my_exit_col = c('newEndDate_SELF')
+
+# Subset
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals)
+length_complete_split_total = ds.length("D8$SEX", type = "split", datasources = opals)
+
+regions = list()
+regions[['central']] =  data.frame("study" = c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
+                                       "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
+                                       "InterAct_denmark","HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"))
+regions[['western']] = data.frame("study" = c("ELSA", "WHI", "CARDIA", "ARIC", "MESA", "PRHHP"))
+regions[['eastern']] = data.frame("study" = c("NHAPC", "JPHC", "AusDiab"))
+
+for_RMA = model_2_alltuned[model_2_alltuned$cov==my_exposure,]
+
+for (z in 1:length(regions)){
+  
+  temp_data = merge(x = regions[[z]], y = for_RMA, by = "study")
+  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_SELF.svg'))
+  svg(filename=mypath, 
+      width=4.5 * length(my_exposure), 
+      height=3.5 * length(my_outcome), 
+      pointsize=10)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
+  par(ps=10)
+  do_REM(coeffs = temp_data$Estimate, s_err = temp_data$`Std. Error`, labels = temp_data$study,fmla = "see main plot", out_family = 'poisson', variable = my_exposure)
+  dev.off()
+  
+}                                                                                                                                                          
 
 
 
@@ -577,7 +612,48 @@ write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/pl
 # | |  | | (_) | (_| |  __/ | ./ /___ | |_\ \  __/ (_) |                        
 # \_|  |_/\___/ \__,_|\___|_| \_____/  \____/\___|\___/                         
                                                                               
-                                                                              
+studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","CARDIA","Whitehall")]
+opals_model2 = opals[studies_model2]
+
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+#my_outcome = c('CASE_OBJ_SELF')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_exit_col = c('newEndDate')
+#my_exit_col = c('newEndDate_SELF')
+
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_model2)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_model2)
+length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = opals_model2)
+
+regions = list()
+regions[['central']] =  data.frame("study" = c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk", 
+                                       "InterAct_netherlands", "InterAct_germany", "InterAct_sweden", 
+                                       "InterAct_denmark","HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"))
+regions[['western']] = data.frame("study" = c("ELSA", "WHI", "CARDIA", "ARIC", "MESA", "PRHHP"))
+regions[['eastern']] = data.frame("study" = c("NHAPC", "JPHC", "AusDiab"))
+
+for_RMA = model_2_alltuned[model_2_alltuned$cov==my_exposure,]
+
+for (z in 1:length(regions)){
+  
+  temp_data = merge(x = regions[[z]], y = for_RMA, by = "study")
+  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_SELF.svg'))
+  svg(filename=mypath, 
+      width=4.5 * length(my_exposure), 
+      height=3.5 * length(my_outcome), 
+      pointsize=10)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
+  par(ps=10)
+  do_REM(coeffs = temp_data$Estimate, s_err = temp_data$`Std. Error`, labels = temp_data$study,fmla = "see main plot", out_family = 'poisson', variable = my_exposure)
+  dev.off()
+  
+}                                                                              
 
 
 # ___  ___          _      _   _____   _____                  _   _ _           
@@ -588,7 +664,7 @@ write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/pl
 # \_|  |_/\___/ \__,_|\___|_| \_____/  \_/\_\\__,_|\__,_|_|   \__|_|_|\___|     
                                                                               
                                                                               
-                                                                                                                                                          
+
 
 
 # ___  ___          _      _   _____  ______    _   _         ___________   ___ 
