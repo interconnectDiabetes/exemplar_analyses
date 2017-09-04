@@ -31,7 +31,7 @@ prevalence$PA118 = as.factor(prevalence$PA118)
 prevalence$PA119 = as.factor(prevalence$PA119)
 prevalence$PA214 = as.factor(prevalence$PA214)
 prevalence$PA199 = as.factor(prevalence$PA199)
-levels(x = prevalence$PA118) = c("No", "Yes", "Unsure")
+levels(x = prevalence$PA118) = c("NO", "Yes", "Unsure")
 levels(x = prevalence$PA119) = c("No", "Diet Treatment", "Oral Medication", "Insulin Treatment")
 levels(x = prevalence$PA214) = c("No", "Yes", "Unsure")
 levels(x = prevalence$PA199) = c("No", "Yes", "Unsure")
@@ -50,10 +50,10 @@ case_c$PC22 = as.factor(case_c$PC22)
 case_c$PC120 = as.factor(case_c$PC120)
 case_b$PB160 = as.numeric(as.character(case_b$PB160))
 case_c$PC119 = as.numeric(as.character(case_c$PC119))
-levels(x = case_b$PB146) = c("No", "Yes", "Unsure")
-levels(x = case_c$PC106) = c("No", "Yes", "Unsure")
-levels(x = case_c$PC21) = c("No", "Yes", "Unsure")
-levels(x = case_c$PC22) = c("No", "Yes", "Unsure")
+levels(x = case_b$PB146) = c("No", "Yes", "Maybe")
+levels(x = case_c$PC106) = c("No", "Yes", "Maybe")
+levels(x = case_c$PC21) = c("No", "Yes", "Maybe")
+levels(x = case_c$PC22) = c("No", "Yes", "Maybe")
 levels(x = case_c$PC120) = c("No", "Yes")
 
 # AGE_END_OBJ
@@ -122,14 +122,14 @@ BMI1$BMI1 = as.numeric(as.character(BMI1$BMI1))
 # EDUCATION
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA28 = subset.data.frame(dfa, select = c(PA28, NEWID))
-PA28$PA28 = as.factor(PA28$PA28)
-levels(x = PA28$PA28) = c("0", "1", "2", "3", "4", "5", "6", "9999")
+PA28$PA28 = as.factor(as.character(PA28$PA28))
+levels(x = PA28$PA28) = c("None", "Grades 1-4", "Grades 5-8", "HighSchool Attended", "HighSchool Graduated", "University Attended", "University Graduated")
 
 # SMOKING
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA42 = subset.data.frame(dfa, select = c(PA42, NEWID))
 PA42$PA42 = as.factor(PA42$PA42)
-levels(x = PA42$PA42) = c("0", "1", "2", "9999")
+levels(x = PA42$PA42) = c("Never", "Now Smoker", "Previous Smoker")
 
 # PA
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -145,19 +145,19 @@ PA78$PA78 = as.numeric(as.character(PA78$PA78))
 dfa = read.csv2(file = 'prevent.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PE34 = subset.data.frame(dfa, select = c(PE34, NEWID))
 PE34$PE34 = as.factor(PE34$PE34)
-levels(x = PE34$PE34) = c("0", "1", "2", "3", "9999")
+levels(x = PE34$PE34) = c("no", "parents only", "siblings", "parent and sibling")
 
 # MI
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA60 = subset.data.frame(dfa, select = c(PA60, NEWID))
 PA60$PA60 = as.factor(PA60$PA60)
-levels(x = PA60$PA60) = c("0", "1", "2", "3", "9999")
+levels(x = PA60$PA60) = c("none", "new", "old", "doubtful")
 
 # STROKE
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA194 = subset.data.frame(dfa, select = c(PA194, NEWID))
 PA194$PA194 = as.factor(PA194$PA194)
-levels(x = PA194$PA194) = c("0", "1", "2", "9999")
+levels(x = PA194$PA194) = c("no", "Yes", "Questionable")
 
 # CANCER
 
@@ -165,7 +165,7 @@ levels(x = PA194$PA194) = c("0", "1", "2", "9999")
 dfa = read.csv2(file = 'prevent.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PE66 = subset.data.frame(dfa, select = c(PE66, NEWID))
 PE66$PE66 = as.factor(PE66$PE66)
-levels(x = PE66$PE66) = c("0", "1", "2", "9999")
+levels(x = PE66$PE66) = c("None", "Borderline", "Definite")
 
 
 # E_INTAKE
@@ -234,7 +234,7 @@ PA250$PA250 = as.numeric(as.character(PA250$PA250))
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA125 = subset.data.frame(dfa, select = c(PA125, NEWID))
 PA125$PA125 = as.factor(PA125$PA125)
-levels(x = PA125$PA125) = c("0", "1", "2", "9999")
+levels(x = PA125$PA125) = c("No", "Yes", "doubtful")
 
 # WAIST
 # SUPPLEMENTS
@@ -255,5 +255,5 @@ prhhp$ID = as.character(prhhp$ID)
 prhhp_tibble = as_tibble(prhhp)
 # WAIST
 save(prhhp,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp.Rdata")
-write_dta(data = prhhp_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_new.dta")
+write_dta(data = prhhp_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_nuggets.dta")
 
