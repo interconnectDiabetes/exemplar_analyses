@@ -153,6 +153,18 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
   else if (studyName == "WHI") {
     exceptions = c("SEX", "SUPPLEMENTS")
   }
+  else if (studyName == "CARDIA") {
+    exceptions = c("SUPPLEMENTS")
+  }
+  else if (studyName == "ARIC") {
+    exceptions = c("SUPPLEMENTS")
+  }
+  else if (studyName == "MESA") {
+    exceptions = c("SUPPLEMENTS")
+  }
+  else if (studyName == "PRHHP") {
+    exceptions = c("SUPPLEMENTS", "SEX")
+  }
 	else {
 		exceptions = c()
 	}
@@ -162,11 +174,11 @@ createModelFormula <- function(studyName, data_table, outcome, exposure, covaria
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return(fmla)
 	} else if (type == "survival") {
-		fmla <- as.formula(paste("censor"," ~ ", "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
+		fmla <- as.formula(paste(paste0(outcome,'_cens')," ~ ", "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$',exposure), 
 				paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
 	} else if (type == "interaction") {
-		fmla <- as.formula(paste("censor"," ~ ",  "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
+		fmla <- as.formula(paste(paste0(outcome,'_cens')," ~ ",  "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
 		return (fmla)
 	} else {
@@ -339,6 +351,18 @@ tunedLexisB <- function(ref_table, my_outcome, my_exit_col, study) {
 	else if (studyName == "JPHC"){ 
 	  interval_width =  c(1,1,1,1,0.5,2.5)
 	}
+	else if (studyName == "ARIC"){
+	  interval_width =  c(3,3,3,3,3,3,3)
+	}
+	else if (studyName == "MESA"){
+	  interval_width =  c(1,1,1,1,1,1)
+	}
+	else if (studyName == "CARDIA"){
+	  interval_width =  c(3,3,3,3,3,3,3,3)
+	}
+	else if (studyName == "PRHHP"){
+	  interval_width =  c(2,2,2,2)
+	}
 	else {
 	  interval_width =  c(1)
 	}
@@ -375,7 +399,7 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 		tunedLexisB(ref_table, my_outcome, my_exit_col, studies[study])
 	}
 	
-	ds.asNumeric('A$CENSOR','censor', datasources = studies)
+	ds.asNumeric('A$CENSOR',paste0(my_outcome,'_cens'), datasources = studies)
 	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
 
 	checkFactoredTime(studies = studies)
@@ -402,7 +426,7 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
-			fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			fmla <- as.formula(paste(paste0(my_outcome,'_cens')," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 			#meta analysis here
 			for (n in 1:length(variables)){
 				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
@@ -449,7 +473,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
 	
-	ds.asNumeric('A$CENSOR','censor', datasources = studies)
+	ds.asNumeric('A$CENSOR', paste0(my_outcome,'_cens'), datasources = studies)
 	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
 	checkFactoredTime(studies = studies)
 	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
@@ -475,7 +499,7 @@ runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, m
 				labels = rbind(labels, reg_data[2,1])      
 				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
 			}
-			fmla <- as.formula(paste("censor"," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
+			fmla <- as.formula(paste(paste0(my_outcome,'_cens')," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
 			#meta analysis here
 			for (n in 1:length(variables)){
 				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
@@ -547,7 +571,7 @@ runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate
 	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
 	           exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
 	
-	ds.asNumeric('A$CENSOR','censor', datasources = studies)
+	ds.asNumeric('A$CENSOR',paste0(my_outcome,'_cens'), datasources = studies)
 	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
 	checkFactoredTime(studies = studies)
 	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
