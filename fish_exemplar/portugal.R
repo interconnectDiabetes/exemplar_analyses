@@ -869,7 +869,29 @@ write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/pl
 #                                                                      _/ |     
 #                                                                     |__/      
 
+fatty_studies = study_names[! study_names %in% c("AusDiab", "HOORN", "NHAPC", "Zutphen", "ELSA", "InterAct_germany")]
+opals_fatty = opals[fatty_studies]
 
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_exit_col = c('newEndDate')
+
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fatty)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fatty)
+length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = opals_fatty)
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_SELF.svg')
+model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fatty)
+model_2_alltuned = model_2[[1]]
+model_2_remtuned = model_2[[2]]
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned.csv')  
 
 
 
@@ -880,4 +902,26 @@ write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/pl
 # | |  | | (_) | (_| |  __/ | ./ /___ | | | |  | |  __/ (_| /\__/ /  __/ | |    
 # \_|  |_/\___/ \__,_|\___|_| \_____/ \_| |_|  |_|\___|\__,_\____/ \___|_|_|    
                                                                               
-                                                                              
+fatty_studies = study_names[! study_names %in% c("AusDiab", "HOORN", "NHAPC", "Zutphen", "ELSA", "InterAct_germany")]
+opals_fatty = opals[fatty_studies]
+
+my_exposure = c('FATTY')
+my_outcome = c('CASE_OBJ_SELF')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_exit_col = c('newEndDate_SELF')
+
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_fatty)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_fatty)
+length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = opals_fatty)
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_SELF.svg')
+model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fatty)
+model_2_alltuned = model_2[[1]]
+model_2_remtuned = model_2[[2]]
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned.csv')                                                                                  
