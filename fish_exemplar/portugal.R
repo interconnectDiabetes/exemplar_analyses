@@ -253,7 +253,7 @@ for_RMA = model_2_alltuned[model_2_alltuned$cov==my_exposure,]
 for (z in 1:length(regions)){
   
   temp_data = merge(x = regions[[z]], y = for_RMA, by = "study")
-  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_SELF.svg'))
+  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_obj.svg'))
   svg(filename=mypath, 
       width=4.5 * length(my_exposure), 
       height=3.5 * length(my_outcome), 
@@ -415,11 +415,11 @@ length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = o
 
 # tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_1_leansurvivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_1_leansurvivaltuned_obj.svg')
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_lean)
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_leansurvivaltuned.csv')                                   
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_leansurvivaltuned_obj.csv')                                   
 
 
 
@@ -451,7 +451,7 @@ mypath = file.path('~', 'plots', 'model_1_leansurvivaltuned_SELF.svg')
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_lean)
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_leansurvivaltuned.csv')                                                                             
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_leansurvivaltuned_SELF.csv')                                                                             
 
 
 # ___  ___          _      _   __   ______    _          _ _____ _     _      
@@ -481,11 +481,11 @@ length_complete_split_fried = ds.length("D8$SEX", type = "split", datasources = 
 
 # tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_1_friedsurvivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_1_friedsurvivaltuned_obj.svg')
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fried)
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_friedsurvivaltuned.csv')
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_friedsurvivaltuned_obj.csv')
 
 
 # ___  ___          _      _   __   ______    _          _ _____      _  __   
@@ -517,7 +517,7 @@ mypath = file.path('~', 'plots', 'model_1_friedsurvivaltuned_SELF.svg')
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fried)
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_friedsurvivaltuned.csv')                                                                            
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_friedsurvivaltuned_SELF.csv')                                                                            
 
 
 
@@ -555,11 +555,9 @@ opals_model2 = opals[studies_model2]
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-#my_outcome = c('CASE_OBJ_SELF')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 my_exit_col = c('newEndDate')
-#my_exit_col = c('newEndDate_SELF')
 
 # Subsetting
 my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
@@ -570,11 +568,11 @@ length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = op
 
 # Analysis
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_obj.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_model2)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_survivaltuned.csv')
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_survivaltuned_obj.csv')
 
 # ___  ___          _      _   _____   _____     _        _ _____      _  __    
 # |  \/  |         | |    | | / __  \ |_   _|   | |      | /  ___|    | |/ _|   
@@ -605,7 +603,7 @@ mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_model2)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_survivaltuned.csv') 
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_survivaltuned_SELF.csv') 
 
 # ___  ___          _      _   _____   _____                                    
 # |  \/  |         | |    | | / __  \ |  __ \                                   
@@ -643,7 +641,7 @@ for_RMA = model_2_alltuned[model_2_alltuned$cov==my_exposure,]
 for (z in 1:length(regions)){
   
   temp_data = merge(x = regions[[z]], y = for_RMA, by = "study")
-  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_SELF.svg'))
+  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_obj.svg'))
   svg(filename=mypath, 
       width=4.5 * length(my_exposure), 
       height=3.5 * length(my_outcome), 
@@ -757,11 +755,11 @@ length_complete_split_fatty = ds.length("D8$SEX", type = "split", datasources = 
 
 # tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_obj.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fatty)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned.csv')
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned_obj.csv')
 
 
 # ___  ___          _      _   _____  ______    _   _         _____      _  __  
@@ -794,7 +792,7 @@ mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_SELF.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fatty)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned.csv')
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned_SELF.csv')
 
 
 # ___  ___          _      _   _____   _                      ___________   ___ 
@@ -822,11 +820,11 @@ length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = o
 
 # tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_2_leansurvivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_leansurvivaltuned_obj.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_lean)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_leansurvivaltuned.csv')                                                                             
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_leansurvivaltuned_obj.csv')                                                                             
 
 
 # ___  ___          _      _   _____   _                      _____      _  __  
@@ -858,7 +856,7 @@ mypath = file.path('~', 'plots', 'model_2_leansurvivaltuned_SELF.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_lean)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_leansurvivaltuned.csv')                                                                                   
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_leansurvivaltuned_SELF.csv')                                                                                   
 
 # ___  ___          _      _   _____  ______    _          _ _____ _     _      
 # |  \/  |         | |    | | / __  \ |  ___|  (_)        | |  _  | |   (_)     
@@ -887,11 +885,11 @@ length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = o
 
 # tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_obj.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fatty)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned.csv')  
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned_obj.csv')  
 
 
 
@@ -924,4 +922,4 @@ mypath = file.path('~', 'plots', 'model_2_fattysurvivaltuned_SELF.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_fatty)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned.csv')                                                                                  
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = '~/plots/model_2_fattysurvivaltuned_SELF.csv')                                                                                  
