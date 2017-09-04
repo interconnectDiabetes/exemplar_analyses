@@ -730,8 +730,9 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 
 #studies_model2 = study_names[! study_names %in% c("AusDiab", "HOORN", "Zutphen","NHAPC","CARDIA")]
 
-studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","CARDIA","Whitehall")]
+#studies_model2 = study_names[! study_names %in% c("AusDiab", "HOORN", "Zutphen","NHAPC","Whitehall", "PRHHP", "ARIC", "CARDIA")]
 
+studies_model2 = study_names[! study_names %in% c("AusDiab", "HOORN", "Zutphen","NHAPC","Whitehall", "CARDIA")]
 opals_model2 = opals[studies_model2]
 
 # Change order to check troublesome studies first
@@ -778,7 +779,8 @@ length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = op
 
 # tuned survival version
 ref_table = 'D8'
-mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
+#mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_model2)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]

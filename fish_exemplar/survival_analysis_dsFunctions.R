@@ -352,10 +352,16 @@ tunedLexisB <- function(ref_table, my_outcome, my_exit_col, study) {
 	  interval_width =  c(1,1,1,1,0.5,2.5)
 	}
 	else if (studyName == "ARIC"){
-	  interval_width =  c(2,2,2,2,2,2,2,2,2,2,2,2)
+	  interval_width =  c(3,3,3,3,3,3,3)
 	}
 	else if (studyName == "MESA"){
-	  interval_width =  c(1,1,1,1,1,1,1,1)
+	  interval_width =  c(1,1,1,1,1,1)
+	}
+	else if (studyName == "CARDIA"){
+	  interval_width =  c(3,3,3,3,3,3,3,3)
+	}
+	else if (studyName == "PRHHP"){
+	  interval_width =  c(2,2,2,2)
 	}
 	else {
 	  interval_width =  c(1)
