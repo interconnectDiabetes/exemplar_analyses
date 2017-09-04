@@ -275,20 +275,6 @@ for (z in 1:length(regions)){
 # | |  | | (_) | (_| |  __/ | _| |_ \ \/' / |_| | (_| | |  | |_| | |  __/     
 # \_|  |_/\___/ \__,_|\___|_| \___/  \_/\_\\__,_|\__,_|_|   \__|_|_|\___|     
                                                                             
-## Stratified analyses by quartile
-
-my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
-my_exit_col = c('newEndDate')
-
-# Subset
-my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
-my_vars_all <- c('ID', my_vars_all)
-ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals)
-ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals)
-length_complete_split_total = ds.length("D8$SEX", type = "split", datasources = opals)
-
 
 quartile_studies = study_names[! study_names %in% c("CARDIA", "Zutphen", "HOORN", "Whitehall")]
 opals_quartiles = opals[quartile_studies]
@@ -539,6 +525,22 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 
 
 
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+######################################################################################################
+
+
+
+
+
+
 
 # ___  ___          _      _   _____   _____     _        _ _____ _     _       
 # |  \/  |         | |    | | / __  \ |_   _|   | |      | |  _  | |   (_)      
@@ -617,11 +619,10 @@ opals_model2 = opals[studies_model2]
 
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
-#my_outcome = c('CASE_OBJ_SELF')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
                   "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 my_exit_col = c('newEndDate')
-#my_exit_col = c('newEndDate_SELF')
+
 
 # Subsetting
 my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
@@ -663,7 +664,68 @@ for (z in 1:length(regions)){
 # | |  | | (_) | (_| |  __/ | ./ /___ \ \/' / |_| | (_| | |  | |_| | |  __/     
 # \_|  |_/\___/ \__,_|\___|_| \_____/  \_/\_\\__,_|\__,_|_|   \__|_|_|\___|     
                                                                               
-                                                                              
+# Objective type
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_exit_col = c('newEndDate')
+
+
+quartile_studies = study_names[! study_names %in% c("CARDIA", "Zutphen", "HOORN", "Whitehall", "InterAct_france",
+                                                    "NHAPC", "AusDiab")]
+opals_quartiles = opals[quartile_studies]
+rev(opals_quartiles)
+
+
+temp_quants = ds.quantileMean(x=paste0("D8$", my_exposure), type = 'split', datasources = opals_quartiles)
+quant_df = t(as.data.frame(temp_quants))
+for (x in c(1:length(row.names(quant_df)))) {
+  ds.subset(x='D8',subset = 'D8_l50', logicalOperator = paste0(my_exposure, '<'), threshold = quant_df[x,'50%'], datasources = opals_quartiles[x])
+  ds.subset(x='D8',subset = 'D8_h50', logicalOperator = paste0(my_exposure, '>='), threshold = quant_df[x,'50%'], datasources = opals_quartiles[x])
+  ds.subset(x='D8_l50',subset = 'D8_l25', logicalOperator = paste0(my_exposure, '<'), threshold = quant_df[x,'25%'], datasources = opals_quartiles[x])
+  ds.subset(x='D8_l50',subset = 'D8_h25', logicalOperator = paste0(my_exposure, '>='), threshold = quant_df[x,'25%'], datasources = opals_quartiles[x])
+  ds.subset(x='D8_h50',subset = 'D8_l75', logicalOperator = paste0(my_exposure, '<'), threshold = quant_df[x,'75%'], datasources = opals_quartiles[x])
+  ds.subset(x='D8_h50',subset = 'D8_h75', logicalOperator = paste0(my_exposure, '>='), threshold = quant_df[x,'75%'], datasources = opals_quartiles[x])
+}
+
+
+ref_table = 'D8_l25'
+#mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q1_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q1.svg')
+model_2_Q1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_quartiles )
+model_2_Q1_alltuned = model_2_Q1[[1]]
+model_2_Q1_remtuned = model_2_Q1[[2]]
+#write.csv(x = model_2_Q1_alltuned[model_2_Q1_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q1_survivaltuned_SELF.csv')
+write.csv(x = model_2_Q1_alltuned[model_2_Q1_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q1_survivaltuned.csv')
+
+ref_table = 'D8_h25'
+#mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q2_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q2.svg')
+model_2_Q2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_quartiles )
+model_2_Q2_alltuned = model_2_Q2[[1]]
+model_2_Q2_remtuned = model_2_Q2[[2]]
+#write.csv(x = model_2_Q2_alltuned[model_2_Q2_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q2_survivaltuned_SELF.csv')
+write.csv(x = model_2_Q2_alltuned[model_2_Q2_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q2_survivaltuned.csv')
+
+ref_table = 'D8_l75'
+#mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q3_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q3.svg')
+model_2_Q3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_quartiles )
+model_2_Q3_alltuned = model_2_Q3[[1]]
+model_2_Q3_remtuned = model_2_Q3[[2]]
+#write.csv(x = model_2_Q3_alltuned[model_2_Q3_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q3_survivaltuned_SELF.csv')
+write.csv(x = model_2_Q3_alltuned[model_2_Q3_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q3_survivaltuned.csv')
+
+ref_table = 'D8_h75'
+#mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q4_SELF.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_Q4.svg')
+model_2_Q4 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_quartiles )
+model_2_Q4_alltuned = model_2_Q4[[1]]
+model_2_Q4_remtuned = model_2_Q4[[2]]
+#write.csv(x = model_2_Q4_alltuned[model_2_Q4_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q4_survivaltuned_SELF.csv')
+write.csv(x = model_2_Q4_alltuned[model_2_Q4_alltuned$cov==my_exposure,], file = '~/plots/model_2_Q4_survivaltuned.csv')
+                                                                             
 
 
 
