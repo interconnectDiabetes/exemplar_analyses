@@ -421,7 +421,7 @@ write.csv(x = model_1_Q4_alltuned[model_1_Q4_alltuned$cov==my_exposure,], file =
 # |_|  |_|  \___||___/_| |_|
 # fresh_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
 #                                                  "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-#                                                  "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy")]
+#                                                  "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy", "WHI", "CARDIA", "ARIC", "MESA", "PRHHP")]
 # opals_fresh = opals[fresh_studies]
 # 
 # # Also need to choose between outcome OBJ or OBJ_SELF
@@ -472,7 +472,7 @@ write.csv(x = model_1_Q4_alltuned[model_1_Q4_alltuned$cov==my_exposure,], file =
 # | |  | |  | |  __/ (_| |
 # |_|  |_|  |_|\___|\__,_|
 
-fried_studies = study_names[! study_names %in% c("JPHC", "NOWAC", "NHAPC", "InterAct_france")]
+fried_studies = study_names[! study_names %in% c("JPHC", "NOWAC", "NHAPC", "InterAct_france", "ARIC", "PRHHP")]
 opals_fried = opals[fried_studies]
 
 # Also need to choose between outcome OBJ or OBJ_SELF
@@ -521,7 +521,7 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # | |    / _ \/ _` | '_ \ 
 # | |___|  __/ (_| | | | |
 # |______\___|\__,_|_| |_|
-lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "InterAct_germany")]
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "InterAct_germany", "PRHHP")]
 opals_lean = opals[lean_studies]
 
 # Also need to choose between outcome OBJ or OBJ_SELF
@@ -622,7 +622,7 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # 
 # salt_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "JPHC", "Zutphen", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
 #                                                 "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-#                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy")]
+#                                                 "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy", "WHI", "CARDIA", "ARIC", "MESA", "PRHHP")]
 # opals_salt = opals[salt_studies]
 # 
 # # Also need to choose between outcome OBJ or OBJ_SELF
@@ -674,7 +674,7 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # 
 # ssd_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "HOORN", "NOWAC", "SMC", "Whitehall", "WHI", "InterAct_spain",
 #                                                "InterAct_france", "InterAct_france", "InterAct_uk","InterAct_netherlands", 
-#                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy")]
+#                                                "InterAct_germany", "InterAct_sweden", "InterAct_denmark", "InterAct_italy", "WHI", "CARDIA", "ARIC", "MESA")]
 # opals_ssd = opals[ssd_studies]
 # 
 # # Also need to choose between outcome OBJ or OBJ_SELF
@@ -730,9 +730,8 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 
 #studies_model2 = study_names[! study_names %in% c("AusDiab", "HOORN", "Zutphen","NHAPC","CARDIA")]
 
-#studies_model2 = study_names[! study_names %in% c("AusDiab", "HOORN", "Zutphen","NHAPC","Whitehall", "PRHHP", "ARIC", "CARDIA")]
+studies_model2 = study_names[! study_names %in% c( "HOORN", "Zutphen","CARDIA","Whitehall")]
 
-studies_model2 = study_names[! study_names %in% c("AusDiab", "HOORN", "Zutphen","NHAPC","Whitehall", "CARDIA")]
 opals_model2 = opals[studies_model2]
 
 # Change order to check troublesome studies first
@@ -779,8 +778,7 @@ length_complete_split_ssd = ds.length("D8$SEX", type = "split", datasources = op
 
 # tuned survival version
 ref_table = 'D8'
-#mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
-mypath = file.path('~', 'plots', 'model_2_survivaltuned.svg')
+mypath = file.path('~', 'plots', 'model_2_survivaltuned_SELF.svg')
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_model2)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
