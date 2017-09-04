@@ -377,7 +377,28 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # | |  | | (_) | (_| |  __/ | _| |_ | |___|  __/ (_| | | | \ \_/ / |_/ /\__/ /
 # \_|  |_/\___/ \__,_|\___|_| \___/ \_____/\___|\__,_|_| |_|\___/\____/\____/ 
                                                                             
-                                                                            
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "InterAct_germany", "PRHHP")]
+opals_lean = opals[lean_studies]
+
+my_exposure = c('LEAN')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+my_exit_col = c('newEndDate')
+
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_lean)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_lean)
+length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = opals_lean)
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_leansurvivaltuned_SELF.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_lean)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_leansurvivaltuned.csv')                                   
 
 
 
@@ -388,7 +409,28 @@ write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/pl
 # | |  | | (_) | (_| |  __/ | _| |_ | |___|  __/ (_| | | | /\__/ /  __/ | |   
 # \_|  |_/\___/ \__,_|\___|_| \___/ \_____/\___|\__,_|_| |_\____/ \___|_|_|   
                                                                             
-                                                                            
+lean_studies = study_names[! study_names %in% c("AusDiab", "ELSA", "NHAPC", "InterAct_germany", "PRHHP")]
+opals_lean = opals[lean_studies]
+
+my_exposure = c('LEAN')
+my_outcome = c('CASE_OBJ_SELF')
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+my_exit_col = c('newEndDate_SELF')
+
+# Subsetting
+my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+my_vars_all <- c('ID', my_vars_all)
+ds.subset(x = 'D6', subset = 'D7', cols =  my_vars_all, datasources = opals_lean)
+ds.subset(x = 'D7', subset = 'D8', completeCases = TRUE, datasources = opals_lean)
+length_complete_split_lean = ds.length("D8$SEX", type = "split", datasources = opals_lean)
+
+# tuned survival version
+ref_table = 'D8'
+mypath = file.path('~', 'plots', 'model_1_leansurvivaltuned_SELF.svg')
+model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies = opals_lean)
+model_1_alltuned = model_1[[1]]
+model_1_remtuned = model_1[[2]]
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = '~/plots/model_1_leansurvivaltuned.csv')                                                                             
 
 
 # ___  ___          _      _   __   ______    _          _ _____ _     _      
