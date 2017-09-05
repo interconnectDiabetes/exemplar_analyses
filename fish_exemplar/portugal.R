@@ -253,7 +253,7 @@ for_RMA = model_2_alltuned[model_2_alltuned$cov==my_exposure,]
 for (z in 1:length(regions)){
   
   temp_data = merge(x = regions[[z]], y = for_RMA, by = "study")
-  mypath = file.path('~', 'plots', paste0('model_2_survivaltuned_', names(regions[z]), '_obj.svg'))
+  mypath = file.path('~', 'plots', paste0('model_1_survivaltuned_', names(regions[z]), '_obj.svg'))
   svg(filename=mypath, 
       width=4.5 * length(my_exposure), 
       height=3.5 * length(my_outcome), 
