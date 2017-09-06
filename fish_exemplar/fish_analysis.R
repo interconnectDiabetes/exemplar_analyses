@@ -818,7 +818,7 @@ for (z in 1:length(regions)){
 ## Stratified analyses by quartile
 
 quartile_studies = study_names[! study_names %in% c("CARDIA", "Zutphen", "HOORN", "Whitehall", "InterAct_france",
-                                                    "NHAPC", "AusDiab")]
+                                                    "NHAPC", "AusDiab", "PRHHP")]
 opals_quartiles = opals[quartile_studies]
 rev(opals_quartiles)
 
