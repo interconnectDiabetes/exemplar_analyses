@@ -248,7 +248,7 @@ regions[['central']] =  data.frame("study" = c("InterAct_france", "InterAct_ital
 regions[['western']] = data.frame("study" = c("ELSA", "WHI", "CARDIA", "ARIC", "MESA", "PRHHP"))
 regions[['eastern']] = data.frame("study" = c("NHAPC", "JPHC", "AusDiab"))
 
-for_RMA = model_2_alltuned[model_2_alltuned$cov==my_exposure,]
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
 
 for (z in 1:length(regions)){
   
