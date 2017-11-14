@@ -20,8 +20,8 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-setwd("/home/l_pms69/exemplar_analyses/")
-#setwd("/home/l_trpb2/git/exemplar_analyses/")
+#setwd("/home/l_pms69/exemplar_analyses/")
+setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Source in the Extra functions for analysis
 source("fish_exemplar/helperFunctions.R")
@@ -255,8 +255,8 @@ summary_total = summaryContExp('E4$TOTAL', study_names, num_studies)
 summary_objective_case = summaryBinExp('E4$CASE_OBJ', study_names, num_studies)
 summary_self_case = summaryBinExp("E4$CASE_OBJ_SELF", study_names, num_studies)
 
-summary_self_age = summaryContExp("E4$AGE_END_OBJ_SELF", study_names, num_studies)
-summary_obj_age = summaryContExp("E4$AGE_END_OBJ", study_names, num_studies)
+#summary_self_age = summaryContExp("E4$AGE_END_OBJ_SELF", study_names, num_studies)
+#summary_obj_age = summaryContExp("E4$AGE_END_OBJ", study_names, num_studies)
 summary_age_base = summaryContExp("E4$AGE_BASE", study_names, num_studies)
 
 summary_prevalence = summaryBinExp("D$PREV_DIAB", study_names, num_studies)
@@ -292,3 +292,4 @@ summary_sugardrinks = summaryContExp('E4$SUG_BEVS', study_names, num_studies)
 
 # Other covariates
 summary_bmi = summaryBinExp('E4$BMI', study_names, num_studies)
+summary_sex = summaryCatExp('E4$SEX', study_names, num_studies)
