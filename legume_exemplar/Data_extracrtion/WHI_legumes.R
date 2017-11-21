@@ -32,7 +32,7 @@ F44_OS_PUB$TCCODE = as.numeric(F44_OS_PUB$TCCODE)
 OUTC_SELF_OS_PUB = read_sas(data_file = 'OUTC_SELF_OS_PUB.sas7bdat')
 
 OUTC_SELF_OS_PUB = OUTC_SELF_OS_PUB[,c("ID", "F33DIABPILLS","F33DIABPILLSDY","F33DIABINSULIN",
-                                       "F33DIABINSULINDY","F33DIABTX","F33DIABTXDY")]
+                                       "F33DIABINSULINDY","F33DIABTX","F33DIABTXDY", "LAST33DY")]
 
 OUTC_SELF_OS_PUB$F33DIABPILLS = as.factor(OUTC_SELF_OS_PUB$F33DIABPILLS)
 levels(OUTC_SELF_OS_PUB$F33DIABPILLS) = c("No","Yes")
@@ -52,6 +52,8 @@ levels(OUTC_SELF_OS_PUB$F33DIABTX) = c("No","Yes")
 #           | |                                  
 #           |_| 
 
+# BUT ALSO SOME CONFOUNDERS HERE:
+
 F60_ITEM_OS_PUB = read_sas(data_file = 'F60_ITEM_OS_PUB.sas7bdat')
 
 F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[order(F60_ITEM_OS_PUB$ID),]
@@ -59,7 +61,9 @@ F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[order(F60_ITEM_OS_PUB$ID),]
 #keep only baseline observations
 F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[which(F60_ITEM_OS_PUB$F60VTYP == 1), ]
 
-F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[,c("ID","GRNPEAS","BEANS","BEANSOUP","REFRIED","GRNBEAN","SOY","NUTS")]
+F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[,c("ID","GRNPEAS","BEANS","BEANSOUP","REFRIED","GRNBEAN","SOY","NUTS",
+                                     "FRUITS", "VEGTABLS", "REDMEAT", "BACON", "LNCHBOL", "HOTDOG",
+                                     "LNCHHAM", "POP")]
 
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
