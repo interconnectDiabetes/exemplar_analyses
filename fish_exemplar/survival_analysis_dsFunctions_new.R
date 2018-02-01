@@ -120,7 +120,7 @@ createModelFormula <- function(study, data_table, outcome, exposure, covariate_l
 				paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
 	} else if (type == "interaction") {
-		fmla <- as.formula(paste(paste0(outcome,'_cens')," ~ ",  "0" , "+", 'tid.f', '+', paste0(c(paste0(data_table, '$', exposure), 
+		fmla <- as.formula(paste(paste0(data_table, '$CENSOR')," ~ ", "0" , "+", paste0(data_table, '$tid.f'), '+', paste0(c(paste0(data_table, '$', exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
 		return (fmla)
 	} else {
@@ -327,13 +327,13 @@ tunedLexisB <- function(ref_table_in, my_outcome_in, my_exit_col_in, study, new_
 }
 
 
-tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, my_exit_col, studies) {
+tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies) {
 	# main function that runs, fits, and stores the results of a survival model using the 
 	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
-	temp <- ds.summary('D$TOTAL', datasources = studies)
-	study_names <- names(temp)
-	num_studies <- length(temp)
-	rm(temp)
+	# temp <- ds.summary('D$TOTAL', datasources = studies)
+	# study_names <- names(temp)
+	# num_studies <- length(temp)
+	# rm(temp)
 
 	REM_results = list()
 	study_regs = data.frame()
@@ -390,99 +390,77 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 }
 
 
-runSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, studies = opals) {
-	# main function that runs, fits, and stores the results of a survival model using the 
-	# lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
-	temp <- ds.summary('D$TOTAL', datasources = studies)
-	study_names <- names(temp)
-	num_studies <- length(temp)
-	rm(temp)
 
-	REM_results = list()
-	study_regs = data.frame()
-
-	svg(filename=mypath, 
-		width=5*length(my_exposure), 
-		height=4*length(my_outcome), 
-		pointsize=10)
-	par(mar=c(5,3,2,2)+0.1)
-	par(mfrow=c(length(my_outcome),length(my_exposure)))
-	par(ps=10)
-
-	# assign Danger.NFILTER to some values as the current code in the dsBeta doesnt work without this.
-	# and expand the dataset using the ds.lexis b command
-	datashield.assign(symbol = 'DANGER.nfilter.tab', value = quote(c(0.1)), opals = studies)
-	datashield.assign(symbol = 'DANGER.nfilter.glm', value = quote(c(0.1)), opals = studies)
-	idColString = paste0(ref_table, '$', 'ID')
-	entryColString = paste0(ref_table, '$', 'newStartDate')
-	exitColString = paste0(ref_table, '$', 'newEndDate')
-	statusColString = paste0(ref_table, '$', 'CASE_OBJ')
-	ds.lexis.b(data=ref_table, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
-		exitCol = exitColString, statusCol = statusColString, expandDF = 'A', datasources = studies)
-	
-	ds.asNumeric('A$CENSOR', paste0(my_outcome,'_cens'), datasources = studies)
-	ds.asFactor('A$TIME.PERIOD','tid.f', datasources = studies)
-	checkFactoredTime(studies = studies)
-	ds.assign(toAssign='log(A$SURVTIME)', newobj='logSurvivalA', datasources = studies)
-	lexised_table = 'A'
-
-	for (k in 1:length(my_outcome)){
-
-		# for each exposure and
-		for (j in 1:length(my_exposure)){
-			estimates = vector()
-			s_errors = vector()
-			labels = vector()
-
-			for(i in 1:length(studies)) {
-				reg_data <- data.frame()
-				
-				fmla <- createModelFormula(study_names[i], lexised_table, my_outcome[k], my_exposure[j], my_covariate, type = "survival")
-				reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = "logSurvivalA", lexisTable = lexised_table, burtonWeights = paste0(lexised_table, "$burtonWeights"), studies = studies)
-
-				study_regs = rbind(study_regs,reg_data)
-				estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
-				s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
-				labels = rbind(labels, reg_data[2,1])      
-				variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
-			}
-			fmla <- as.formula(paste(paste0(my_outcome,'_cens')," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(lexised_table, '$',my_exposure[j]), paste0(lexised_table, '$',my_covariate)), collapse= "+")))
-			#meta analysis here
-			for (n in 1:length(variables)){
-				REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n])
-			}
-		}
-	}
-
-	#Store results
-	dev.off()
-	model_all <- study_regs
-	model_rem <- REM_results
-
-	return (list(model_all, model_rem))
-}
-
-
-runIncrementalSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath_prefix, interval_width, studies = opals){
-	# Runs survival models incrementally through a list of provided covariates, producing randomeffectmodels and therein
-	# forest plots along the way. Mainly used for exploratory purposes.
-  temp <- ds.summary('D$TOTAL', datasources = studies)
-  study_names <- names(temp)
-  num_studies <- length(temp)
-  rm(temp)
+tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interaction_term, studies) {
+  # main function that runs, fits, and stores the results of a survival model using the 
+  # lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
+  # temp <- ds.summary('D$TOTAL', datasources = studies)
+  # study_names <- names(temp)
+  # num_studies <- length(temp)
+  # rm(temp)
   
-	REM_results = list()
-	study_regs = data.frame()
-	overall_df = data.frame()
-	for (i in 1:length(my_covariate)){
-		mypath_func = file.path(paste0(mypath_prefix, "_", i, "_out_of_", length(my_covariate), ".svg"))
-		sub_covariate_list = my_covariate[1:i]
-		runResults = runSurvivalModel(ref_table, my_exposure, my_outcome, sub_covariate_list, mypath_func, c(2,2,2,2,2,2,2,2,2,2), studies)
-		runCoeffs = runResults[[1]]
-		overall_df = rbind(overall_df, runCoeffs)
-		print(mypath_func)
-	}
-	return(overall_df)
+  interaction_class = ds.class(x = paste0(ref_table,'$',interaction_term), studies[1])
+  
+  if(interaction_class[[1]]=="factor"){
+    number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term), datasources = studies)[[1]])
+  }
+  else {
+    number_of_interactions <- 1
+  }
+  
+  REM_results = list()
+  study_regs = data.frame()
+  
+  svg(filename=mypath, 
+      width=5*number_of_interactions, 
+      height=5*length(my_outcome), 
+      pointsize=10)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_outcome),number_of_interactions))
+  par(ps=10)
+  
+  
+  
+  
+  for (k in 1:length(my_outcome)){
+    
+    
+    
+    # for each exposure and
+    for (j in 1:length(my_exposure)){
+      estimates = vector()
+      s_errors = vector()
+      labels = vector()
+      
+      for(i in 1:length(studies)) {
+        reg_data <- data.frame()
+        
+        fmla <- createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
+        print(studies[i])
+        print(fmla)
+        reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = paste0(ref_table, "$logSurvival"), lexisTable = ref_table, burtonWeights = paste0(ref_table, "$burtonWeights"), studies = studies)
+        
+        study_regs = rbind(study_regs,reg_data)
+        estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+        s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+        labels = rbind(labels, reg_data[2,1])      
+        variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+      }
+      createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate,interaction_term, type = "interaction")
+      fmla <- as.formula(paste(paste0(ref_table,'$CENSOR')," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+"),"+", ref_table,"$",interaction_term,"*", ref_table,"$", my_exposure[j]))
+      #meta analysis here
+      for (n in 1:length(variables)){
+        REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = "poisson", variable = variables[n], ref_table)
+      }
+    }
+  }
+  
+  #Store results
+  dev.off()
+  model_all <- study_regs
+  model_rem <- REM_results
+  
+  return (list(model_all, model_rem))
 }
 
 

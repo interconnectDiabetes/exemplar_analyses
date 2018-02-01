@@ -42,7 +42,7 @@ myvars = c(
   'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'FATTY',
   'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA',
   'ALCOHOL', 'FAM_DIAB', 'E_INTAKE', 'FRUIT', 'VEG', 'FIBER', 'SUG_BEVS', 'WAIST', 'SUPPLEMENTS', 'COMORBID',
-  'MEAT'
+  'MEAT', 'QRT'
 )
 
 
@@ -270,3 +270,23 @@ summary_sugardrinks = summaryContExp('E7$SUG_BEVS', study_names, num_studies)
 # Other covariates
 summary_bmi = summaryBinExp('E7$BMI', study_names, num_studies)
 summary_sex = summaryCatExp('E7$SEX', study_names, num_studies)
+
+#-----------------------------------------------------------
+# summaries by standardised consumer groups - 100g servings per week
+
+datashield.assign(opal = opals, symbol = 'groups', value = quote((E7$TOTAL/100)*7))
+ds.cbind(x=c("groups", "E7"), newobj = "E8", opals)
+
+ds.subset(x='E8',subset = 'E8_l2', logicalOperator = 'groups<', threshold = 2, datasources = opals)
+ds.subset(x='E8',subset = 'E8_h2', logicalOperator = 'groups>=', threshold = 2, datasources = opals)
+ds.subset(x='E8_l2',subset = 'E8_1', logicalOperator = 'groups<', threshold = 1, datasources = opals)
+ds.subset(x='E8_l2',subset = 'E8_2', logicalOperator = 'groups>=', threshold = 1, datasources = opals)
+ds.subset(x='E8_h2',subset = 'E8_3', logicalOperator = 'groups<', threshold = 3, datasources = opals)
+ds.subset(x='E8_h2',subset = 'E8_4', logicalOperator = 'groups>=', threshold = 3, datasources = opals)
+
+l1 = ds.length('E8_1$TOTAL', type = 'split')
+l2 = ds.length('E8_2$TOTAL', type = 'split')
+l3 = ds.length('E8_3$TOTAL', type = 'split')
+l4 = ds.length('E8_4$TOTAL', type = 'split')
+tot = ds.length('E8$TOTAL', type = 'split')
+group_df = rbind(as.data.frame(l1),as.data.frame(l2), as.data.frame(l3),as.data.frame(l4), as.data.frame(tot))
