@@ -238,30 +238,19 @@ EX8_AGE$EX8_AGE = as.numeric(as.character(EX8_AGE$EX8_AGE))
 # \____/_/\_\ .__/ \___/|___/\__,_|_|  \___||___/
 #           | |                                  
 #           |_|                                  
-# FATTY
-dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-fatty = subset.data.frame(dfa, select = c(A06MFF0100, PID))
-fatty$A06MFF0100 = as.numeric(as.character(fatty$A06MFF0100))
-# FRIED
-dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-fried = subset.data.frame(dfa, select = c(A06MFF0200, A06MSF0100, PID))
-fried$A06MFF0200 = as.numeric(as.character(fried$A06MFF0200))
-fried$A06MSF0100 = as.numeric(as.character(fried$A06MSF0100))
 
-# LEAN
+# veg
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-lean = subset.data.frame(dfa, select = c(A06MFL0100, PID))
-lean$A06MFL0100 = as.numeric(as.character(lean$A06MFL0100))
-
-# NONFISH
-dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-nonfish = subset.data.frame(dfa, select = c(A06MSL0100, PID))
-nonfish$A06MSL0100 = as.numeric(as.character(nonfish$A06MSL0100))
+veg = subset.data.frame(dfa, select = c(A06VEG0700, A06MOF0500 , PID))
+veg$A06VEG0700 = as.numeric(as.character(veg$A06VEG0700))
+veg$A06MOF0500 = as.numeric(as.character(veg$A06MOF0500))
 
 # TOTAL
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06mj.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-total = subset.data.frame(dfa, select = c(A06FISH, PID))
-total$A06FISH = as.numeric(as.character(total$A06FISH))
+total = subset.data.frame(dfa, select = c(A06LEGUMES, A06NUTS, PID))
+total$A06LEGUMES = as.numeric(as.character(total$A06LEGUMES))
+total$A06NUTS = as.numeric(as.character(total$A06NUTS))
+
 
 # ___  ___          _ _  __ _               
 # |  \/  |         | (_)/ _(_)              
@@ -411,7 +400,7 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl, dfm, dfn, dfo, df
 dataframes_list = list(EXAMAGE,A01AGE1,A08DIAB,A09DIBST,AL3_GLU,B08DIAB,B09DIBAG,C08DIAB,C08DIBAG,
                        D08DIAB,D08DIBAG,DL7GLU,E08DIAB,E08DIBAG,EL7GLU,EL7GLU2H,F08DIAB,F08DIBAG,FL7GLU,FDIABMED,
                        G08DIAB,G08DIBAG,GL7GLU,GL7GLU2H,H08DIAB,H08DIBAG,HL7GLU,HL7GLU2H,EX2_AGE,
-                       EX3_AGE,EX4_AGE,EX5_AGE,EX6_AGE,EX7_AGE,EX8_AGE,fatty,fried,lean,nonfish,total,A01SEX,A20BMI,
+                       EX3_AGE,EX4_AGE,EX5_AGE,EX6_AGE,EX7_AGE,EX8_AGE,veg,total,A01SEX,A20BMI,
                        A01ED1,A03ED,A10SMOKE,A01SMNOW,A19MODWK,A06ALCHL,famdiab,A09HRTAK,A08CANCR,A08HBP,A06CALO,
                        A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST)
 
@@ -419,6 +408,6 @@ cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
 colnames(cardia)[1] <- "ID"
 
 cardia_tibble = as_tibble(cardia)
-save(cardia,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df.Rdata")
-write_dta(data = cardia_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_fishnew.dta")
+save(cardia,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_r_df_leg.Rdata")
+write_dta(data = cardia_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/cardia/cardia_leg.dta")
 
