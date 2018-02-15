@@ -238,85 +238,8 @@ tunedLexisB <- function(ref_table_in, my_outcome_in, my_exit_col_in, study, new_
 	exitColString = paste0(ref_table_in, '$', my_exit_col_in)
 	statusColString = paste0(ref_table_in, '$', my_outcome_in)
 
-	if (studyName == "InterAct_germany"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_denmark"){ 
-	  interval_width =  c(2,2,2,1.5,5)
-	}
-	else if (studyName == "InterAct_france"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1.5,1,4)
-	}
-	else if (studyName == "InterAct_italy"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_netherlands"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_spain"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_sweden"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_uk"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "HOORN"){ 
-	  interval_width =  c(2,2,2.5,2.5)
-	}
-	else if (studyName == "ELSA"){ 
-	  #interval_width =  c(2,2,1,3.5)
-	  interval_width =  c(2,2,0.5,3.5)
-	}
-	else if (studyName == "NOWAC"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "SMC"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "Zutphen"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "Whitehall"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "AusDiab"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1.5,1,1,1,2)
-	}
-	else if (studyName == "NHAPC"){ 
-	  interval_width =  c(1,1,1,1,1,1)
-	}
-	else if (studyName == "WHI"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1)
-	}
-	else if (studyName == "JPHC"){ 
-	  interval_width =  c(1,1,1,1,0.5,2.5)
-	}
-	else if (studyName == "ARIC"){
-	  interval_width =  c(3,3,3,3,3,3,3)
-	}
-	else if (studyName == "MESA"){
-	  interval_width =  c(1,1,1,1,1,1)
-	}
-	else if (studyName == "CARDIA"){
-	  interval_width =  c(3,3,3,3,3,3,3,3)
-	}
-	else if (studyName == "PRHHP"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else if (studyName == "FMC"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else if (studyName == "Golestan"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else if (studyName == "CKB"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else {
-	  interval_width =  c(1)
-	}
+	interval_width =  time_buckets[[studyName]]
+
 	
 
 	ds.lexis.b(data=ref_table_in, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 

@@ -1,4 +1,4 @@
-# This file serves to run all the summary code for the legumes exemplar, to seperate the task of running summaries
+# This file serves to run all the summary code for the dietary pattern exemplar, to seperate the task of running summaries
 # and performing the complex models
 
 ## Author: Paul Scherer
@@ -27,11 +27,11 @@ setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 source("variable_functions.R")
 # Retrieve Credential Details
-source("creds/leg_exemplar_creds.R")
+source("creds/diet_exemplar_creds.R")
 
 # complete cases per study only on variables not known to be all missing
-setwd("/home/l_trpb2/git/exemplar_analyses/legume_exemplar")
-filter_csv = read.csv(file = 'leg_opal_vars.csv',  header=TRUE, row.names = 1 )
+setwd("/home/l_trpb2/git/exemplar_analyses/pattern_exemplar")
+filter_csv = read.csv(file = 'diet_opal_vars.csv',  header=TRUE, row.names = 1 )
 setwd("~")
 
 
@@ -76,12 +76,12 @@ pre_missings_table = data.frame(cbind(fullNum))
 types_table = data.frame(cbind(study_names))
 
 for (j in 1:length(myvars)){
-  print(paste0(j," start"))
+  
   missing_vect = ds.numNA(paste0('D$',myvars[j]))
   pre_missings_table = cbind(pre_missings_table,unlist(missing_vect))
   type_vect = ds.class(paste0('D$',myvars[j]))
   types_table = cbind(types_table,unlist(type_vect))
-  print(paste0(j," end"))
+  
 }
 
 colnames(pre_missings_table) <- c('Total in Study', myvars)
@@ -226,7 +226,7 @@ summary_soy = summaryContExp('E7$SOY', study_names, num_studies)
 summary_pbcl = summaryContExp('E7$PBCL', study_names, num_studies)
 summary_isoflavones = summaryContExp('E7$ISOFLAVONES', study_names, num_studies)
 summary_total = summaryContExp('E7$TOTAL', study_names, num_studies)
-                               
+
 #---------------------------------------------------------
 # Summaries for outcomes
 summary_objective_case = summaryBinExp('E7$CASE_OBJ', study_names, num_studies)

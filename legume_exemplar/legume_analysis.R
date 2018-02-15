@@ -1,7 +1,7 @@
-## Analysis script for Fish Exemplar Analysis
-## Author: Paul Scherer
-##		   Tom Bishop
-## Date: 31/03/2017
+## Analysis script for Legume Exemplar Analysis
+## Author: Tom Bishop
+##		   
+## Date: 14/02/2018
 
 ###############################################################################
 ########################### Dependencies   ####################################
@@ -18,30 +18,34 @@ library(metafor)
 ########################### SET UP SERVERS  ###################################
 ###############################################################################
 # Set working directory to source our credentials
-#setwd("/home/l_pms69/exemplar_analyses/")
+
 setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Source in the Extra functions for analysis
+
 source("variable_functions.R")
-#source("fish_exemplar/helperFunctions.R")
-source("fish_exemplar/survival_analysis_dsFunctions_new.R")
+#source("helperFunctions.R")
+source("survival_analysis_dsFunctions.R")
+
 # Retrieve Credential Details
-source("creds/fish_exemplar_creds.R")
+source("creds/leg_exemplar_creds.R")
 
 # complete cases per study only on variables not known to be all missing
-setwd("/home/l_trpb2/git/exemplar_analyses/fish_exemplar")
-filter_csv = read.csv(file = 'fish_opal_vars.csv',  header=TRUE, row.names = 1 )
+# also get time bucket information (bespoke to study and exemplar)
+setwd("/home/l_trpb2/git/exemplar_analyses/legume_exemplar")
+filter_csv = read.csv(file = 'leg_opal_vars.csv',  header=TRUE, row.names = 1 )
+source("leg_buckets.R")
 setwd("~")
+
 
 # Logout in case there was any older session in place and login with chosen variables
 datashield.logout(opals)
 
 #all the variables in the analysis
 myvars = c(
-  'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'FATTY',
-  'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA',
-  'ALCOHOL', 'FAM_DIAB', 'E_INTAKE', 'FRUIT', 'VEG', 'FIBER', 'SUG_BEVS', 'WAIST', 'SUPPLEMENTS', 'COMORBID',
-  'MEAT','QRT'
+  'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'PBCL',
+  'SOY', 'NUTS_SEEDS', 'ISOFLAVONES', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA', 'ALCOHOL',
+  'FAM_DIAB', 'COMORBIDITY', 'E_INTAKE', 'COV_FRUIT', 'COV_VEG', 'COV_FIBER', 'COV_MEAT', 'COV_SUG_BEVS', 'WAIST'
 )
 
 
@@ -69,7 +73,7 @@ all_participants_split <- ds.length('D$TOTAL',type = 'split', datasources = opal
 # remove participants with prevalent diabetes and type 1
 ds.subset(x = 'D', subset = 'E1', logicalOperator = 'PREV_DIAB==', threshold = 0)
 noPrevalence <- ds.length('E1$SEX', type = 'split')
-ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
+ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB!=', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
 # Remove CKB
@@ -100,8 +104,8 @@ afterIntake["CKB"] = noType1["CKB"]
 #variables not to be used in complete cases
 # stops loss of missing for these variables during complete cases, when they are not used in most models
 
-#none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB")
-none_cc_vars = c()
+none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB")
+#none_cc_vars = c()
 
 for (i in c(1:num_studies)) {
   my_name = names(opals[i])
@@ -116,22 +120,29 @@ length_complete = ds.length("E6$AGE_BASE", type = "split", datasources = opals)
 ########################################################################
 
 
+
 for (i in c(1:num_studies)) {
   my_name = names(opals[i])
   size <- length_complete[[i]]
   list_variables = missing_variable_creator(single_opal = my_name, filter_df = filter_csv)
   to_eval = paste0("ds.subset(x='D', subset='TRIM', rows = c(1:", size, "), datasources = opals[",i,"])")
   eval(parse(text=to_eval))
-  for (j in 1:length(list_variables)){
-    
-    var_name <- list_variables[j]
-    #to_eval = paste0("ds.subset(x='D$",var_name,"', subset='", var_name,"', rows = c(1:", size, "), datasources = opals[",i,"])")
-    to_eval2 = paste0("datashield.assign(opals[",i,"],'",var_name,"', quote(TRIM$",var_name,"))")
-    eval(parse(text=to_eval2))
+  if(length(list_variables)>0){
+    for (j in 1:length(list_variables)){
+      
+      var_name <- list_variables[j]
+      #to_eval = paste0("ds.subset(x='D$",var_name,"', subset='", var_name,"', rows = c(1:", size, "), datasources = opals[",i,"])")
+      to_eval2 = paste0("datashield.assign(opals[",i,"],'",var_name,"', quote(TRIM$",var_name,"))")
+      eval(parse(text=to_eval2))
+    }
+    ds.cbind(x=c(list_variables, "E6"), newobj = "E7", opals[i])
   }
-  ds.cbind(x=c(list_variables, "E6"), newobj = "E7", opals[i])
-  
+  else {
+    datashield.assign(opals[i],"E7",quote(E6))
+  }
 }
+
+
 
 # Setup an additional proxy ID column for each study
 for(i in 1:length(opals)){
@@ -167,23 +178,12 @@ ds.assign(toAssign="((1 - caseNums)*17.68276) + caseNums",  newobj = "burtonWeig
 ds.assign(toAssign="((1 - caseNums)*27.28305) + caseNums",  newobj = "burtonWeights", datasources = opals['InterAct_denmark'])
 
 # Non InterAct studies get a weighting of 1 in either case or noncase
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['HOORN'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NHAPC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['NOWAC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['SMC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['ELSA'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Whitehall'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Zutphen'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['AusDiab'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['JPHC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['WHI'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['CARDIA'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['ARIC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['PRHHP'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['MESA'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['FMC'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['Golestan'])
-ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals['CKB'])
+
+
+ds.assign(toAssign="newStartDate + 1",  newobj = "burtonWeights", datasources = opals[!names(opals) 
+                                                                    %in% c('InterAct_france', 'InterAct_italy','InterAct_spain','InterAct_uk',
+                                                                           'InterAct_netherlands', 'InterAct_germany', 'InterAct_sweden', 'InterAct_denmark')])
+
 ds.cbind(x=c('burtonWeights','E10'), newobj='F1')
 
 ###############################################################################
@@ -234,16 +234,15 @@ ds.cbind(x=c(bucket_table,'tid.f', 'logSurvival'), newobj=bucket_table, datasour
 # | |  | | (_) | (_| |  __/ | _| |_
 # \_|  |_/\___/ \__,_|\___|_| \___/
 
-# Exposure: total fish (g/d) at baseline
+# Exposure: total legumes (g/d) at baseline
 # Outcome: CASE_OBJ
 # Confounders: Age, sex, education, smoking, physical activity, BMI, co-morbidities
 
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
-my_exposure = c('FATTY')
-my_exposure = c('LEAN')
 
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBIDITY")
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
@@ -263,11 +262,11 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_1_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/legumes', paste0('model_1_',my_exposure,'_',ref_table,'.svg'))
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_1_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/legumes/model_1_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 ####################################################
@@ -393,17 +392,18 @@ write.csv(x = model_1_Q4_alltuned[model_1_Q4_alltuned$cov==my_exposure,], file =
 
 
 # Also need to choose between outcome OBJ or OBJ_SELF
-#my_exposure = c('TOTAL')
+my_exposure = c('TOTAL')
 #my_exposure = c('FATTY')
 #my_exposure = c('LEAN')
 #my_exposure = c('SALT')
 #my_exposure = c('FRESH')
 #my_exposure = c('NONFISH')
 #my_exposure = c('SSD')
-my_exposure = c('FRIED')
+#my_exposure = c('FRIED')
 
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBIDITY",
+                  "E_INTAKE", "ALCOHOL", "COV_FIBER", "COV_MEAT", "COV_FRUIT", "COV_VEG", "COV_SUG_BEVS")
+
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
@@ -416,7 +416,7 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # exclude studies with insufficient cases to run
 
-studies_model2 = which( names(temp_opals) %in% c( "HOORN", "Zutphen","CARDIA","Whitehall","NHAPC", "AusDiab") )
+studies_model2 = which( names(temp_opals) %in% c('AusDiab', 'CoLaus', 'HOORN', 'Zutphen') )
 
 temp_opals = temp_opals[-studies_model2]
 
@@ -427,11 +427,11 @@ temp_opals = temp_opals[-studies_model2]
 #temp_opals = temp_opals[-studies_model2]
 
 
-mypath = file.path('~', 'plots/test', paste0('model_2_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/legumes', paste0('model_2_',my_exposure,'_',ref_table,'.svg'))
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = paste0('~/plots/legumes/model_2_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
