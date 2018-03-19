@@ -132,7 +132,7 @@ under3500cal["CKB"] = noType1["CKB"]
 afterIntake["CKB"] = noType1["CKB"]
 
 #variables not to be used in complete cases
-none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB")
+none_cc_vars = c('tid.f','CENSOR',"WAIST","SUPPLEMENTS", "FAM_DIAB")
 
 # Do complete cases.Note that we strip off variables that are known to be missing for studies,
 # and glue these empty variables back on later.

@@ -124,7 +124,8 @@ afterIntake <- ds.length('E4$SEX', type = 'split', opals)
 
 
 #variables not to be used in complete cases
-none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB")
+#none_cc_vars = c("WAIST", "FAM_DIAB")
+none_cc_vars = c('tid.f','CENSOR')
 
 for (i in c(1:num_studies)) {
   my_name = names(opals[i])
