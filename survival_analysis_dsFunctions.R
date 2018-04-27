@@ -238,85 +238,8 @@ tunedLexisB <- function(ref_table_in, my_outcome_in, my_exit_col_in, study, new_
 	exitColString = paste0(ref_table_in, '$', my_exit_col_in)
 	statusColString = paste0(ref_table_in, '$', my_outcome_in)
 
-	if (studyName == "InterAct_germany"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_denmark"){ 
-	  interval_width =  c(2,2,2,1.5,5)
-	}
-	else if (studyName == "InterAct_france"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1.5,1,4)
-	}
-	else if (studyName == "InterAct_italy"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_netherlands"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_spain"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_sweden"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "InterAct_uk"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "HOORN"){ 
-	  interval_width =  c(2,2,2.5,2.5)
-	}
-	else if (studyName == "ELSA"){ 
-	  #interval_width =  c(2,2,1,3.5)
-	  interval_width =  c(2,2,0.5,3.5)
-	}
-	else if (studyName == "NOWAC"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "SMC"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "Zutphen"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "Whitehall"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2)
-	}
-	else if (studyName == "AusDiab"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1.5,1,1,1,2)
-	}
-	else if (studyName == "NHAPC"){ 
-	  interval_width =  c(1,1,1,1,1,1)
-	}
-	else if (studyName == "WHI"){ 
-	  interval_width =  c(1,1,1,1,1,1,1,1,1,1,1,1,1)
-	}
-	else if (studyName == "JPHC"){ 
-	  interval_width =  c(1,1,1,1,0.5,2.5)
-	}
-	else if (studyName == "ARIC"){
-	  interval_width =  c(3,3,3,3,3,3,3)
-	}
-	else if (studyName == "MESA"){
-	  interval_width =  c(1,1,1,1,1,1)
-	}
-	else if (studyName == "CARDIA"){
-	  interval_width =  c(3,3,3,3,3,3,3,3)
-	}
-	else if (studyName == "PRHHP"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else if (studyName == "FMC"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else if (studyName == "Golestan"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else if (studyName == "CKB"){
-	  interval_width =  c(2,2,2,2)
-	}
-	else {
-	  interval_width =  c(1)
-	}
+	interval_width =  time_buckets[[studyName]]
+
 	
 
 	ds.lexis.b(data=ref_table_in, intervalWidth = interval_width, idCol = idColString, entryCol = entryColString, 
@@ -346,13 +269,8 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 	par(mfrow=c(length(my_outcome),length(my_exposure)))
 	par(ps=10)
 
-	
-
-
 	for (k in 1:length(my_outcome)){
     
-
-	  
 		# for each exposure and
 		for (j in 1:length(my_exposure)){
 			estimates = vector()
@@ -389,6 +307,99 @@ tunedSurvivalModel <- function(ref_table, my_exposure, my_outcome, my_covariate,
 	return (list(model_all, model_rem))
 }
 
+UniversalModel <- function(ref_table, my_exposure, my_outcome, my_covariate, interaction_term, my_weights, my_offset, my_family, set_inter, mypath, studies) {
+  # main function that runs, fits, and stores the results of a  model 
+
+  REM_results = list()
+  study_regs = data.frame()
+  
+  svg(filename=mypath, 
+      width=5*length(my_exposure), 
+      height=5*length(my_outcome), 
+      pointsize=10)
+  par(mar=c(5,3,2,2)+0.1)
+  par(mfrow=c(length(my_outcome),length(my_exposure)))
+  par(ps=10)
+  
+  for (k in 1:length(my_outcome)){
+    
+    # for each exposure and
+    for (j in 1:length(my_exposure)){
+      estimates = vector()
+      s_errors = vector()
+      labels = vector()
+      
+      for(i in 1:length(studies)) {
+        reg_data <- data.frame()
+        
+        fmla <- createModelFormulaNew(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, set_inter)
+        print(studies[i])
+        print(fmla)
+        reg_data <- do_reg_new(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = my_family, offset = my_offset, ref_table_in  = ref_table, weights = my_weights, studies = studies)
+        
+        study_regs = rbind(study_regs,reg_data)
+        estimates = rbind(estimates,reg_data[grep(my_exposure[j], reg_data$cov),"Estimate"])
+        s_errors = rbind(s_errors,reg_data[grep(my_exposure[j], reg_data$cov),"Std. Error"])
+        labels = rbind(labels, reg_data[2,1])      
+        variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
+        print(estimates)
+      }
+      fmla <- createModelFormulaNew(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, set_inter)
+        #as.formula(paste(paste0(ref_table,'$', my_outcome[k])," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+")))
+      #meta analysis here
+      for (n in 1:length(variables)){
+        #REM_results[[paste(c(my_outcome[k], my_exposure[j],my_covariate, variables[n],'REM'),collapse="_")]]  <- do_REM(estimates[,n], s_errors[,n], labels, fmla,out_family = my_family, variable = variables[n], ref_table)
+      }
+    }
+  }
+  
+  #Store results
+  dev.off()
+  model_all <- study_regs
+  model_rem <- REM_results
+  
+  return (list(model_all, model_rem))
+}
+
+
+do_reg_new <- function(counter, my_fmla, study, outcome, offset, ref_table_in, weights, out_family, studies = opals){
+  #temp <- ds.summary('D$TOTAL', datasources = studies)
+  #study_names <- names(temp)
+  #num_studies <- length(temp)
+  #rm(temp)
+  
+  # performs a regular regression and returns the coefficients of the fitted model as a dataframe
+  print(studies[counter])
+  print(my_fmla)
+  model <- ds.glm(formula = my_fmla, data = ref_table_in, family = out_family, offset = offset, weights = weights, datasources=studies[counter], maxit = 25)
+  model_coeffs <- as.data.frame(model$coefficients)
+  model_coeffs$study = study
+  model_coeffs$outcome = outcome
+  model_coeffs$cov = rownames(model_coeffs)
+  for (x in 1:3){ model_coeffs <- model_coeffs[,c(ncol(model_coeffs),1:(ncol(model_coeffs)-1))]}
+  rownames(model_coeffs) = NULL
+  return(model_coeffs)
+}
+
+
+createModelFormulaNew <- function(study, data_table, outcome, exposure, covariate_list, interaction_term = NULL, set_inter) {
+  
+  exceptions = missing_variable_creator(single_opal = names(study), filter_df = filter_csv)
+  
+  if (is.null(interaction_term)){
+    fmla <- as.formula(paste(data_table, '$', outcome," ~ ", set_inter, "+", paste0(c(paste0(data_table, '$',exposure), 
+                                                                      paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
+    return(fmla)
+  } else if (!is.null(interaction_term)) {
+    fmla <- as.formula(paste(paste0(data_table, '$CENSOR')," ~ ", set_inter , "+", paste0(c(paste0(data_table, '$', exposure), 
+                                                                                                                         paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
+    return (fmla)
+  }else {
+    stop("Undefined type of model for formula")
+    return(NULL)
+  }
+}
+
 
 
 tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interaction_term, studies) {
@@ -419,12 +430,7 @@ tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covaria
   par(mfrow=c(length(my_outcome),number_of_interactions))
   par(ps=10)
   
-  
-  
-  
   for (k in 1:length(my_outcome)){
-    
-    
     
     # for each exposure and
     for (j in 1:length(my_exposure)){

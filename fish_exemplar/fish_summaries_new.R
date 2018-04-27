@@ -3,7 +3,7 @@
 
 ## Author: Paul Scherer
 ##		   Tom Bishop
-## Date: 06/06/2017
+## Date: 01/02/2018
 
 ###############################################################################
 ########################### Dependencies   ####################################
@@ -24,8 +24,8 @@ library(metafor)
 setwd("/home/l_trpb2/git/exemplar_analyses/")
 
 # Source in the Extra functions for analysis
-source("fish_exemplar/helperFunctions.R")
-source("fish_exemplar/survival_analysis_dsFunctions.R")
+
+source("variable_functions.R")
 # Retrieve Credential Details
 source("creds/fish_exemplar_creds.R")
 
@@ -42,7 +42,7 @@ myvars = c(
   'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'FATTY',
   'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA',
   'ALCOHOL', 'FAM_DIAB', 'E_INTAKE', 'FRUIT', 'VEG', 'FIBER', 'SUG_BEVS', 'WAIST', 'SUPPLEMENTS', 'COMORBID',
-  'MEAT', 'QRT'
+  'MEAT', 'QRT','SERVINGS'
 )
 
 
@@ -63,11 +63,13 @@ rm(temp)
 #### CHECK MISSINGS BEFORE FILTERING ###################################
 ########################################################################
 
-#check the variables are there
+#check the variables are there - this table lists the variables per study
 all_vars = ds.summary('D', opals)
 all_vars = as.data.frame(lapply(X=all_vars,FUN = function(x){
   temp = sort(x[[4]])
 }))
+
+# Now do missings check
 
 fullNum = ds.length('D$AGE_BASE', type = 'split') 
 
@@ -104,7 +106,7 @@ noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB==', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
-# Remove CKB
+# Remove CKB (no energy intake data)
 opals_temp = opals
 opals_temp["CKB"] = NULL
 
@@ -123,14 +125,17 @@ afterIntake <- ds.length('E4$SEX', type = 'split', opals_temp)
 
 rm(opals_temp)
 
-#exception for CKB
+#exception for CKB - assume all ok
 ds.assign(toAssign="E2", newobj = "E4", opals["CKB"])
 #generate under3500cal, afterIntake
 under3500cal["CKB"] = noType1["CKB"]
 afterIntake["CKB"] = noType1["CKB"]
 
 #variables not to be used in complete cases
-none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB")
+none_cc_vars = c('tid.f','CENSOR',"WAIST","SUPPLEMENTS", "FAM_DIAB")
+
+# Do complete cases.Note that we strip off variables that are known to be missing for studies,
+# and glue these empty variables back on later.
 
 for (i in c(1:num_studies)) {
   my_name = names(opals[i])
@@ -141,46 +146,10 @@ for (i in c(1:num_studies)) {
 rm(i)
 length_complete = ds.length("E6$AGE_BASE", type = "split", datasources = opals)
 
+#table showing how many are lost at each stage of filtering
+
 model_all_len <- data.frame()
 model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noType1, under3500cal, afterIntake,length_complete)
-
-
-###############################################################################
-########################### DATA SUMMARIES ####################################
-###############################################################################
-summaryContExp <- function(column, study_names, num_studies) {
-  # given a table$column combination as a string, return the summary table 
-  # for the continous variable
-  summary_column_temp = ds.summary(column)
-  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
-  rownames(summary_column) = study_names
-  colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
-  summary_column = summary_column[,c(2,6,5,7)]
-  rm(summary_column_temp)
-  return(summary_column)
-}
-
-summaryBinExp <- function(column, study_names, num_studies) {
-  # given a table$column combination as a string, return the summary
-  # table for the binary variable
-  summary_column_temp = ds.summary(column)
-  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=6, byrow=TRUE))
-  rownames(summary_column) <- study_names
-  colnames(summary_column) <- c('type', 'n', '0', '1', 'No', 'Yes')
-  rm(summary_column_temp)
-  return(summary_column)
-}
-
-summaryCatExp <- function (column, study_names, num_studies, levels = 2){
-  # given a table$column combination as a string, return the overall summary for categorical
-  # variables set in the levels parameter.
-  summary_column_temp = ds.summary(column)
-  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow=num_studies, ncol=(2+(2*levels)), byrow = TRUE))
-  rownames(summary_column) <- study_names
-  colnames(summary_column) = c('type', 'n')
-  rm(summary_column_temp)
-  return(summary_column)
-}
 
 
 ########################################################################
@@ -223,6 +192,59 @@ post_missings_table = t(post_missings_table)
 post_missings_table = as.data.frame(post_missings_table)
 
 
+###############################################################################
+########################### DATA SUMMARIES ####################################
+###############################################################################
+summaryContExp <- function(column, study_names, num_studies) {
+  # given a table$column combination as a string, return the summary table 
+  # for the continous variable
+  summary_column_temp = ds.summary(column)
+  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=10, byrow=TRUE))
+  rownames(summary_column) = study_names
+  colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
+  summary_column = summary_column[,c(2,6,5,7)]
+  rm(summary_column_temp)
+  return(summary_column)
+}
+
+summaryContExp_m_sd <- function(column, study_names, num_studies) {
+  # given a table$column combination as a string, return the summary table 
+  # for the continous variable
+  summary_column_mean = ds.mean(column, type = 'split')
+  summary_column_var = ds.var(column, type = 'split')
+  summary_column_mean = data.frame(matrix(unlist(summary_column_mean), nrow = num_studies, ncol=1, byrow=TRUE))
+  summary_column_sd = data.frame(matrix(unlist(summary_column_var), nrow = num_studies, ncol=1, byrow=TRUE))^0.5
+  summary_column = cbind(summary_column_mean,summary_column_sd)
+  rownames(summary_column) = study_names
+  colnames(summary_column) = c("mean", "sd")
+  return(summary_column)
+}
+
+
+summaryBinExp <- function(column, study_names, num_studies) {
+  # given a table$column combination as a string, return the summary
+  # table for the binary variable
+  summary_column_temp = ds.summary(column)
+  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow = num_studies, ncol=6, byrow=TRUE))
+  rownames(summary_column) <- study_names
+  colnames(summary_column) <- c('type', 'n', '0', '1', 'No', 'Yes')
+  rm(summary_column_temp)
+  return(summary_column)
+}
+
+summaryCatExp <- function (column, study_names, num_studies, levels = 2){
+  # given a table$column combination as a string, return the overall summary for categorical
+  # variables set in the levels parameter.
+  summary_column_temp = ds.summary(column)
+  summary_column = data.frame(matrix(unlist(summary_column_temp), nrow=num_studies, ncol=(2+(2*levels)), byrow = TRUE))
+  rownames(summary_column) <- study_names
+  colnames(summary_column) = c('type', 'n')
+  rm(summary_column_temp)
+  return(summary_column)
+}
+
+
+
 #---------------------------------------------------------
 # Summaries for exposures
 
@@ -234,6 +256,7 @@ summary_nonfish = summaryContExp('E7$NONFISH', study_names, num_studies)
 summary_salt = summaryContExp('E7$SALT', study_names, num_studies)
 summary_ssd = summaryContExp('E7$SSD', study_names, num_studies)
 summary_total = summaryContExp('E7$TOTAL', study_names, num_studies)
+summary_servings = summaryCatExp('E7$SERVINGS', study_names, num_studies, levels = 4)
 
 #---------------------------------------------------------
 # Summaries for outcomes
@@ -268,8 +291,9 @@ summary_fiber = summaryContExp('E7$FIBER', study_names, num_studies)
 summary_sugardrinks = summaryContExp('E7$SUG_BEVS', study_names, num_studies)
 
 # Other covariates
-summary_bmi = summaryBinExp('E7$BMI', study_names, num_studies)
+summary_bmi = summaryContExp_m_sd('E7$BMI', study_names, num_studies)
 summary_sex = summaryCatExp('E7$SEX', study_names, num_studies)
+summary_age = summaryContExp_m_sd('E7$AGE_BASE', study_names, num_studies)
 
 #-----------------------------------------------------------
 # summaries by standardised consumer groups - 100g servings per week
