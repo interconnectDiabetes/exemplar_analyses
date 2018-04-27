@@ -42,7 +42,7 @@ myvars = c(
   'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'FATTY',
   'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA',
   'ALCOHOL', 'FAM_DIAB', 'E_INTAKE', 'FRUIT', 'VEG', 'FIBER', 'SUG_BEVS', 'WAIST', 'SUPPLEMENTS', 'COMORBID',
-  'MEAT', 'QRT'
+  'MEAT', 'QRT','SERVINGS'
 )
 
 
@@ -207,6 +207,20 @@ summaryContExp <- function(column, study_names, num_studies) {
   return(summary_column)
 }
 
+summaryContExp_m_sd <- function(column, study_names, num_studies) {
+  # given a table$column combination as a string, return the summary table 
+  # for the continous variable
+  summary_column_mean = ds.mean(column, type = 'split')
+  summary_column_var = ds.var(column, type = 'split')
+  summary_column_mean = data.frame(matrix(unlist(summary_column_mean), nrow = num_studies, ncol=1, byrow=TRUE))
+  summary_column_sd = data.frame(matrix(unlist(summary_column_var), nrow = num_studies, ncol=1, byrow=TRUE))^0.5
+  summary_column = cbind(summary_column_mean,summary_column_sd)
+  rownames(summary_column) = study_names
+  colnames(summary_column) = c("mean", "sd")
+  return(summary_column)
+}
+
+
 summaryBinExp <- function(column, study_names, num_studies) {
   # given a table$column combination as a string, return the summary
   # table for the binary variable
@@ -242,6 +256,7 @@ summary_nonfish = summaryContExp('E7$NONFISH', study_names, num_studies)
 summary_salt = summaryContExp('E7$SALT', study_names, num_studies)
 summary_ssd = summaryContExp('E7$SSD', study_names, num_studies)
 summary_total = summaryContExp('E7$TOTAL', study_names, num_studies)
+summary_servings = summaryCatExp('E7$SERVINGS', study_names, num_studies, levels = 4)
 
 #---------------------------------------------------------
 # Summaries for outcomes
@@ -276,8 +291,9 @@ summary_fiber = summaryContExp('E7$FIBER', study_names, num_studies)
 summary_sugardrinks = summaryContExp('E7$SUG_BEVS', study_names, num_studies)
 
 # Other covariates
-summary_bmi = summaryBinExp('E7$BMI', study_names, num_studies)
+summary_bmi = summaryContExp_m_sd('E7$BMI', study_names, num_studies)
 summary_sex = summaryCatExp('E7$SEX', study_names, num_studies)
+summary_age = summaryContExp_m_sd('E7$AGE_BASE', study_names, num_studies)
 
 #-----------------------------------------------------------
 # summaries by standardised consumer groups - 100g servings per week
