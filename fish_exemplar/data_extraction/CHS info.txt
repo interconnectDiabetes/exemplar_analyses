@@ -1,0 +1,66 @@
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2828342/
+
+
+INSLN06 - verified medication
+OHGA06 - verified medication
+
+DIABET07 DIABETES from baseline medical history
+DIABET12 from phlebotomy
+INSUL12 from above - self report
+FAST12 are you fasting f/o from above
+GLUC12 are they taking part in glucose test?
+GLU44 baseline glucose relating to above
+GLU244 2h glucose
+DIAB01 self report from eligibility
+DIABETES ? presume interpretation of glucose tests (because IGT is there)
+DIABET57 equivalent of DIABET07 for those starting in year 5
+DIABYR57 age for above
+
+
+DIABETES
+      1 = 'NORMAL'  
+      2 = 'IMPAIRED GLUCOSE TOLERANCE'  
+      3 = 'DIABETES'
+
+
+DIABET07 DIABET12 
+      0 = 'NO '  
+      1 = 'YES '  
+      9 = 'DON’T KNOW ' ;
+
+
+DIAB01 
+      0 = 'NO '  
+      1 = 'YES '  
+      9 = 'UNKNOWN ' ;
+
+all others follow 0,1 pattern
+
+
+YEAR 3 
+
+DIABET37 
+      0 = 'NO '  
+      1 = 'YES '  
+      9 = 'UNKNOWN ' ;
+
+INSLN06
+OHGA06
+
+YEAR 4
+
+DIABET39
+INSLN06
+OHGA06
+
+YEAR 5 Old
+
+DIABET29 - new coding from this point onwards
+
+0 = 'NO (OLD CODE) '  
+1 = 'NEVER TOLD '  
+2 = 'TOLD DURING PAST YEAR '  
+3 = 'TOLD MORE THAN 1 YR AGO '  
+9 = 'DON’T KNOW ' ;
+
+GLU44
