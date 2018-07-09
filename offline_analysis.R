@@ -249,7 +249,7 @@ filter_csv = read.csv(file = 'U:/___Personal___/fish_opal_vars.csv',  header=TRU
 
 ##### model 1 total primary
 
-file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 1 with regions/'
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/'
 
 model_1_alltuned = read.csv(paste0(file_loc,'model_1_TOTAL_A_OBJ.csv'))
 
@@ -259,8 +259,6 @@ model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
 
 my_exposure = c('TOTAL')
 
-my_outcome = c('CASE_OBJ')
-
 ref_table =  'A_OBJ'
 
 my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
@@ -268,7 +266,8 @@ colnames(my_studies) = 'study'
 
 mylist=list('SMC')
 names(mylist) <- 'SMC'
-
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
 myformula = ''
 
 for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
@@ -277,7 +276,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_1_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -289,10 +288,11 @@ res <- rma(yi = temp_data$Estimate*100/7, sei = temp_data$`Std. Error`*100/7, me
 res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
 
 forest(res,at=log(c(0.8,0.9,1.0,1.1,1.2)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
-                                        .(round(res$I2)),'%, p = ',
-                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
        xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
                          .(round(res$pval,3)))), atransf = exp, xlim = log(c(0.6, 1.5)),alim=log(c(0.8, 1.2)))
+usr <- par("usr")
 usr <- par("usr")
 text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
 
@@ -300,9 +300,10 @@ text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
 
 dev.off()
 
+
 ##### model 1 total secondary
 
-file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 1 with regions/'
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/'
 
 model_1_alltuned = read.csv(paste0(file_loc,'model_1_TOTAL_A_OBJ_SELF.csv'))
 
@@ -330,7 +331,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_1_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -610,11 +611,63 @@ text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
 text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
 dev.off()
 
+##### model 4 total interaction term
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 4/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_TOTAL_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+my_exposure = c('TOTAL:SEX1')
+
+ref_table =  'A_OBJ'
+
+my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
+colnames(my_studies) = 'study'
+
+mylist=list('SMC')
+names(mylist) <- 'SMC'
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
+myformula = ''
+
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
+
+temp_data = merge(x = my_studies, y = for_RMA, by = "study")
+mypath = file.path(file_loc, paste0('model_4_TOTAL_',ref_table,'.svg'))
+svg(filename=mypath, 
+    width=6 * length(my_exposure), 
+    height=6 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+res <- rma(yi = temp_data$Estimate*100/7, sei = temp_data$`Std. Error`*100/7, method='DL', slab = temp_data$study)
+
+#add the weights to the labels
+res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+
+forest(res,at=log(c(0.8,0.9,1.0,1.1,1.2)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+                         .(round(res$pval,3)))), atransf = exp, xlim = log(c(0.6, 1.5)),alim=log(c(0.8, 1.2)))
+usr <- par("usr")
+usr <- par("usr")
+text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
+dev.off()
+
+
 ##### model 4 total interaction men
 
 file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 4/'
 
-model_1_alltuned = read.csv(paste0(file_loc,'model_4_men_TOTAL_A_OBJ_men.csv'))
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_men_TOTAL_A_OBJ.csv'))
 
 model_1_alltuned = model_1_alltuned[,-1]
 colnames(model_1_alltuned)[5] = c('Std. Error')
@@ -639,7 +692,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_4_men_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -691,7 +744,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_4_women_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -743,7 +796,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_2_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -795,7 +848,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_2_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -847,7 +900,7 @@ temp_data = merge(x = my_studies, y = for_RMA, by = "study")
 mypath = file.path(file_loc, paste0('model_2_', my_exposure,'_',ref_table,'.svg'))
 svg(filename=mypath, 
     width=6 * length(my_exposure), 
-    height=5 * length(my_outcome), 
+    height=6 * length(my_outcome), 
     pointsize=10)
 par(mar=c(5,3,2,2)+0.1)
 par(mfrow=c(length(my_outcome),length(my_exposure)))
@@ -900,7 +953,7 @@ regions = list()
 
 regions[['central']] =  data.frame("study" = c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk",
                                                "InterAct_netherlands", "InterAct_germany", "InterAct_sweden",
-                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"))
+                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC","SUN", "Whitehall", "Zutphen"))
 regions[['nwestern']] = data.frame("study" = c("WHI", "CARDIA", "ARIC", "MESA", "PRHHP"))
 regions[['swestern']] = data.frame("study" = c("ELSA"))
 regions[['eastern']] = data.frame("study" = c("NHAPC", "JPHC", "CKB", "Golestan", "SWHS", "SMHS"))
@@ -976,7 +1029,7 @@ for (z in 1:length(regions)){
 
 file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 4/'
 
-model_1_alltuned = read.csv(paste0(file_loc,'model_4_men_TOTAL_A_OBJ_men.csv'))
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_men_TOTAL_A_OBJ.csv'))
 
 model_1_alltuned = model_1_alltuned[,-1]
 colnames(model_1_alltuned)[5] = c('Std. Error')
@@ -1003,7 +1056,7 @@ regions = list()
 
 regions[['central']] =  data.frame("study" = c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk",
                                                "InterAct_netherlands", "InterAct_germany", "InterAct_sweden",
-                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"))
+                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC", "SUN", "Whitehall", "Zutphen"))
 regions[['nwestern']] = data.frame("study" = c("WHI", "CARDIA", "ARIC", "MESA", "PRHHP"))
 regions[['swestern']] = data.frame("study" = c("ELSA"))
 regions[['eastern']] = data.frame("study" = c("NHAPC", "JPHC", "CKB", "Golestan", "SWHS", "SMHS"))
@@ -1069,7 +1122,7 @@ regions = list()
 
 regions[['central']] =  data.frame("study" = c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk",
                                                "InterAct_netherlands", "InterAct_germany", "InterAct_sweden",
-                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC", "Whitehall", "Zutphen"))
+                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC", "SUN", "Whitehall", "Zutphen"))
 regions[['nwestern']] = data.frame("study" = c("WHI", "CARDIA", "ARIC", "MESA", "PRHHP"))
 regions[['swestern']] = data.frame("study" = c("ELSA"))
 regions[['eastern']] = data.frame("study" = c("NHAPC", "JPHC", "CKB", "Golestan", "SWHS", "SMHS"))
@@ -1313,6 +1366,319 @@ forest(res,at=log(c(0.8,0.9,1.0,1.1,1.2)),  digits=3, mlab=bquote(paste('Overall
                                                                         .(format(round(res$QEp,3), nsmall=3)),')')),
        xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
                          .(round(res$pval,3)))), atransf = exp, xlim = log(c(0.9, 1.6)),alim=log(c(0.8, 1.2)))
+usr <- par("usr")
+usr <- par("usr")
+text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
+dev.off()
+
+
+# meta regression women by geog area
+
+# get data
+
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 4/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_women_TOTAL_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+#Regional split 
+
+
+regions_central = data.frame("study" = c("InterAct_france", "InterAct_italy", "InterAct_spain", "InterAct_uk",
+                                               "InterAct_netherlands", "InterAct_germany", "InterAct_sweden",
+                                               "InterAct_denmark","FMC","HOORN", "NOWAC", "SMC", "SUN", "Whitehall", "Zutphen"), region = 'central')
+
+
+regions_nwestern = data.frame("study" = c("WHI", "CARDIA", "ARIC", "MESA", "PRHHP"), region = 'nwestern')
+regions_swestern = data.frame("study" = c("ELSA"), region = 'swestern')
+regions_eastern = data.frame("study" = c("NHAPC", "JPHC", "CKB", "Golestan", "SWHS", "SMHS"), region = 'eastern')
+regions_oceania = data.frame("study" = c("AusDiab"), region = 'oceania')
+
+regions = rbind(regions_central, regions_nwestern, regions_swestern, regions_eastern, regions_oceania )
+
+model_1_alltuned=merge(x=model_1_alltuned, y=regions, by = 'study')
+
+sink(file='V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/women_region.txt')
+summary(lm(formula = model_1_alltuned$Estimate ~ model_1_alltuned$region +0))
+sink()
+
+# meta regression women by mean age
+
+# get data
+
+women_age = read.csv(file='V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_04_24/women_age.csv')
+colnames(women_age) = c('study', 'mean_age')
+model_1_alltuned=merge(x=model_1_alltuned, y=women_age, by = 'study')
+sink(file='V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/women_age.txt')
+summary(lm(formula = model_1_alltuned$Estimate ~ model_1_alltuned$mean_age))
+sink()
+
+##### model 2 total primary heterogeneity test removing WHI
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 2/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_2_TOTAL_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+#remove WHI
+
+model_1_alltuned = model_1_alltuned[which(model_1_alltuned$study != 'WHI'),]
+
+my_exposure = c('TOTAL')
+
+ref_table =  'A_OBJ'
+
+my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
+colnames(my_studies) = 'study'
+
+mylist=list('SMC')
+names(mylist) <- 'SMC'
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
+myformula = ''
+
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
+
+temp_data = merge(x = my_studies, y = for_RMA, by = "study")
+mypath = file.path(file_loc, paste0('model_2_noWHI_', my_exposure,'_',ref_table,'.svg'))
+svg(filename=mypath, 
+    width=6 * length(my_exposure), 
+    height=5 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+res <- rma(yi = temp_data$Estimate*100/7, sei = temp_data$`Std. Error`*100/7, method='DL', slab = temp_data$study)
+
+#add the weights to the labels
+res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+
+forest(res,at=log(c(0.8,0.9,1.0,1.1,1.2)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+                         .(round(res$pval,3)))), atransf = exp, xlim = log(c(0.6, 1.5)),alim=log(c(0.8, 1.2)))
+usr <- par("usr")
+usr <- par("usr")
+text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
+dev.off()
+
+
+##### model 2 total primary heterogeneity test removing SWHS
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_03_08/model 2/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_2_TOTAL_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+#remove SWHS
+
+model_1_alltuned = model_1_alltuned[which(model_1_alltuned$study != 'SWHS'),]
+
+my_exposure = c('TOTAL')
+
+ref_table =  'A_OBJ'
+
+my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
+colnames(my_studies) = 'study'
+
+mylist=list('SMC')
+names(mylist) <- 'SMC'
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
+myformula = ''
+
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
+
+temp_data = merge(x = my_studies, y = for_RMA, by = "study")
+mypath = file.path(file_loc, paste0('model_2_noSWHS_', my_exposure,'_',ref_table,'.svg'))
+svg(filename=mypath, 
+    width=6 * length(my_exposure), 
+    height=5 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+res <- rma(yi = temp_data$Estimate*100/7, sei = temp_data$`Std. Error`*100/7, method='DL', slab = temp_data$study)
+
+#add the weights to the labels
+res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+
+forest(res,at=log(c(0.8,0.9,1.0,1.1,1.2)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+                         .(round(res$pval,3)))), atransf = exp, xlim = log(c(0.6, 1.5)),alim=log(c(0.8, 1.2)))
+usr <- par("usr")
+usr <- par("usr")
+text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
+dev.off()
+
+
+##### model 4 servings 2 compared to 1 - WOMEN ONLY
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_04_24/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_women_SERVINGS_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+my_exposure = c('SERVINGS2')
+
+ref_table =  'A_OBJ'
+
+my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
+colnames(my_studies) = 'study'
+
+mylist=list('SMC')
+names(mylist) <- 'SMC'
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
+myformula = ''
+
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
+
+temp_data = merge(x = my_studies, y = for_RMA, by = "study")
+mypath = file.path(file_loc, paste0('model_4_women_', my_exposure,'_',ref_table,'.svg'))
+svg(filename=mypath, 
+    width=6 * length(my_exposure), 
+    height=5 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+res <- rma(yi = temp_data$Estimate, sei = temp_data$`Std. Error`, method='DL', slab = temp_data$study)
+
+#add the weights to the labels
+res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+
+forest(res,at=log(c(0.4,0.6,1.0,1.6,2.4)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+                         .(format(round(res$pval,3),nsmall=3)))), atransf = exp, xlim = log(c(0.1, 6)),alim=log(c(0.4, 2.4)))
+usr <- par("usr")
+usr <- par("usr")
+text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
+dev.off()
+
+
+##### model 4 servings 3 compared to 1 women only
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_04_24/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_men_SERVINGS_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+my_exposure = c('SERVINGS3')
+
+ref_table =  'A_OBJ'
+
+my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
+colnames(my_studies) = 'study'
+
+mylist=list('SMC')
+names(mylist) <- 'SMC'
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
+myformula = ''
+
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
+
+temp_data = merge(x = my_studies, y = for_RMA, by = "study")
+mypath = file.path(file_loc, paste0('model_4_men_', my_exposure,'_',ref_table,'.svg'))
+svg(filename=mypath, 
+    width=6 * length(my_exposure), 
+    height=5 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+res <- rma(yi = temp_data$Estimate, sei = temp_data$`Std. Error`, method='DL', slab = temp_data$study)
+
+#add the weights to the labels
+res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+
+forest(res,at=log(c(0.4,0.6,1.0,1.6,2.4)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+                         .(format(round(res$pval,3),nsmall=3)))), atransf = exp, xlim = log(c(0.1, 6)),alim=log(c(0.4, 2.4)))
+usr <- par("usr")
+usr <- par("usr")
+text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
+text(usr[1], usr[3], paste0(ref_table,my_exposure), adj = c( 0, 0 ),cex=0.75)
+dev.off()
+
+
+##### model 4 servings 4 compared to 1 women only
+
+file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_04_24/'
+
+model_1_alltuned = read.csv(paste0(file_loc,'model_4_men_SERVINGS_A_OBJ.csv'))
+
+model_1_alltuned = model_1_alltuned[,-1]
+colnames(model_1_alltuned)[5] = c('Std. Error')
+model_1_alltuned = model_1_alltuned[order(model_1_alltuned$study),]
+
+my_exposure = c('SERVINGS4')
+
+ref_table =  'A_OBJ'
+
+my_studies =  unique(as.data.frame(model_1_alltuned[,1]))
+colnames(my_studies) = 'study'
+
+mylist=list('SMC')
+names(mylist) <- 'SMC'
+#myformula = createModelFormula(study = mylist['SMC'],data_table = ref_table, outcome = my_outcome, 
+#                              exposure = my_exposure, covariate_list = my_covariate, type = 'survival')
+myformula = ''
+
+for_RMA = model_1_alltuned[model_1_alltuned$cov==my_exposure,]
+
+temp_data = merge(x = my_studies, y = for_RMA, by = "study")
+mypath = file.path(file_loc, paste0('model_4_men_', my_exposure,'_',ref_table,'.svg'))
+svg(filename=mypath, 
+    width=6 * length(my_exposure), 
+    height=5 * length(my_outcome), 
+    pointsize=10)
+par(mar=c(5,3,2,2)+0.1)
+par(mfrow=c(length(my_outcome),length(my_exposure)))
+par(ps=10)
+
+res <- rma(yi = temp_data$Estimate, sei = temp_data$`Std. Error`, method='DL', slab = temp_data$study)
+
+#add the weights to the labels
+res$slab <- paste(res$slab, " (", round(weights.rma.uni(res),digits=1), "%)")
+
+forest(res,at=log(c(0.4,0.6,1.0,1.6,2.4)),  digits=3, mlab=bquote(paste('Overall (I'^2*' = ', 
+                                                                        .(round(res$I2)),'%, p = ',
+                                                                        .(format(round(res$QEp,3), nsmall=3)),')')),
+       xlab=bquote(paste('Test of H'[0]*': true Hazard ratio = 1, p = ',
+                         .(format(round(res$pval,3),nsmall=3)))), atransf = exp, xlim = log(c(0.1, 6)),alim=log(c(0.4, 2.4)))
 usr <- par("usr")
 usr <- par("usr")
 text(usr[2], usr[4], "Hazard Ratio [95% CI]", adj = c(1, 4),cex=0.75)
