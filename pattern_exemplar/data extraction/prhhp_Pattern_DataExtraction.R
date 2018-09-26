@@ -1,5 +1,5 @@
-# This file is used to create a dataframe for the fish exemplar in prhhp
-# Author: Paul Scherer
+# This file is used to create a dataframe for the pattern exemplar in prhhp
+# Author: Paul Scherer and Stefan Dietrich
 
 library(tibble) # for easier dataframes, and rather the saving to dta
 library(haven)
@@ -80,8 +80,84 @@ age_end_c$PC5 = as.numeric(as.character(age_end_c$PC5))
 
 # TOTAL
 dfa = read.csv2(file = "prexam1.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+PA217 = subset.data.frame(dfa, select = c(PA217, NEWID))
+PA218 = subset.data.frame(dfa, select = c(PA218, NEWID))
+PA219 = subset.data.frame(dfa, select = c(PA219, NEWID))
+PA220 = subset.data.frame(dfa, select = c(PA220, NEWID))
+PA221 = subset.data.frame(dfa, select = c(PA221, NEWID))
+PA222 = subset.data.frame(dfa, select = c(PA222, NEWID))
+PA223 = subset.data.frame(dfa, select = c(PA223, NEWID))
+PA224 = subset.data.frame(dfa, select = c(PA224, NEWID))
+PA225 = subset.data.frame(dfa, select = c(PA225, NEWID))
+PA226 = subset.data.frame(dfa, select = c(PA226, NEWID))
+PA227 = subset.data.frame(dfa, select = c(PA227, NEWID))
+PA228 = subset.data.frame(dfa, select = c(PA228, NEWID))
+PA229 = subset.data.frame(dfa, select = c(PA229, NEWID))
+PA230 = subset.data.frame(dfa, select = c(PA230, NEWID))
+PA231 = subset.data.frame(dfa, select = c(PA231, NEWID))
+PA232 = subset.data.frame(dfa, select = c(PA232, NEWID))
 PA233 = subset.data.frame(dfa, select = c(PA233, NEWID))
+PA234 = subset.data.frame(dfa, select = c(PA234, NEWID))
+PA235 = subset.data.frame(dfa, select = c(PA235, NEWID))
+PA236 = subset.data.frame(dfa, select = c(PA236, NEWID))
+PA237 = subset.data.frame(dfa, select = c(PA237, NEWID))
+PA238 = subset.data.frame(dfa, select = c(PA238, NEWID))
+PA239 = subset.data.frame(dfa, select = c(PA239, NEWID))
+PA240 = subset.data.frame(dfa, select = c(PA240, NEWID))
+PA241 = subset.data.frame(dfa, select = c(PA241, NEWID))
+PA242 = subset.data.frame(dfa, select = c(PA242, NEWID))
+PA243 = subset.data.frame(dfa, select = c(PA243, NEWID))
+PA244 = subset.data.frame(dfa, select = c(PA244, NEWID))
+PA245 = subset.data.frame(dfa, select = c(PA245, NEWID))
+PA246 = subset.data.frame(dfa, select = c(PA246, NEWID))
+PA247 = subset.data.frame(dfa, select = c(PA247, NEWID))
+PA248 = subset.data.frame(dfa, select = c(PA248, NEWID))
+PA249 = subset.data.frame(dfa, select = c(PA249, NEWID))
+PA250 = subset.data.frame(dfa, select = c(PA250, NEWID))
+PA252 = subset.data.frame(dfa, select = c(PA252, NEWID))
+PA253 = subset.data.frame(dfa, select = c(PA253, NEWID))
+PA254 = subset.data.frame(dfa, select = c(PA254, NEWID))
+PA255 = subset.data.frame(dfa, select = c(PA255, NEWID))
+
+PA217$PA217 = as.numeric(as.character(PA217$PA217))
+PA218$PA218 = as.numeric(as.character(PA218$PA218))
+PA219$PA219 = as.numeric(as.character(PA219$PA219))
+PA220$PA220 = as.numeric(as.character(PA220$PA220))
+PA221$PA221 = as.numeric(as.character(PA221$PA222))
+PA222$PA222 = as.numeric(as.character(PA222$PA222))
+PA223$PA223 = as.numeric(as.character(PA223$PA223))
+PA224$PA224 = as.numeric(as.character(PA224$PA224))
+PA225$PA225 = as.numeric(as.character(PA225$PA225))
+PA226$PA226 = as.numeric(as.character(PA226$PA226))
+PA227$PA227 = as.numeric(as.character(PA227$PA227))
+PA228$PA228 = as.numeric(as.character(PA228$PA228))
+PA229$PA229 = as.numeric(as.character(PA229$PA229))
+PA230$PA230 = as.numeric(as.character(PA230$PA230))
+PA231$PA231 = as.numeric(as.character(PA231$PA231))
+PA232$PA232 = as.numeric(as.character(PA232$PA232))
 PA233$PA233 = as.numeric(as.character(PA233$PA233))
+PA234$PA234 = as.numeric(as.character(PA234$PA234))
+PA235$PA235 = as.numeric(as.character(PA235$PA235))
+PA236$PA236 = as.numeric(as.character(PA236$PA236))
+PA237$PA237 = as.numeric(as.character(PA237$PA237))
+PA238$PA238 = as.numeric(as.character(PA238$PA238))
+PA239$PA239 = as.numeric(as.character(PA239$PA239))
+PA240$PA240 = as.numeric(as.character(PA240$PA240))
+PA241$PA241 = as.numeric(as.character(PA241$PA241))
+PA242$PA242 = as.numeric(as.character(PA242$PA242))
+PA243$PA243 = as.numeric(as.character(PA243$PA243))
+PA244$PA244 = as.numeric(as.character(PA244$PA244))
+PA245$PA245 = as.numeric(as.character(PA245$PA245))
+PA246$PA246 = as.numeric(as.character(PA246$PA246))
+PA247$PA247 = as.numeric(as.character(PA247$PA247))
+PA248$PA248 = as.numeric(as.character(PA248$PA248))
+PA249$PA249 = as.numeric(as.character(PA249$PA249))
+PA250$PA250 = as.numeric(as.character(PA250$PA250))
+PA252$PA252 = as.numeric(as.character(PA252$PA252))
+PA253$PA253 = as.numeric(as.character(PA253$PA253))
+PA254$PA254 = as.numeric(as.character(PA254$PA254))
+PA255$PA255 = as.numeric(as.character(PA255$PA255))
+
 
 # ___  ___          _ _  __ _               
 # |  \/  |         | (_)/ _(_)              
@@ -155,93 +231,10 @@ PE66 = subset.data.frame(dfa, select = c(PE66, NEWID))
 PE66$PE66 = as.factor(PE66$PE66)
 levels(x = PE66$PE66) = c("None", "Borderline", "Definite")
 
-
 # E_INTAKE
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 PA63 = subset.data.frame(dfa, select = c(PA63, NEWID))
 PA63$PA63 = as.numeric(as.character(PA63$PA63))
-
-# COV_FRUIT
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA237 = subset.data.frame(dfa, select = c(PA237, NEWID))
-PA237$PA237 = as.numeric(as.character(PA237$PA237))
-
-dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA238 = subset.data.frame(dfb, select = c(PA238, NEWID))
-PA238$PA238 = as.numeric(as.character(PA238$PA238))
-
-dfc = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA239 = subset.data.frame(dfc, select = c(PA239, NEWID))
-PA239$PA239 = as.numeric(as.character(PA239$PA239))
-
-
-dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA235 = subset.data.frame(dfb, select = c(PA235, NEWID))
-PA235$PA235 = as.numeric(as.character(PA235$PA235))
-
-dfc = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA236 = subset.data.frame(dfc, select = c(PA236, NEWID))
-PA236$PA236 = as.numeric(as.character(PA236$PA236))
-
-# FISH
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA227= subset.data.frame(dfa, select = c(PA227, NEWID))
-PA227$PA227 = as.numeric(as.character(PA227$PA227))
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA228= subset.data.frame(dfa, select = c(PA228, NEWID))
-PA228$PA228 = as.numeric(as.character(PA228$PA228))
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA229= subset.data.frame(dfa, select = c(PA229, NEWID))
-PA229$PA229 = as.numeric(as.character(PA229$PA229))
-
-# DAIRY
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA244= subset.data.frame(dfa, select = c(PA244, NEWID))
-PA244$PA244 = as.numeric(as.character(PA244$PA244))
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA245= subset.data.frame(dfa, select = c(PA245, NEWID))
-PA245$PA245 = as.numeric(as.character(PA245$PA245))
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA217= subset.data.frame(dfa, select = c(PA217, NEWID))
-PA217$PA217 = as.numeric(as.character(PA217$PA217))
-
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA218= subset.data.frame(dfa, select = c(PA218, NEWID))
-PA218$PA218 = as.numeric(as.character(PA218$PA218))
-
-# FIBER
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA77 = subset.data.frame(dfa, select = c(PA77, NEWID))
-PA77$PA77 = as.numeric(as.character(PA77$PA77))
-
-# RED_MEAT
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA221 = subset.data.frame(dfa, select = c(PA221, NEWID))
-PA221$PA221 = as.numeric(as.character(PA221$PA221))
-
-dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA223 = subset.data.frame(dfb, select = c(PA223, NEWID))
-PA223$PA223 = as.numeric(as.character(PA223$PA223))
-
-# PROC_MEAT
-dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA224 = subset.data.frame(dfa, select = c(PA224, NEWID))
-PA224$PA224 = as.numeric(as.character(PA224$PA224))
-
-dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA225 = subset.data.frame(dfb, select = c(PA225, NEWID))
-PA225$PA225 = as.numeric(as.character(PA225$PA225))
-
-# SUG_BEVS
-dfb = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
-PA250 = subset.data.frame(dfb, select = c(PA250, NEWID))
-PA250$PA250 = as.numeric(as.character(PA250$PA250))
 
 # MEDS
 dfa = read.csv2(file = 'prexam1.csv', header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -258,9 +251,10 @@ rm(dfa, dfb, dfc)
 #################################################################################################################
 #################################################################################################################
 dataframes_list = list(PA17,PE3,prevalence,case_b,case_c,age_end_b,age_end_c,
-	PA233,BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PE66,PA63,PA237,
-	PA238,PA239,PA235,PA236,PA77,PA221,PA223,PA224,PA225,PA250,PA125,
-	PA244, PA245, PA217, PA218, PA227, PA228, PA229)
+	BMI1,PA28,PA42,PA52,PA78,PE34,PA60,PA194,PE66,PA63, PA125,
+	PA217, PA218, PA219, PA220, PA221, PA222, PA223, PA224, PA225, PA226, PA227, PA228, PA229, PA230, PA231, PA232,
+	PA233, PA234, PA235, PA236, PA237, PA238, PA239, PA240, PA241, PA242, PA243, PA244, PA245, PA246, PA247, PA248,
+	PA249, PA250, PA252, PA253, PA254, PA255)
 
 prhhp = Reduce(function(...) merge(..., by="NEWID", all=TRUE), dataframes_list)
 colnames(prhhp)[1] <- "ID"
@@ -268,6 +262,6 @@ prhhp$ID = as.character(prhhp$ID)
 
 prhhp_tibble = as_tibble(prhhp)
 # WAIST
-save(prhhp,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_leg.Rdata")
-write_dta(data = prhhp_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_leg.dta")
+save(prhhp,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_pattern.Rdata")
+write_dta(data = prhhp_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/prhhp/prhhp_pattern.dta")
 

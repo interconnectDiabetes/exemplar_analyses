@@ -275,6 +275,50 @@ levels(x = veg$DTIA25) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
 # DAIRY
 
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dai = subset.data.frame(dfa, select = c(DTIA08, DTIA07, DTIA02, DTIA03, DTIA01, DTIA05 , DTIA06, ID_C))
+
+dai$DTIA01 = as.factor(dai$DTIA01)
+levels(x = dai$DTIA01) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA02 = as.factor(dai$DTIA02)
+levels(x = dai$DTIA02) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA03 = as.factor(dai$DTIA03)
+levels(x = dai$DTIA03) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA04 = as.factor(dai$DTIA04)
+levels(x = dai$DTIA04) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA05 = as.factor(dai$DTIA05)
+levels(x = dai$DTIA05) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA06 = as.factor(dai$DTIA06)
+levels(x = dai$DTIA06) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA07 = as.factor(dai$DTIA07)
+levels(x = dai$DTIA07) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+dai$DTIA08 = as.factor(dai$DTIA08)
+levels(x = dai$DTIA08) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+#FISH
+
+dfa = read.csv2(file = "v1/dtia.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+fish = subset.data.frame(dfa, select = c(DTIA34, DTIA35, DTIA36, DTIA37, ID_C))
+
+fish$DTIA34 = as.factor(fish$DTIA34)
+levels(x = fish$DTIA34) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+fish$DTIA35 = as.factor(fish$DTIA35)
+levels(x = fish$DTIA35) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+fish$DTIA36 = as.factor(fish$DTIA36)
+levels(x = fish$DTIA36) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+fish$DTIA37 = as.factor(fish$DTIA37)
+levels(x = fish$DTIA37) = c("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
 # FIBER
 dfa = read.csv2(file = "v1/anut2.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 DFIB = subset.data.frame(dfa, select = c(DFIB, ID_C))
@@ -331,7 +375,7 @@ rm(dfa, dfb, dfc, dfd, dfe, dff, dfg, dfh, dfi, dfj, dfk, dfl)
 dataframes_list = list(HOM10E,MSRA08F,GLUCOS01,CHMB07,HHXB05D,MSRB24F,LIPC4A,PHXA8K,MSRC24G,LIPD4A,PHXB6C,MSRD24G,
 	LIP23,MSRF33C,V2AGE22,V1AGE01,V3AGE31,V4AGE41,V5AGE51,V2DAYS,V3DAYS,V4DAYS,V5DATE51_DAYS,DTIA, 
 	GENDER,BMI01,ELEVEL02,CIGT01,SPRT_I02,ETHANL03,famdiab,MHXA28,HOM10C,HOM10D,HOM10F,HOM10A,TCAL,fruit,veg,DFIB,red,proc,
-	bevs,HYPTMDCODE01,ANTA07A, TOTCAL03)
+	bevs,HYPTMDCODE01,ANTA07A, TOTCAL03, dai, fish)
 
 aric = Reduce(function(...) merge(..., by="ID_C", all=TRUE), dataframes_list)
 colnames(aric)[1] <- "ID"
@@ -339,5 +383,5 @@ colnames(aric)[1] <- "ID"
 aric_tibble = as_tibble(aric)
 # WAIST
 save(aric,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_r_legumes.Rdata")
-write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_legumes.dta")
+write_dta(data = aric_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/aric/main_study/aric_legumes_new.dta")
 

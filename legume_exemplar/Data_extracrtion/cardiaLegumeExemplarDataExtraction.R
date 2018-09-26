@@ -374,6 +374,18 @@ proc = subset.data.frame(dfa, select = c(A06MCF0200,A06MCF0100 , PID))
 proc$A06MCF0200 = as.numeric(as.character(proc$A06MCF0200))
 proc$A06MCF0100 = as.numeric(as.character(proc$A06MCF0100))
 
+#FISH
+
+dfa = read.csv2(file = "Y00/DATA/csv/aaf06mj.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+fish = subset.data.frame(dfa, select = c(A06FISH, PID))
+fish$A06FISH = as.numeric(as.character(fish$A06FISH))
+
+#DAIRY
+
+dfa = read.csv2(file = "Y00/DATA/csv/aaf06mj.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
+dairy = subset.data.frame(dfa, select = c(A06DAIRY, PID))
+dairy$A06DAIRY = as.numeric(as.character(dairy$A06DAIRY))
+
 # SUG_BEVS
 dfa = read.csv2(file = "Y00/DATA/csv/aaf06fg.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 A06BVS0400 = subset.data.frame(dfa, select = c(A06BVS0400, PID))
@@ -402,7 +414,7 @@ dataframes_list = list(EXAMAGE,A01AGE1,A08DIAB,A09DIBST,AL3_GLU,B08DIAB,B09DIBAG
                        G08DIAB,G08DIBAG,GL7GLU,GL7GLU2H,H08DIAB,H08DIBAG,HL7GLU,HL7GLU2H,EX2_AGE,
                        EX3_AGE,EX4_AGE,EX5_AGE,EX6_AGE,EX7_AGE,EX8_AGE,veg,total,A01SEX,A20BMI,
                        A01ED1,A03ED,A10SMOKE,A01SMNOW,A19MODWK,A06ALCHL,famdiab,A09HRTAK,A08CANCR,A08HBP,A06CALO,
-                       A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST)
+                       A06FRUIT,A06VEGETABLE,A06FIBER,red,proc,A06BVS0400,A08BPMED,A20WST, dairy, fish)
 
 cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
 colnames(cardia)[1] <- "ID"

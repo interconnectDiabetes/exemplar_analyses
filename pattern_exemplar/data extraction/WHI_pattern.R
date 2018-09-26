@@ -61,10 +61,23 @@ F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[order(F60_ITEM_OS_PUB$ID),]
 #keep only baseline observations
 F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[which(F60_ITEM_OS_PUB$F60VTYP == 1), ]
 
-F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[,c("ID","GRNPEAS","BEANS","BEANSOUP","REFRIED","GRNBEAN","SOY","NUTS",
-                                     "FRUITS", "VEGTABLS", "REDMEAT", "BACON", "LNCHBOL", "HOTDOG",
-                                     "LNCHHAM", "POP", "FRYFISH", "WHITFISH", "DARKFISH", "SHELFISH", "DAIRY"
-)]
+F60_ITEM_OS_PUB = F60_ITEM_OS_PUB[,c("ID","APPLE", "APRICOT", "AVOCADO", "BACON", "BANANA", "BBQSAND", "BEANS", "BEER", "BISCUIT", "BROCCOLI", "BUTTER", "CANDY", "CANTALOP", "CARROT", "CAULIF",
+				"CHILI", "CHIPS", "CHOCOLT", "CLDCERL", "COFFEE", "COLESLAW", "COOKCER", "COOKIES", "CORN", "CORNBRD", "COTCHEES", "DARKFISH", "DOUGHNT",  "DRESSING", "DRKBRD",
+				"DRYFRUIT", "EGGS", "FRIES", "FRYBRD", "FRYCHICK", "FRYFISH", "GRAINS", "GRAVY", "GREENS", "GRNBEAN", "GRNDMEAT", "GRNPEAS", "GRNPEPP", "HOTDOG", "ICECRM",
+				"LETTUCE", "LFCHEES", "LFCOTCH", "LFDESST", "LIQUOR", "LIVER", "LNCHBOL", "LNCHHAM", "LOWPIZZA", "MACCHEES", "MAYON", "MILKFAT", "MLK1", "MLK2", "MLKCERL",
+				"MLKCRM", "MLKDK", "MLKDRNK", "MLKEVAP", "MLKNDCRM", "MLKSKIM", "MLKSOY", "MLKWHOL", "NFCHEES", "NFYOGUR", "ONION", "ORANGE", "OTHCHEE", "OTHFRUIT",
+				"OTHMELON", "OTHPIE", "OTHYOGU", "PANCAKE", "PEACH", "PEANUT", "PIZZA", "PLANTAIN", "POP", "POTATO", "PSALAD", "PUDDING", "PUMPPIE", "REDPEPP", "REFRIED",
+				"RICE", "ROSTCHIC", "SALAD", "SALTINE", "SHELFISH", "SNKPOPC", "SOY", "SPAGMEAT", "SPAGTOM", "STEAK", "STEW", "STRAWBER", "SUGCOFF", "SUMSQASH", "TOFU",
+				"TOMATO", "TOMATOC", "TORTILC", "TORTILF", "TUNA",  "WATERMEL",
+				"WHITBRD", "WHITFISH", "WHLGRNS", "WINE", "WINSQASH", "YAM")] 
+
+F143_AV3_OS_PUB = read_sas(data_file = 'F143_AV3_OS_PUB.sas7bdat')
+F143_AV3_OS_PUB = F143_AV3_OS_PUB[order(F143_AV3_OS_PUB$ID),]
+#seems to be observations of 3rd exam -> if baselin is not available keep this.
+F143_AV3_OS_PUB = F143_AV3_OS_PUB[,c("ID","USEBTTR_3", "USELOMRG_3", "USENOFAT_3", "USEOLIVE_3", "USEOTFAT_3", "USESTMRG_3", "USETBMRG_3")]
+
+
+
 
 #  _____              __                      _               
 # /  __ \            / _|                    | |              
@@ -152,11 +165,11 @@ levels(F30_OS_PUB$CHF_F30) = c("No","Yes")
 #################################################################################################################
 
 dataframes_list = list(DEM_OS_PUB,OUTC_SELF_OS_PUB,F60_ITEM_OS_PUB,F80_OS_PUB,F34_OS_PUB,
-                       F60_NUTR_OS_PUB,F32_OS_PUB,F30_OS_PUB,F44_OS_PUB)
+                       F60_NUTR_OS_PUB,F32_OS_PUB,F30_OS_PUB,F44_OS_PUB, F143_AV3_OS_PUB)
 
 whi_legumes = Reduce(function(...) merge(..., by="ID", all=TRUE), dataframes_list)
 colnames(whi_legumes)[1] <- "ID"
 
 whi_legumes_tibble = as_tibble(whi_legumes)
-save(whi_legumes,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/whios/WHI_OS_2014b/whi_legumes.Rdata")
-write_dta(data = whi_legumes_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/whios/WHI_OS_2014b/whi_legumes.dta")
+save(whi_legumes,file="V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/whios/WHI_OS_2014b/whi_pattern.Rdata")
+write_dta(data = whi_legumes_tibble, path = "V:/Studies/InterConnect/Internal/Other data sharing mechanisms/BioLINCC data_ US data/whios/WHI_OS_2014b/whi_pattern.dta")
