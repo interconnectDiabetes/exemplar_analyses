@@ -36,13 +36,14 @@ setwd("~")
 
 
 # Logout in case there was any older session in place and login with chosen variables
-datashield.logout(opals)
+datashield.logout(opals = opals)
 
 #all the variables in the analysis
 myvars = c(
   'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'PBCL',
   'SOY', 'NUTS_SEEDS', 'ISOFLAVONES', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA', 'ALCOHOL',
-  'FAM_DIAB', 'COMORBIDITY', 'E_INTAKE', 'COV_FRUIT', 'COV_VEG', 'COV_FIBER', 'COV_MEAT', 'COV_SUG_BEVS', 'WAIST'
+  'FAM_DIAB', 'COMORBIDITY', 'E_INTAKE', 'COV_FRUIT', 'COV_VEG', 'COV_FIBER', 'COV_MEAT', 'COV_SUG_BEVS', 'WAIST',
+  'REGION_CH', 'BMI_CAT', 'CONSUMER', 'COV_DAIRY', 'COV_FISH'
 )
 
 
@@ -105,7 +106,10 @@ noPrevalence <- ds.length('E1$SEX', type = 'split')
 ds.subset(x = 'E1', subset = 'E2', logicalOperator = 'TYPE_DIAB!=', threshold = 1)
 noType1 <- ds.length('E2$SEX', type = 'split')
 
-
+# Remove CKB and ELSA_UK (no energy intake data)
+opals_temp = opals
+opals_temp["CKB"] = NULL
+opals_temp["ELSA_UK"] = NULL
 
 # In order to deal with the intake subsets stratified by sex we will have to create subsets of sex,
 # do the intake subset and then rbind the groups back together. What follows is DataSHIELD magic
@@ -120,12 +124,22 @@ under3500cal <- ds.length('E3$SEX', type = 'split', opals)
 ds.subset(x = 'E3', subset = 'E4', logicalOperator = 'adjustedLowerBound>=', threshold = 800, datasources = opals)
 afterIntake <- ds.length('E4$SEX', type = 'split', opals)
 
+rm(opals_temp)
+
+#exception for CKB and ELSA_UK - assume all ok
+ds.assign(toAssign="E2", newobj = "E4", opals["CKB"])
+ds.assign(toAssign="E2", newobj = "E4", opals["ELSA_UK"])
+#generate under3500cal, afterIntake
+under3500cal["CKB"] = noType1["CKB"]
+afterIntake["CKB"] = noType1["CKB"]
+under3500cal["ELSA_UK"] = noType1["ELSA_UK"]
+afterIntake["ELSA_UK"] = noType1["ELSA_UK"]
 
 
 
 #variables not to be used in complete cases
-#none_cc_vars = c("WAIST", "FAM_DIAB")
-none_cc_vars = c('tid.f','CENSOR')
+none_cc_vars = c('tid.f','CENSOR',"WAIST", "FAM_DIAB")
+#none_cc_vars = c('tid.f','CENSOR')
 
 for (i in c(1:num_studies)) {
   my_name = names(opals[i])
@@ -227,6 +241,7 @@ summary_soy = summaryContExp('E7$SOY', study_names, num_studies)
 summary_pbcl = summaryContExp('E7$PBCL', study_names, num_studies)
 summary_isoflavones = summaryContExp('E7$ISOFLAVONES', study_names, num_studies)
 summary_total = summaryContExp('E7$TOTAL', study_names, num_studies)
+summary_consumer = summaryBinExp('E7$CONSUMER', study_names, num_studies)
                                
 #---------------------------------------------------------
 # Summaries for outcomes
