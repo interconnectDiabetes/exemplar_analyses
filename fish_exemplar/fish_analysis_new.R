@@ -28,7 +28,10 @@ source("survival_analysis_dsFunctions.R")
 # Retrieve Credential Details
 source("creds/fish_exemplar_creds.R")
 
-# complete cases per study only on variables not known to be all missing
+# complete cases per study only on variables known to be not all missing
+# the _vars.csv file stores information about which variables a study is expected to have and
+# which variables are completely missing for all participants
+# the buckets file contains defined buckets for the piecewise poisson analysis
 setwd("/home/l_trpb2/git/exemplar_analyses/fish_exemplar")
 filter_csv = read.csv(file = 'fish_opal_vars.csv',  header=TRUE, row.names = 1 )
 source("fish_buckets.R")
@@ -42,7 +45,7 @@ myvars = c(
   'AGE_BASE', 'TYPE_DIAB', 'PREV_DIAB', 'CASE_OBJ_SELF', 'CASE_OBJ', 'FUP_OBJ', 'FUP_OBJ_SELF', 'FATTY',
   'FRESH', 'FRIED', 'LEAN', 'NONFISH', 'SALT', 'SSD', 'TOTAL', 'SEX', 'BMI', 'EDUCATION', 'SMOKING', 'PA',
   'ALCOHOL', 'FAM_DIAB', 'E_INTAKE', 'FRUIT', 'VEG', 'FIBER', 'SUG_BEVS', 'WAIST', 'SUPPLEMENTS', 'COMORBID',
-  'MEAT','QRT', 'SERVINGS'
+  'MEAT','QRT', 'SERVINGS', 'REGION_CH'
 )
 
 
@@ -227,16 +230,17 @@ ds.cbind(x=c(bucket_table,'tid.f', 'logSurvival'), newobj=bucket_table, datasour
 # Confounders: Age, sex, education, smoking, physical activity, BMI, co-morbidities
 
 # Also need to choose between outcome OBJ or OBJ_SELF
-#my_exposure = c('TOTAL')
+my_exposure = c('TOTAL')
 #my_exposure = c('FATTY')
 #my_exposure = c('LEAN')
 #my_exposure = c('SALT')
 #my_exposure = c('FRESH')
 #my_exposure = c('NONFISH')
 #my_exposure = c('FRIED')
-my_exposure = c('SSD')
+#my_exposure = c('SSD')
 
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+#my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", "REGION_CH")
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
@@ -258,6 +262,7 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 mypath = file.path('~', 'plots/test', paste0('model_1_',my_exposure,'_',ref_table,'.svg'))
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
+
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
 write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_1_',my_exposure,'_',ref_table,'.csv'))
@@ -287,11 +292,11 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_1_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_1_SMC_',my_exposure,'_',ref_table,'.svg'))
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_1_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_1_SMC_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 ####################################
@@ -356,8 +361,11 @@ my_exposure = c('SERVINGS')
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID")
 
 my_outcome = c('CASE_OBJ')
+#my_outcome = c('CASE_OBJ_SELF')
 #my_exit_col = c('newEndDate')
 ref_table =  'A_OBJ'
+#ref_table =  'A_OBJ_SELF'
+
 
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
@@ -395,24 +403,28 @@ rm(temp_opals)
 
 
 # Also need to choose between outcome OBJ or OBJ_SELF
-#my_exposure = c('TOTAL')
+my_exposure = c('TOTAL')
 #my_exposure = c('FATTY')
 #my_exposure = c('LEAN')
 #my_exposure = c('SALT')
 #my_exposure = c('FRESH')
 #my_exposure = c('NONFISH')
 #my_exposure = c('SSD')
-my_exposure = c('FRIED')
+#my_exposure = c('FRIED')
+
+
 
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
 
 #my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
 #                 "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
 my_outcome = c('CASE_OBJ')
+#my_outcome = c('CASE_OBJ_SELF')
 #my_exit_col = c('newEndDate')
 ref_table =  'A_OBJ'
+#ref_table =  'A_OBJ_SELF'
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
 #only run on opals with the exposure and outcome
@@ -438,7 +450,7 @@ mypath = file.path('~', 'plots/test', paste0('model_2_',my_exposure,'_',ref_tabl
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[model_2_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_2_alltuned[grep(my_exposure, model_2_alltuned$cov),], file = paste0('~/plots/test/model_2_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
@@ -546,7 +558,10 @@ my_exposure = c('SERVINGS')
 
 
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
@@ -574,12 +589,12 @@ temp_opals = temp_opals[-studies_model2]
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_2_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_2_REG_CKB_',my_exposure,'_',ref_table,'.svg'))
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
 #nb grep to get all categorical variables with SERVINGS
-write.csv(x = model_2_alltuned[grep(my_exposure, model_2_alltuned$cov),], file = paste0('~/plots/test/model_2_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_2_alltuned[grep(my_exposure, model_2_alltuned$cov),], file = paste0('~/plots/test/model_2_REG_CKB_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 #### dose response for servings
@@ -704,15 +719,12 @@ rm(temp_opals)
 # Model Specific Setup
 ####################################################
 
+
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
 
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "FAM_DIAB")
-
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "FAM_DIAB")
-
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "FAM_DIAB", "REGION_CH")
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
@@ -731,32 +743,39 @@ temp_opals = temp_opals[-studies_model3]
 
 # studies with missing variable - need to forcibly leave them out or they get included without the missing variable
 
-studies_model3 = which( names(temp_opals) %in% c("Golestan", "InterAct_italy", "InterAct_spain","MESA"))
+studies_model3 = which( names(temp_opals) %in% c("Golestan", "InterAct_italy", "InterAct_spain","MESA", "NOWAC"))
 
 temp_opals = temp_opals[-studies_model3]
 
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_3a_','FAM_DIAB','_', my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_3a_FAM_DIAB_', my_exposure,'_',ref_table,'.svg'))
 model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_3_alltuned = model_3[[1]]
 model_3_remtuned = model_3[[2]]
 write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_3a_FAM_DIAB_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
-# equivalent model 2a
+## Stratified analyses by sex (men, women) if significant
+# Men
+ds.subset(x = 'A_OBJ', subset = 'A_OBJ_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
 
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
 
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+#                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH", "FAM_DIAB")
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+
 
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
-ref_table =  'A_OBJ'
+ref_table =  'A_OBJ_men'
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
 #only run on opals with the exposure and outcome
@@ -769,20 +788,79 @@ studies_model3 = which( names(temp_opals) %in% c( "HOORN", "Zutphen", "NHAPC") )
 
 temp_opals = temp_opals[-studies_model3]
 
+# exclude studies with women only as will not run model 3 for men
+
+studies_model3 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI", "CARDIA", "InterAct_germany"))
+
+temp_opals = temp_opals[-studies_model3]
+
 # studies with missing variable - need to forcibly leave them out or they get included without the missing variable
 
-studies_model3 = which( names(temp_opals) %in% c("Golestan", "InterAct_italy", "InterAct_spain","MESA"))
+studies_model3 = which( names(temp_opals) %in% c("Golestan", "InterAct_italy", "InterAct_spain","MESA", "NOWAC"))
 
 temp_opals = temp_opals[-studies_model3]
 
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_2a_','FAM_DIAB','_', my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_2a_men_','FAM_DIAB','_', my_exposure,'_',ref_table,'.svg'))
 model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_3_alltuned = model_3[[1]]
 model_3_remtuned = model_3[[2]]
-write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2a_FAM_DIAB_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2a_men_FAM_DIAB_',my_exposure,'_',ref_table,'.csv'))
+rm(temp_opals)
+
+## Stratified analyses by sex (men, women) if significant
+# Women
+ds.subset(x = 'A_OBJ', subset = 'A_OBJ_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
+
+# Also need to choose between outcome OBJ or OBJ_SELF
+my_exposure = c('TOTAL')
+
+
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+#                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH", "FAM_DIAB")
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+
+
+
+my_outcome = c('CASE_OBJ')
+#my_exit_col = c('newEndDate')
+ref_table =  'A_OBJ_women'
+
+#my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+#only run on opals with the exposure and outcome
+my_vars_check = c(my_exposure, my_outcome)
+temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+
+# exclude studies with insufficient cases to run
+
+studies_model3 = which( names(temp_opals) %in% c( "HOORN", "Zutphen", "NHAPC") )
+
+temp_opals = temp_opals[-studies_model3]
+
+# exclude studies with women only as will not run model 3 for men
+
+studies_model3 = which( names(temp_opals) %in% c("PRHHP"))
+
+temp_opals = temp_opals[-studies_model3]
+
+# studies with missing variable - need to forcibly leave them out or they get included without the missing variable
+
+studies_model3 = which( names(temp_opals) %in% c("Golestan", "InterAct_italy", "InterAct_spain","MESA", "NOWAC"))
+
+temp_opals = temp_opals[-studies_model3]
+
+
+# tuned survival version
+
+mypath = file.path('~', 'plots/test', paste0('model_2a_women_','FAM_DIAB','_', my_exposure,'_',ref_table,'.svg'))
+model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
+model_3_alltuned = model_3[[1]]
+model_3_remtuned = model_3[[2]]
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2a_women_FAM_DIAB_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 ####################################################
@@ -792,7 +870,7 @@ rm(temp_opals)
 my_exposure = c('TOTAL')
 
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST")
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST", "REGION_CH")
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
@@ -856,11 +934,107 @@ temp_opals = temp_opals[-studies_model3]
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_2b_','WAIST','_', my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_2b_SMC_','WAIST','_', my_exposure,'_',ref_table,'.svg'))
 model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_3_alltuned = model_3[[1]]
 model_3_remtuned = model_3[[2]]
-write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2b_','WAIST','_', my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2b_SMC_','WAIST','_', my_exposure,'_',ref_table,'.csv'))
+rm(temp_opals)
+
+### Model 3b for men
+
+my_exposure = c('TOTAL')
+
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+#                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST", "REGION_CH")
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+
+
+my_outcome = c('CASE_OBJ')
+#my_exit_col = c('newEndDate')
+ref_table =  'A_OBJ_men'
+
+
+#my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+#only run on opals with the exposure and outcome
+my_vars_check = c(my_exposure, my_outcome)
+temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+
+# exclude studies with insufficient cases to run
+
+studies_model3 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
+
+temp_opals = temp_opals[-studies_model3]
+
+# exclude studies with women only as will not run model 3 for men
+
+studies_model3 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI", "CARDIA","InterAct_germany", "InterAct_italy"))
+
+temp_opals = temp_opals[-studies_model3]
+
+# studies with missing variable - need to forcibly leave them out or they get included without the missing variable
+
+studies_model3 = which( names(temp_opals) %in% c("FMC", "JPHC", "NOWAC", "PRHHP"))
+
+temp_opals = temp_opals[-studies_model3]
+
+# tuned survival version
+
+mypath = file.path('~', 'plots/test', paste0('model_2b_men_','WAIST','_', my_exposure,'_',ref_table,'.svg'))
+model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
+model_3_alltuned = model_3[[1]]
+model_3_remtuned = model_3[[2]]
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2b_men_','WAIST','_', my_exposure,'_',ref_table,'.csv'))
+rm(temp_opals)
+
+### model 3b for women
+
+my_exposure = c('TOTAL')
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST", "REGION_CH")
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+
+
+my_outcome = c('CASE_OBJ')
+#my_exit_col = c('newEndDate')
+ref_table =  'A_OBJ_women'
+
+
+#my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+#only run on opals with the exposure and outcome
+my_vars_check = c(my_exposure, my_outcome)
+temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+
+# exclude studies with insufficient cases to run
+
+studies_model3 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
+
+temp_opals = temp_opals[-studies_model3]
+
+# exclude studies with women only as will not run model 3 for men
+
+studies_model3 = which( names(temp_opals) %in% c("PRHHP"))
+
+temp_opals = temp_opals[-studies_model3]
+
+# studies with missing variable - need to forcibly leave them out or they get included without the missing variable
+
+studies_model3 = which( names(temp_opals) %in% c("FMC", "JPHC", "NOWAC", "PRHHP"))
+
+temp_opals = temp_opals[-studies_model3]
+
+# tuned survival version
+
+mypath = file.path('~', 'plots/test', paste0('model_2b_women_','WAIST','_', my_exposure,'_',ref_table,'.svg'))
+model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
+model_3_alltuned = model_3[[1]]
+model_3_remtuned = model_3[[2]]
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2b_women_','WAIST','_', my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 ####################################################
@@ -870,7 +1044,7 @@ rm(temp_opals)
 my_exposure = c('TOTAL')
 
 my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS")
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "REGION_CH")
 
 
 my_outcome = c('CASE_OBJ')
@@ -908,16 +1082,21 @@ model_3_remtuned = model_3[[2]]
 write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_3c_SUPPLEMENTS_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
-#Equivalanet model 2
+### Model 3c men
 
+# Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
 
-my_covariate =  c("AGE_BASE", "SEX", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
-                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+#                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "REGION_CH")
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+
 
 my_outcome = c('CASE_OBJ')
 #my_exit_col = c('newEndDate')
-ref_table =  'A_OBJ'
+ref_table =  'A_OBJ_men'
 
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
@@ -925,9 +1104,15 @@ ref_table =  'A_OBJ'
 my_vars_check = c(my_exposure, my_outcome)
 temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
 
-# exclude studies with insufficient cases to run from model 2
+# exclude studies with insufficient cases to run
 
 studies_model3 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
+
+temp_opals = temp_opals[-studies_model3]
+
+# exclude studies with women only as will not run model 3 for men
+
+studies_model3 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI", "CARDIA","InterAct_germany", "InterAct_italy"))
 
 temp_opals = temp_opals[-studies_model3]
 
@@ -937,19 +1122,69 @@ studies_model3 = which( names(temp_opals) %in% c("AusDiab", "FMC", "JPHC", "Zutp
                                                  "InterAct_italy", "InterAct_spain", "InterAct_denmark", "InterAct_france",
                                                  "InterAct_uk", "InterAct_sweden", "InterAct_germany", "InterAct_netherlands", "Golestan"
 ))
-
 temp_opals = temp_opals[-studies_model3]
-
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_2c_','SUPPLEMENTS','_', my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_2c_men_','SUPPLEMENTS','_', my_exposure,'_',ref_table,'.svg'))
 model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_3_alltuned = model_3[[1]]
 model_3_remtuned = model_3[[2]]
-write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2c_SUPPLEMENTS_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2c_men_','SUPPLEMENTS','_', my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
+
+### Model 3c women
+
+
+# Also need to choose between outcome OBJ or OBJ_SELF
+my_exposure = c('TOTAL')
+
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+#                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SUPPLEMENTS", "REGION_CH")
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID",
+                  "E_INTAKE", "ALCOHOL", "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+
+
+my_outcome = c('CASE_OBJ')
+#my_exit_col = c('newEndDate')
+ref_table =  'A_OBJ_women'
+
+
+#my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+#only run on opals with the exposure and outcome
+my_vars_check = c(my_exposure, my_outcome)
+temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+
+# exclude studies with insufficient cases to run
+
+studies_model3 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
+
+temp_opals = temp_opals[-studies_model3]
+
+# exclude studies with men only as will not run model 3 for women
+
+studies_model3 = which( names(temp_opals) %in% c("PRHHP"))
+
+temp_opals = temp_opals[-studies_model3]
+
+# studies with missing variable - need to forcibly leave them out or they get included without the missing variable
+
+studies_model3 = which( names(temp_opals) %in% c("AusDiab", "FMC", "JPHC", "Zutphen", "PRHHP", "WHI", "ARIC", "CARDIA", "MESA",
+                                                 "InterAct_italy", "InterAct_spain", "InterAct_denmark", "InterAct_france",
+                                                 "InterAct_uk", "InterAct_sweden", "InterAct_germany", "InterAct_netherlands", "Golestan"
+))
+temp_opals = temp_opals[-studies_model3]
+
+# tuned survival version
+
+mypath = file.path('~', 'plots/test', paste0('model_2c_women_','SUPPLEMENTS','_', my_exposure,'_',ref_table,'.svg'))
+model_3 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
+model_3_alltuned = model_3[[1]]
+model_3_remtuned = model_3[[2]]
+write.csv(x = model_3_alltuned[model_3_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_2c_women_','SUPPLEMENTS','_', my_exposure,'_',ref_table,'.csv'))
+rm(temp_opals)
 
 # ___  ___          _      _     ___ 
 # |  \/  |         | |    | |   /   |
@@ -968,7 +1203,9 @@ rm(temp_opals)
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
-                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX")
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX", "REGION_CH")
+
+
 my_interaction = "SEX"
 #my_exit_col = c('newEndDate')
 ref_table =  'A_OBJ'
@@ -1002,21 +1239,32 @@ mypath = file.path('~', 'plots/test', paste0('model_4_',my_exposure,'_',ref_tabl
 model_4 = tunedInterActionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath,interaction_term = my_interaction, studies = temp_opals)
 model_4_alltuned = model_4[[1]]
 model_4_remtuned = model_4[[2]]
-write.csv(x = model_4_alltuned[model_4_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_4_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
+
+
 
 ####################################################
 ## Stratified analyses by sex (men, women) if significant
 # Men
-ds.subset(x = 'A_OBJ', subset = 'A_OBJ_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
+#ds.subset(x = 'A_OBJ', subset = 'A_OBJ_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
+
+ds.subset(x = 'A_OBJ_SELF', subset = 'A_OBJ_SELF_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
+
 
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
+
 my_outcome = c('CASE_OBJ')
+#my_outcome = c('CASE_OBJ_SELF')
+
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
-                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", "REGION_CH")
+
 
 ref_table =  'A_OBJ_men'
+#ref_table =  'A_OBJ_SELF_men'
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
 #only run on opals with the exposure and outcome
@@ -1025,46 +1273,62 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # exclude studies with insufficient cases to run from model 2
 
-studies_model4 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
+#studies_model4 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
 
-temp_opals = temp_opals[-studies_model4]
+#temp_opals = temp_opals[-studies_model4]
 
-# exclude studies with women only as will not run model 4
+# exclude studies with women only as will not run model 4 for men
+#studies_model4 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI"))
+#temp_opals = temp_opals[-studies_model4]
 
-#studies_model4 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI", "PRHHP"))
+# exclude studies that will not run model 4 after gender split for TOTAL, FATTY, LEAN, SERVINGS
+#studies_model4 = which( names(temp_opals) %in% c("CARDIA", "InterAct_germany", "InterAct_italy"))
+#temp_opals = temp_opals[-studies_model4]
 
-studies_model4 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI"))
+# exclude studies that will not run model 4 after gender split for TOTAL, FATTY, LEAN, SERVINGS for secondary
+#studies_model4 = which( names(temp_opals) %in% c("InterAct_germany", "InterAct_italy"))
+#temp_opals = temp_opals[-studies_model4]
 
+# exclude studies that will not run model 4 after gender split for FRIED
 
-temp_opals = temp_opals[-studies_model4]
+#studies_model4 = which( names(temp_opals) %in% c("CARDIA", "InterAct_italy"))
+#temp_opals = temp_opals[-studies_model4]
 
-# exclude studies that will not run model 4 after gender split
+# exclude studies that will not run model 4 after gender split for NONFISH
 
-studies_model4 = which( names(temp_opals) %in% c("CARDIA", "InterAct_germany", "InterAct_italy"))
+#studies_model4 = which( names(temp_opals) %in% c("CARDIA","InterAct_italy"))
+#temp_opals = temp_opals[-studies_model4]
 
-temp_opals = temp_opals[-studies_model4]
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_4_men_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_4_men_zut_',my_exposure,'_',ref_table,'.svg'))
 model_4 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_4_alltuned = model_4[[1]]
 model_4_remtuned = model_4[[2]]
-write.csv(x = model_4_alltuned[model_4_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_4_men_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_men_zut_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
 ####################################################
 # Women
-ds.subset(x = 'A_OBJ', subset = 'A_OBJ_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
+#ds.subset(x = 'A_OBJ', subset = 'A_OBJ_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
+ds.subset(x = 'A_OBJ_SELF', subset = 'A_OBJ_SELF_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
+
 
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
-my_outcome = c('CASE_OBJ')
-my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
-                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS")
 
-ref_table =  'A_OBJ_women'
+#my_outcome = c('CASE_OBJ')
+my_outcome = c('CASE_OBJ_SELF')
+
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+#my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", "REGION_CH")
+
+
+#ref_table =  'A_OBJ_women'
+ref_table =  'A_OBJ_SELF_women'
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
 #only run on opals with the exposure and outcome
@@ -1073,31 +1337,38 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # exclude studies with insufficient cases to run from model 2
 
-studies_model4 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
+#studies_model4 = which( names(temp_opals) %in% c( "HOORN", "Zutphen") )
 
-temp_opals = temp_opals[-studies_model4]
+#temp_opals = temp_opals[-studies_model4]
 
 # exclude studies with men or women only as will not run model 4
 
 #studies_model4 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI", "PRHHP"))
 
-studies_model4 = which( names(temp_opals) %in% c("PRHHP"))
+#studies_model4 = which( names(temp_opals) %in% c("PRHHP"))
+#temp_opals = temp_opals[-studies_model4]
 
-temp_opals = temp_opals[-studies_model4]
+# exclude studies that will not run model 4 after gender split for TOTAL, FATTY, LEAN
 
-# exclude studies that will not run model 4 after gender split
-
-#studies_model4 = which( names(temp_opals) %in% c("CARDIA", "InterAct_germany", "InterAct_italy"))
+#studies_model4 = which( names(temp_opals) %in% c("InterAct_germany", "InterAct_italy"))
 
 #temp_opals = temp_opals[-studies_model4]
 
+
+# exclude studies that will not run model 4 with SERVINGS
+
+#studies_model4 = which( names(temp_opals) %in% c("SUN"))
+
+#temp_opals = temp_opals[-studies_model4]
+
+
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_4_women_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_4_women_card_',my_exposure,'_',ref_table,'.svg'))
 model_4 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_4_alltuned = model_4[[1]]
 model_4_remtuned = model_4[[2]]
-write.csv(x = model_4_alltuned[model_4_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_4_women_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_women_card_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
@@ -1162,7 +1433,7 @@ rm(temp_opals)
 ds.subset(x = 'A_OBJ', subset = 'A_OBJ_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
 
 # Also need to choose between outcome OBJ or OBJ_SELF
-my_exposure = c('TOTAL')
+my_exposure = c('FATTY')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST")
@@ -1263,7 +1534,7 @@ rm(temp_opals)
 my_exposure = c('TOTAL')
 my_outcome = c('CASE_OBJ')
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
-                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX")
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "SEX", "REGION_CH")
 my_interaction = "BMI"
 
 ref_table =  'A_OBJ'
@@ -1281,12 +1552,95 @@ temp_opals = temp_opals[studies_model5]
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_5_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_5_SUN_',my_exposure,'_',ref_table,'.svg'))
 model_5 = tunedInterActionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath,interaction_term = my_interaction, studies = temp_opals)
 model_5_alltuned = model_5[[1]]
 model_5_remtuned = model_5[[2]]
-write.csv(x = model_5_alltuned[model_5_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_5_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_5_alltuned[grep(my_exposure, model_5_alltuned$cov),], file = paste0('~/plots/test/model_5_SUN_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
+
+####################################################
+## Stratified analyses by sex (men, women) if significant
+# Men
+ds.subset(x = 'A_OBJ', subset = 'A_OBJ_men', logicalOperator = 'SEX==', threshold = 0, datasources = opals)
+
+# Also need to choose between outcome OBJ or OBJ_SELF
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
+my_interaction = "BMI"
+
+ref_table =  'A_OBJ_men'
+
+#only run on opals with the exposure and outcome
+my_vars_check = c(my_exposure, my_outcome)
+temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+
+# exclude studies that won't run
+
+studies_model4 = which( names(temp_opals) %in% c( "HOORN", "Zutphen","ELSA","CARDIA", "InterAct_germany", "InterAct_italy") )
+
+temp_opals = temp_opals[-studies_model4]
+
+# exclude studies with women only as will not run model 4
+
+studies_model4 = which( names(temp_opals) %in% c("InterAct_france", "NOWAC", "WHI"))
+
+temp_opals = temp_opals[-studies_model4]
+
+# tuned survival version
+
+mypath = file.path('~', 'plots/test', paste0('model_5_men_',my_exposure,'_',ref_table,'.svg'))
+model_5 = tunedInterActionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath,interaction_term = my_interaction, studies = temp_opals)
+model_5_alltuned = model_5[[1]]
+model_5_remtuned = model_5[[2]]
+write.csv(x = model_5_alltuned[model_5_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_5_men_',my_exposure,'_',ref_table,'.csv'))
+rm(temp_opals)
+
+
+
+####################################################
+# Women
+ds.subset(x = 'A_OBJ', subset = 'A_OBJ_women', logicalOperator = 'SEX==', threshold = 1, datasources = opals)
+
+# Also need to choose between outcome OBJ or OBJ_SELF
+my_exposure = c('TOTAL')
+my_outcome = c('CASE_OBJ')
+my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
+                  "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "WAIST")
+my_interaction = "BMI"
+
+ref_table =  'A_OBJ_women'
+
+#my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
+#only run on opals with the exposure and outcome
+my_vars_check = c(my_exposure, my_outcome)
+temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+
+# exclude studies with insufficient cases to run, women only
+
+studies_model4 = study_names[! study_names %in% c( "HOORN", "Zutphen","CARDIA",
+                                                   "InterAct_italy",
+                                                   "PRHHP")]
+
+temp_opals = temp_opals[studies_model4]
+
+# won't run model 4
+
+studies_model4 = which( names(temp_opals) %in% c("InterAct_netherlands", "InterAct_spain", "ARIC"))
+
+temp_opals = temp_opals[-studies_model4]
+
+# tuned survival version
+
+mypath = file.path('~', 'plots/test', paste0('model_5_women_',my_exposure,'_',ref_table,'.svg'))
+model_5 = tunedInterActionModel(ref_table, my_exposure, my_outcome, my_covariate, mypath,interaction_term = my_interaction, studies = temp_opals)
+model_5_alltuned = model_5[[1]]
+model_5_remtuned = model_5[[2]]
+write.csv(x = model_5_alltuned[model_5_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_5_women_',my_exposure,'_',ref_table,'.csv'))
+rm(temp_opals)
+
 
 ####################################################
 # BMI < 25
