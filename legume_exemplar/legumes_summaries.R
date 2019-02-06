@@ -157,7 +157,7 @@ model_all_len <- rbind(model_all_len, all_participants_split, noPrevalence, noTy
 ###############################################################################
 ########################### DATA SUMMARIES ####################################
 ###############################################################################
-summaryContExp <- function(column, study_names, num_studies) {
+summaryContExp_med <- function(column, study_names, num_studies) {
   # given a table$column combination as a string, return the summary table 
   # for the continous variable
   summary_column_temp = ds.summary(column)
@@ -166,6 +166,17 @@ summaryContExp <- function(column, study_names, num_studies) {
   colnames(summary_column) = c("type", "N", "5%", "10%", "25%", "50%", "75%", "90%", "95%", "mean")
   summary_column = summary_column[,c(2,6,5,7)]
   rm(summary_column_temp)
+  return(summary_column)
+}
+
+summaryContExp_mean <- function(column, study_names, num_studies) {
+
+  mean_val = ds.mean(x=column, type = 'split')
+  variance = ds.var(x=column, type = 'split')
+  
+  mean_unlist = unlist(mean_val)
+  sd_unlist = (unlist(variance))^0.5
+  summary_column = data.frame("mean" = mean_unlist, "sd" = sd_unlist)
   return(summary_column)
 }
 
@@ -236,11 +247,11 @@ post_missings_table = as.data.frame(post_missings_table)
 
 #---------------------------------------------------------
 # Summaries for exposures
-summary_nuts_seeds = summaryContExp('E7$NUTS_SEEDS', study_names, num_studies)
-summary_soy = summaryContExp('E7$SOY', study_names, num_studies)
-summary_pbcl = summaryContExp('E7$PBCL', study_names, num_studies)
-summary_isoflavones = summaryContExp('E7$ISOFLAVONES', study_names, num_studies)
-summary_total = summaryContExp('E7$TOTAL', study_names, num_studies)
+summary_nuts_seeds = summaryContExp_med('E7$NUTS_SEEDS', study_names, num_studies)
+summary_soy = summaryContExp_med('E7$SOY', study_names, num_studies)
+summary_pbcl = summaryContExp_med('E7$PBCL', study_names, num_studies)
+summary_isoflavones = summaryContExp_med('E7$ISOFLAVONES', study_names, num_studies)
+summary_total = summaryContExp_med('E7$TOTAL', study_names, num_studies)
 summary_consumer = summaryBinExp('E7$CONSUMER', study_names, num_studies)
                                
 #---------------------------------------------------------
@@ -248,13 +259,13 @@ summary_consumer = summaryBinExp('E7$CONSUMER', study_names, num_studies)
 summary_objective_case = summaryBinExp('E7$CASE_OBJ', study_names, num_studies)
 summary_self_case = summaryBinExp("E7$CASE_OBJ_SELF", study_names, num_studies)
 
-summary_age_base = summaryContExp("E7$AGE_BASE", study_names, num_studies)
+summary_age_base = summaryContExp_mean("E7$AGE_BASE", study_names, num_studies)
 
 summary_prevalence = summaryBinExp("E7$PREV_DIAB", study_names, num_studies)
 summary_type_diab = summaryBinExp("E7$TYPE_DIAB", study_names, num_studies)
 
-summary_fup_self = summaryContExp("E7$FUP_OBJ_SELF", study_names, num_studies)
-summary_fup_obj = summaryContExp("E7$FUP_OBJ", study_names, num_studies)
+summary_fup_self = summaryContExp_med("E7$FUP_OBJ_SELF", study_names, num_studies)
+summary_fup_obj = summaryContExp_med("E7$FUP_OBJ", study_names, num_studies)
 
 #---------------------------------------------------------
 # Summaries for covariates and confounders
@@ -266,15 +277,15 @@ summary_smoking = summaryBinExp('E7$SMOKING', study_names, num_studies)
 summary_comorbid = summaryBinExp('E7$COMORBIDITY', study_names, num_studies)
 
 # # Continous covariates
-summary_pa = summaryContExp('E7$PA', study_names, num_studies)
-summary_alc = summaryContExp('E7$ALCOHOL', study_names, num_studies)
-summary_eintake = summaryContExp('E7$E_INTAKE', study_names, num_studies)
-summary_meat = summaryContExp('E7$COV_MEAT', study_names, num_studies)
-summary_fruit = summaryContExp('E7$COV_FRUIT', study_names, num_studies)
-summary_veg = summaryContExp('E7$COV_VEG', study_names, num_studies)
-summary_fiber = summaryContExp('E7$COV_FIBER', study_names, num_studies)
-summary_sugardrinks = summaryContExp('E7$COV_SUG_BEVS', study_names, num_studies)
+summary_pa = summaryContExp_med('E7$PA', study_names, num_studies)
+summary_alc = summaryContExp_med('E7$ALCOHOL', study_names, num_studies)
+summary_eintake = summaryContExp_med('E7$E_INTAKE', study_names, num_studies)
+summary_meat = summaryContExp_med('E7$COV_MEAT', study_names, num_studies)
+summary_fruit = summaryContExp_med('E7$COV_FRUIT', study_names, num_studies)
+summary_veg = summaryContExp_med('E7$COV_VEG', study_names, num_studies)
+summary_fiber = summaryContExp_med('E7$COV_FIBER', study_names, num_studies)
+summary_sugardrinks = summaryContExp_med('E7$COV_SUG_BEVS', study_names, num_studies)
 
 # Other covariates
-summary_bmi = summaryBinExp('E7$BMI', study_names, num_studies)
+summary_bmi = summaryContExp_mean('E7$BMI', study_names, num_studies)
 summary_sex = summaryCatExp('E7$SEX', study_names, num_studies)
