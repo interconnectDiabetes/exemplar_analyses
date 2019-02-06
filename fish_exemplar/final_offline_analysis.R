@@ -93,9 +93,22 @@ do_offline <- function(filename_in, model_name, exposure, outcome, scaling_facto
 
 file_loc = 'V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/'
 
+#model 4 sex interaction term
+
+do_offline(filename_in = 'model_4_TOTAL_A_OBJ.csv', model_name = 'model_4_',
+           exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
+           xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
+
+
 #men total fish regional primary
 
 do_offline(filename_in = 'model_4_men_TOTAL_A_OBJ_men.csv', model_name = 'model_4_men_',
+           exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
+           xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
+
+#men total fish regional primary no IA Netherlands
+
+do_offline(filename_in = 'model_4_men_TOTAL_A_OBJ_men_sensit.csv', model_name = 'model_4_men_sensit_',
            exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
            xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
 
@@ -103,6 +116,24 @@ do_offline(filename_in = 'model_4_men_TOTAL_A_OBJ_men.csv', model_name = 'model_
 #women total fish regional primary
 
 do_offline(filename_in = 'model_4_women_TOTAL_A_OBJ_women.csv', model_name = 'model_4_women_',
+           exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
+           xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
+
+#women total fish regional primary no IA Netherlands France
+
+do_offline(filename_in = 'model_4_women_TOTAL_A_OBJ_women_sensit.csv', model_name = 'model_4_women_sensit_',
+           exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
+           xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
+
+#women total fish regional primary no IA  France
+
+do_offline(filename_in = 'model_4_women_TOTAL_A_OBJ_women_no_france.csv', model_name = 'model_4_women_no_france_',
+           exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
+           xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
+
+#women total fish regional primary no IA Netherlands
+
+do_offline(filename_in = 'model_4_women_TOTAL_A_OBJ_women_no_neth.csv', model_name = 'model_4_women_no_neth_',
            exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
            xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = TRUE)
 
@@ -370,5 +401,27 @@ do_offline(filename_in = 'model_1_men_TOTAL_A_OBJ_men.csv', model_name = 'model_
            exposure = 'TOTAL', outcome = 'A_OBJ', scaling_factor = 100/7, at_vect = c(0.8,0.9,1.0,1.1,1.2),
            xlim_vect = c(0.6, 1.5), alim_vect = c(0.8, 1.2), do_regions = FALSE)
 
+# meta analysis of age against estimate to see if it explains variation
 
+model_1_alltuned = read.csv('V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/model_4_women_TOTAL_A_OBJ_women.csv')
+sink(file='V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/meta_reg_age_women.txt')
+res <- rma(yi = model_1_alltuned$Estimate, sei = model_1_alltuned$Std..Error, method='DL', mods = ~ model_1_alltuned$AGE_BASE, slab = model_1_alltuned$study, digits = 5)
+print(res)
+sink()
+
+# meta analysis of region against estimate to see if it explains variation
+
+model_1_alltuned = read.csv('V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/model_4_women_TOTAL_A_OBJ_women.csv')
+sink(file='V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/meta_reg_region_women.txt')
+res <- rma(yi = model_1_alltuned$Estimate, sei = model_1_alltuned$Std..Error, method='DL', mods = ~ model_1_alltuned$REGION , slab = model_1_alltuned$study, digits = 5)
+print(res)
+sink()
+
+# meta analysis of mean BMI against estimate to see if it explains variation
+
+model_1_alltuned = read.csv('V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/model_4_women_TOTAL_A_OBJ_women.csv')
+sink(file='V:/Studies/InterConnect/Internal/Fish exemplar/Analysis/2018_05_16/really final/meta_reg_bmi_women.txt')
+res <- rma(yi = model_1_alltuned$Estimate*100/7, sei = model_1_alltuned$Std..Error*100/7, method='DL', mods = ~ model_1_alltuned$BMI, slab = model_1_alltuned$study, digits = 5)
+print(res)
+sink()
 
