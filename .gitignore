@@ -9,6 +9,7 @@ creds/
 dataShieldTestScript.R
 .Rhistory
 exemplar_analyses.Rproj
+.RData
 
 # All the svg files
 *.svg
