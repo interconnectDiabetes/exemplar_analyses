@@ -43,7 +43,7 @@ myvars = c(
   'ABDOMINAL_FAT', 'WC_CORRECT', 'WC', 'MACROSOMIA_4000',
   'MACROSOMIA_4500', 'PONDERAL_INDEX', 'PUBERTY', 'AGE', 'MATERNAL_BMI',
   'MATERNAL_OB', 'ETHNICITY', 'GDM', 'SEX', 'SMOKING', 'GESTATIONAL_AGE', 'PREECLAMPSIA',
-  'BIRTHWEIGHT', 'MATERNAL_EDU', "ABDOMINAL_MRI"
+  'BIRTHWEIGHT', 'MATERNAL_EDU', "ABDOMINAL_MRI", "GDM"
 )
 
 # myvars = c(
@@ -64,6 +64,9 @@ myvars = c(
 
 #this option for all studies together including SWS and GEN R at 4-6
 opals <- datashield.login(logins=logindata_all, assign=TRUE, variables =myvars, opts = list(ssl.verifypeer=0,ssl.verifyhost=0), directory = '/home/shared/certificates/pa')
+
+#this option for all studies together including SWS and GEN R at 7-9 for sensitivity analysis
+#opals <- datashield.login(logins=logindata_older, assign=TRUE, variables =myvars, opts = list(ssl.verifypeer=0,ssl.verifyhost=0), directory = '/home/shared/certificates/pa')
 
 #opals <- datashield.login(logins=logindata_4_6, assign=TRUE, variables =myvars, opts = list(ssl.verifypeer=0,ssl.verifyhost=0), directory = '/home/shared/certificates/pa')
 
@@ -320,12 +323,15 @@ for (q in 1:length(my_outcome)){
     my_vars_check = c(my_exposure[p], my_outcome[q])
     temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
     
-    # if (my_exposure == 'TOTAL' & my_outcome == 'CASE_OBJ'){
-    #   # exclusions for TOTAL OBJ
-    #   #studies_model1 = which( names(temp_opals) %in% c("HOORN","KOGES_ASAS", "Zutphen") )
-    #   studies_model1 = which( names(temp_opals) %in% c("HOORN","KOGES_ASAS", "Zutphen") )
-    #   temp_opals = temp_opals[-studies_model1]
-    # }
+    # REPRO has this variable but too few people in each category
+    
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT', 'BODY_FAT', 'WC_TO_TOTAL')){
+      studies_model1 = which( names(temp_opals) %in% c("REPRO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    
     
     mypath = file.path('~', 'plots/bw', paste0('model_4_6_',my_exposure[p],'_',my_outcome[q],'.svg'))
     model_1 = runRegModel(ref_table = ref_table, my_exposure = my_exposure[p], my_outcome = my_outcome[q], my_covariate = my_covariate,mypath = mypath, studies = temp_opals)
@@ -369,13 +375,15 @@ for (q in 1:length(my_outcome)){
     my_vars_check = c(my_exposure[p], my_outcome[q])
     temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
     
-      # REPRO has this variable but too few people in each category
-     if (my_exposure[p] %in% c('MACROSOMIA_4000', 'MACROSOMIA_4500')){
-       studies_model1 = which( names(temp_opals) %in% c("REPRO") )
-       if (length(studies_model1)!=0){
-         temp_opals = temp_opals[-studies_model1]
-       }
-     }
+    # REPRO has this variable but too few people in each category
+    
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT', 'BODY_FAT', 'WC_TO_TOTAL')){
+      studies_model1 = which( names(temp_opals) %in% c("REPRO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    
     
     mypath = file.path('~', 'plots/bw', paste0('model_7_9_',my_exposure[p],'_',my_outcome[q],'.svg'))
     model_1 = runRegModel(ref_table = ref_table, my_exposure = my_exposure[p], my_outcome = my_outcome[q], my_covariate = my_covariate,mypath = mypath, studies = temp_opals)
@@ -482,13 +490,12 @@ for (q in 1:length(my_outcome)){
 
 my_exposure = c('BIRTHWEIGHT', 'MACROSOMIA_4000', 'MACROSOMIA_4500', 'PONDERAL_INDEX')
 
+my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "HEIGHT")
+#my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE")
 
-#my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "HEIGHT")
-my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE")
 
-
-#my_outcome = c('ABDOMINAL_FAT','WC_CORRECT')
-my_outcome = c('BODY_FAT', 'WC_TO_TOTAL', 'AB_TO_TOTAL')
+my_outcome = c('ABDOMINAL_FAT','WC_CORRECT')
+#my_outcome = c('BODY_FAT', 'WC_TO_TOTAL', 'AB_TO_TOTAL')
 
 
 ref_table =  'D10'
@@ -503,7 +510,8 @@ for (q in 1:length(my_outcome)){
     temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
     
     # REPRO has this variable but too few people in each category
-    if (my_exposure[p] %in% c('MACROSOMIA_4000', 'MACROSOMIA_4500')){
+
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT', 'BODY_FAT', 'WC_TO_TOTAL')){
       studies_model1 = which( names(temp_opals) %in% c("REPRO") )
       if (length(studies_model1)!=0){
         temp_opals = temp_opals[-studies_model1]
@@ -515,6 +523,170 @@ for (q in 1:length(my_outcome)){
     model_1_alltuned = model_1[[1]]
     model_1_remtuned = model_1[[2]]
     write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure[p],], file = paste0('~/plots/bw/model_all_',my_exposure[p],'_',my_outcome[q],'.csv'))
+  }
+}
+rm(temp_opals)
+
+# _____         _                             _    _               
+#|_   _|       | |                           | |  (_)              
+#  | |   _ __  | |_   ___  _ __   __ _   ___ | |_  _   ___   _ __  
+#  | |  | '_ \ | __| / _ \| '__| / _` | / __|| __|| | / _ \ | '_ \ 
+# _| |_ | | | || |_ |  __/| |   | (_| || (__ | |_ | || (_) || | | |
+# \___/ |_| |_| \__| \___||_|    \__,_| \___| \__||_| \___/ |_| |_|
+                                                                  
+
+#    ____   ____    __  __ 
+#   / ___| |  _ \  |  \/  |
+#  | |  _  | | | | | |\/| |
+#  | |_| | | |_| | | |  | |
+#  \____| |____/  |_|  |_|
+  
+
+
+
+# The chosen studies and time points
+
+my_exposure = c('BIRTHWEIGHT', 'MACROSOMIA_4000', 'MACROSOMIA_4500', 'PONDERAL_INDEX')
+
+#my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "GDM", "HEIGHT")
+my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "GDM")
+
+
+#my_outcome = c('ABDOMINAL_FAT','WC_CORRECT')
+my_outcome = c( 'AB_TO_TOTAL', 'BODY_FAT', 'WC_TO_TOTAL')
+
+my_interaction = c('GDM')
+
+ref_table =  'D10'
+
+
+# tuned survival version
+for (q in 1:length(my_outcome)){
+  for (p in 1:length(my_exposure)){
+    
+    #only run on opals with the exposure and outcome
+    my_vars_check = c(my_exposure[p], my_outcome[q])
+    temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+    
+    temp_opals = rev(temp_opals)
+    
+    # REPRO has this variable but too few people in each category
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT', 'BODY_FAT', 'WC_TO_TOTAL')){
+      studies_model1 = which( names(temp_opals) %in% c("REPRO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    # REPRO has this variable but too few people in each category
+    if (my_exposure[p] %in% c('MACROSOMIA_4000') && my_outcome[q] %in% c('BODY_FAT', 'WC_TO_TOTAL', 'WC_CORRECT')){
+      studies_model1 = which( names(temp_opals) %in% c("REPRO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    # ROLO does not work with GDM
+    if (my_exposure[p] %in% c('MACROSOMIA_4000') && my_outcome[q] %in% c('BODY_FAT', 'WC_TO_TOTAL', 'AB_TO_TOTAL', 'ABDOMINAL_FAT', 'WC_CORRECT' ) && my_interaction %in% c('GDM')){
+      studies_model1 = which( names(temp_opals) %in% c("ROLO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+      
+    }
+    # ROLO does not work with GDM
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('BODY_FAT', 'WC_TO_TOTAL', 'AB_TO_TOTAL', 'ABDOMINAL_FAT', 'WC_CORRECT') && my_interaction %in% c('GDM')){
+      studies_model1 = which( names(temp_opals) %in% c("ROLO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+      
+    }
+    # GENR does not work with GDM
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('BODY_FAT', 'AB_TO_TOTAL', 'ABDOMINAL_FAT') && my_interaction %in% c('GDM')){
+      studies_model1 = which( names(temp_opals) %in% c("GEN_R") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    # HSS does not work with GDM
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('BODY_FAT', 'WC_TO_TOTAL', 'WC_CORRECT') && my_interaction %in% c('GDM')){
+      studies_model1 = which( names(temp_opals) %in% c("HSS") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    # SWS does not work with GDM
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('BODY_FAT', 'WC_TO_TOTAL', 'WC_CORRECT') && my_interaction %in% c('GDM')){
+      studies_model1 = which( names(temp_opals) %in% c("SWS") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    
+    mypath = file.path('~', 'plots/bw', paste0('model_GDM_',my_exposure[p],'_',my_outcome[q],'.svg'))
+    model_1 = runRegModel(ref_table = ref_table, my_exposure = my_exposure[p], my_outcome = my_outcome[q], my_covariate = my_covariate,mypath = mypath, interaction_term = my_interaction, studies = temp_opals)
+    model_1_alltuned = model_1[[1]]
+    model_1_remtuned = model_1[[2]]
+    write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure[p],], file = paste0('~/plots/bw/model_GDM_',my_exposure[p],'_',my_outcome[q],'.csv'))
+  }
+}
+rm(temp_opals)
+
+# ____    __  __   ___ 
+#| __ )  |  \/  | |_ _|
+#|  _ \  | |\/| |  | | 
+#| |_) | | |  | |  | | 
+#|____/  |_|  |_| |___|
+  
+
+
+
+# The chosen studies and time points
+
+my_exposure = c('BIRTHWEIGHT', 'MACROSOMIA_4000', 'MACROSOMIA_4500', 'PONDERAL_INDEX')
+
+#my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "MATERNAL_BMI", "HEIGHT")
+my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "MATERNAL_BMI")
+
+
+#my_outcome = c('ABDOMINAL_FAT','WC_CORRECT')
+my_outcome = c( 'AB_TO_TOTAL', 'BODY_FAT', 'WC_TO_TOTAL')
+
+my_interaction = c('MATERNAL_BMI')
+
+ref_table =  'D10'
+
+
+# tuned survival version
+for (q in 1:length(my_outcome)){
+  for (p in 1:length(my_exposure)){
+    
+    #only run on opals with the exposure and outcome
+    my_vars_check = c(my_exposure[p], my_outcome[q])
+    temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
+    
+    temp_opals = rev(temp_opals)
+    
+    # REPRO has this variable but too few people in each category
+    
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT', 'BODY_FAT', 'WC_TO_TOTAL')){
+      studies_model1 = which( names(temp_opals) %in% c("REPRO") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    # HSS does not work with GDM
+    if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT','BODY_FAT', 'WC_TO_TOTAL')){
+      studies_model1 = which( names(temp_opals) %in% c("HSS") )
+      if (length(studies_model1)!=0){
+        temp_opals = temp_opals[-studies_model1]
+      }
+    }
+    
+    mypath = file.path('~', 'plots/bw', paste0('model_BMI_',my_exposure[p],'_',my_outcome[q],'.svg'))
+    model_1 = runRegModel(ref_table = ref_table, my_exposure = my_exposure[p], my_outcome = my_outcome[q], my_covariate = my_covariate,mypath = mypath, interaction_term = my_interaction, studies = temp_opals)
+    model_1_alltuned = model_1[[1]]
+    model_1_remtuned = model_1[[2]]
+    write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure[p],], file = paste0('~/plots/bw/model_BMI_',my_exposure[p],'_',my_outcome[q],'.csv'))
   }
 }
 rm(temp_opals)

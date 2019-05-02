@@ -120,7 +120,7 @@ createModelFormula <- function(study, data_table, outcome, exposure, covariate_l
 				paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+")))
 		return (fmla)
 	} else if (type == "interaction") {
-		fmla <- as.formula(paste(paste0(data_table, '$CENSOR')," ~ ", "0" , "+", paste0(data_table, '$tid.f'), '+', paste0(c(paste0(data_table, '$', exposure), 
+		fmla <- as.formula(paste(data_table, '$', outcome," ~ ", paste0(c(paste0(data_table, '$',exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
 		return (fmla)
 	} else {
@@ -161,27 +161,52 @@ checkFactoredTime <- function(timeVariable = 'tid.f', studies = opals){
 
 
 
-runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = opals){
+runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interaction_term = NULL, studies){
 	# main function that runs, fits, and stores the results of a regression model using the 
 	# datashield process
 	#temp <- ds.summary('D$TOTAL', datasources = studies)
 	#study_names <- names(temp)
 	#num_studies <- length(temp)
 	#rm(temp)
+  
+  REM_results = list()
+  study_regs = data.frame()
+  
+  if(!is.null(interaction_term)){
+    
+    interaction_class = ds.class(x = paste0(ref_table,'$',interaction_term), studies[1])
+    
+    if(interaction_class[[1]]=="factor"){
+      number_of_interactions <- length(ds.levels(paste0(ref_table,'$',interaction_term), datasources = studies)[[1]])
+    }
+    else {
+      number_of_interactions <- 1
+    }
+    svg(filename=mypath, 
+        width=9*number_of_interactions, 
+        height=8*length(my_outcome), 
+        pointsize=10)
+    par(mar=c(5,3,2,2)+0.1)
+    par(mfrow=c(length(my_outcome),number_of_interactions))
+    par(ps=10)
+    
+  }
+  
+  else {
+   
+  	svg(filename=mypath, 
+  		width=9 * length(my_exposure), 
+  		height=7 * length(my_outcome), 
+  		pointsize=10)
+  	par(mar=c(5,3,2,2)+0.1)
+  	par(mfrow=c(length(my_outcome),length(my_exposure)))
+  	par(ps=10)
+  }
+	
 
-	REM_results = list()
-	study_regs = data.frame()
-
-	svg(filename=mypath, 
-		width=9 * length(my_exposure), 
-		height=7 * length(my_outcome), 
-		pointsize=10)
-	par(mar=c(5,3,2,2)+0.1)
-	par(mfrow=c(length(my_outcome),length(my_exposure)))
-	par(ps=10)
 
 	for (k in 1:length(my_outcome)){
-		outcome_family = findOutcomeFamily(ref_table, my_outcome[k])
+		outcome_family = findOutcomeFamily(ref_table, my_outcome[k], studies)
 
 		# for each exposure and
 		for (j in 1:length(my_exposure)){
@@ -193,7 +218,13 @@ runRegModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath
 				reg_data <- data.frame()
 
 				#fmla <- createModelFormula(study_names[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, type = "standard")
-				fmla <- createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, type = "standard")
+				if (!is.null(interaction_term)){
+				  fmla <- createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term = interaction_term, type = "interaction")
+				}
+				else {
+				  fmla <- createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, type = "standard")
+				}
+				
 				reg_data <- do_reg(i,fmla, names(studies[i]), my_outcome[k], outcome_family, studies)
 				
 				if (outcome_family == 'binomial' & length(reg_data) > 0){
