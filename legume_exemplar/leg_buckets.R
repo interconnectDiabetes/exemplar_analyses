@@ -33,11 +33,11 @@
 # 
 # )
 
-#temp = ds.quantileMean(x='F1$FUP_OBJ', type = 'split')
-#temp2 = as.data.frame(temp)[-c(1,7,8),]
-#temp3 = diff(as.matrix(temp2))
-#temp4 = round(rbind(temp2[1,], temp3), digits = 2)
-#temp5 = lapply(as.list(temp4),FUN = paste0, collapse = ',')
+# temp = ds.quantileMean(x='F1$FUP_OBJ', type = 'split')
+# temp2 = as.data.frame(temp)[-c(1,7,8),]
+# temp3 = diff(as.matrix(temp2))
+# temp4 = round(rbind(temp2[1,], temp3), digits = 2)
+# temp5 = lapply(as.list(temp4),FUN = paste0, collapse = ',')
 
 time_buckets = list(
 
@@ -58,12 +58,16 @@ time_buckets = list(
 "WHI" =  c(5.94,2.05,3.9,1.82,0.82),
 "JPHC" = c(1,1,1,1,0.5,2.5),
 "ARIC" =  c(8.78,0.12,3.05,11.69,0.91),
-"MESA" =  c(2,2,1),
+#"MESA" =  c(2,2,1),
+#"MESA" =  c(4,2.56,2.44,1),
+"MESA" =  c(4,2.5,2.5),
 "CARDIA" =  c(7,12,6,10),
 "PRHHP" =  c(5,5),
 "FMC" =  c(10.68,11.85,1.72,1.55,1.12),
 "Golestan" =  c(2.83,0.8,0.60,1.38,1.02),
-"CoLaus" =  c(5.25,0.06,0.11,0.21),
+#"CoLaus" =  c(5.25,0.06,0.11,0.21),
+#"CoLaus" =  c(5.44,5.05,0.17,0.23,0.37),
+"CoLaus" =  c(5.44,5.05,1),
 "CKB" =  c(2,2,2,2),
 "SUN" = c(2.37, 2.48, 3.88, 4.25),
 "KOGES_CAVAS" = c(1.03,2.23,1.04,1.21,0.77),

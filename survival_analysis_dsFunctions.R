@@ -123,6 +123,9 @@ createModelFormula <- function(study, data_table, outcome, exposure, covariate_l
 		fmla <- as.formula(paste(data_table, '$', outcome," ~ ", paste0(c(paste0(data_table, '$',exposure), 
 			paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
 		return (fmla)
+	}  else if (type == "surv_interaction") {
+	  fmla <- as.formula(paste(paste0(data_table, '$CENSOR')," ~ ", "0" , "+", paste0(data_table, '$tid.f'), '+', paste0(c(paste0(data_table, '$', exposure),                                                                                                                    paste0(data_table, '$',covariate_list[! covariate_list %in% exceptions])), collapse= "+"),"+", data_table,"$",interaction_term,"*", data_table,"$", exposure))
+	  return (fmla)
 	} else {
 		stop("Undefined type of model for formula")
 		return(NULL)
@@ -435,13 +438,7 @@ createModelFormulaNew <- function(study, data_table, outcome, exposure, covariat
 
 
 tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interaction_term, studies) {
-  # main function that runs, fits, and stores the results of a survival model using the 
-  # lexisB function to expand the dataframe and also rebases the start and endtimes of the data variables.
-  # temp <- ds.summary('D$TOTAL', datasources = studies)
-  # study_names <- names(temp)
-  # num_studies <- length(temp)
-  # rm(temp)
-  
+#Function for interaction in survival model
   interaction_class = ds.class(x = paste0(ref_table,'$',interaction_term), studies[1])
   
   if(interaction_class[[1]]=="factor"){
@@ -473,7 +470,7 @@ tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covaria
       for(i in 1:length(studies)) {
         reg_data <- data.frame()
         
-        fmla <- createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "interaction")
+        fmla <- createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate, interaction_term, type = "surv_interaction")
         print(studies[i])
         print(fmla)
         reg_data <- do_reg_survival(i, my_fmla = fmla, study = names(studies[i]), outcome =  my_outcome[k],  out_family = "poisson", offset_column = paste0(ref_table, "$logSurvival"), lexisTable = ref_table, burtonWeights = paste0(ref_table, "$burtonWeights"), studies = studies)
@@ -484,7 +481,7 @@ tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covaria
         labels = rbind(labels, reg_data[2,1])      
         variables = reg_data[grep(my_exposure[j], reg_data$cov), 'cov']
       }
-      createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate,interaction_term, type = "interaction")
+      createModelFormula(studies[i], ref_table, my_outcome[k], my_exposure[j], my_covariate,interaction_term, type = "surv_interaction")
       fmla <- as.formula(paste(paste0(ref_table,'$CENSOR')," ~ ", '0', '+', 'tid.f', '+', paste0(c(paste0(ref_table, '$',my_exposure[j]), paste0(ref_table, '$',my_covariate)), collapse= "+"),"+", ref_table,"$",interaction_term,"*", ref_table,"$", my_exposure[j]))
       #meta analysis here
       for (n in 1:length(variables)){
@@ -503,8 +500,8 @@ tunedInterActionModel <- function(ref_table, my_exposure, my_outcome, my_covaria
 
 
 runInteractionModel <- function(ref_table, my_exposure, my_outcome, my_covariate, mypath, interval_width, interaction_term, studies = opals) {
-	# Runs an interaction model of the given interaction term. It is similar to the normal survival model runSurvival functions
-	# however the formula has to take the additional interaction term into account.
+	# Runs an interaction model of the given interaction term - non survival version
+  
   temp <- ds.summary('D$TOTAL', datasources = studies)
   study_names <- names(temp)
   num_studies <- length(temp)

@@ -104,8 +104,8 @@ afterIntake["CKB"] = noType1["CKB"]
 #variables not to be used in complete cases
 # stops loss of missing for these variables during complete cases, when they are not used in most models
 
-#none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB", 'tid.f','CENSOR')
-none_cc_vars = c('tid.f','CENSOR')
+none_cc_vars = c("WAIST","SUPPLEMENTS", "FAM_DIAB", 'tid.f','CENSOR')
+#none_cc_vars = c('tid.f','CENSOR')
 
 for (i in c(1:num_studies)) {
   my_name = names(opals[i])
@@ -260,12 +260,12 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_1_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_1_ckb_test_2_',my_exposure,'_',ref_table,'.svg'))
 model_1 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 
 model_1_alltuned = model_1[[1]]
 model_1_remtuned = model_1[[2]]
-write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_1_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_1_alltuned[model_1_alltuned$cov==my_exposure,], file = paste0('~/plots/test/model_1_ckb_test_2_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 ####################################################
@@ -404,6 +404,7 @@ rm(temp_opals)
 
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
+#my_exposure = c('SERVINGS')
 #my_exposure = c('FATTY')
 #my_exposure = c('LEAN')
 #my_exposure = c('SALT')
@@ -446,11 +447,11 @@ temp_opals = temp_opals[-studies_model2]
 #temp_opals = temp_opals[-studies_model2]
 
 
-mypath = file.path('~', 'plots/test', paste0('model_2_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_2_CKB_fix_',my_exposure,'_',ref_table,'.svg'))
 model_2 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_2_alltuned = model_2[[1]]
 model_2_remtuned = model_2[[2]]
-write.csv(x = model_2_alltuned[grep(my_exposure, model_2_alltuned$cov),], file = paste0('~/plots/test/model_2_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_2_alltuned[grep(my_exposure, model_2_alltuned$cov),], file = paste0('~/plots/test/model_2_CKB_fix_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
@@ -1255,16 +1256,16 @@ ds.subset(x = 'A_OBJ_SELF', subset = 'A_OBJ_SELF_men', logicalOperator = 'SEX=='
 # Also need to choose between outcome OBJ or OBJ_SELF
 my_exposure = c('TOTAL')
 
-my_outcome = c('CASE_OBJ')
-#my_outcome = c('CASE_OBJ_SELF')
+#my_outcome = c('CASE_OBJ')
+my_outcome = c('CASE_OBJ_SELF')
 
 my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA","BMI", "COMORBID","E_INTAKE", 
                   "FIBER", "MEAT", "FRUIT", "VEG", "SUG_BEVS", "REGION_CH")
 #my_covariate =  c("AGE_BASE", "EDUCATION", "SMOKING", "PA", "BMI", "COMORBID", "REGION_CH")
 
 
-ref_table =  'A_OBJ_men'
-#ref_table =  'A_OBJ_SELF_men'
+#ref_table =  'A_OBJ_men'
+ref_table =  'A_OBJ_SELF_men'
 
 #my_vars_all = c(my_exposure, my_outcome, my_covariate, my_exit_col, "newStartDate", "burtonWeights")
 #only run on opals with the exposure and outcome
@@ -1302,11 +1303,11 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_4_men_zut_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_4_men_MESA_',my_exposure,'_',ref_table,'.svg'))
 model_4 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_4_alltuned = model_4[[1]]
 model_4_remtuned = model_4[[2]]
-write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_men_zut_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_men_MESA_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
@@ -1364,11 +1365,11 @@ temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filte
 
 # tuned survival version
 
-mypath = file.path('~', 'plots/test', paste0('model_4_women_card_',my_exposure,'_',ref_table,'.svg'))
+mypath = file.path('~', 'plots/test', paste0('model_4_women_MESA_',my_exposure,'_',ref_table,'.svg'))
 model_4 = tunedSurvivalModel(ref_table, my_exposure, my_outcome, my_covariate, mypath, studies = temp_opals)
 model_4_alltuned = model_4[[1]]
 model_4_remtuned = model_4[[2]]
-write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_women_card_',my_exposure,'_',ref_table,'.csv'))
+write.csv(x = model_4_alltuned[grep(my_exposure, model_4_alltuned$cov),], file = paste0('~/plots/test/model_4_women_MESA_',my_exposure,'_',ref_table,'.csv'))
 rm(temp_opals)
 
 
@@ -1380,7 +1381,7 @@ rm(temp_opals)
 #|_|  |_|  \___/   \__,_|  \___| |_|      |_|    \__,_|
 
 
-# Exposure: total fish (g/d) at baseline*sex
+# Exposure: total fish (g/d) at baseline*waist
 # Outcome: Type 2 diabetes incidence
 # Confounders: Age, sex, education, smoking, physical activity, co-morbidities, BMI, energy intake, 
 #             fibre intake, meat intake, fruit intake, vegetables intake, sugary drinks intake. PLUS WAIST

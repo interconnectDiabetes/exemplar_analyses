@@ -30,11 +30,11 @@ time_buckets = list(
 
 )
 
-#temp = ds.quantileMean(x='F1$FUP_OBJ', type = 'split')
-#temp2 = as.data.frame(temp)[-c(1,7,8),]
-#temp3 = diff(as.matrix(temp2))
-#temp4 = round(rbind(temp2[1,], temp3), digits = 2)
-#temp5 = lapply(as.list(temp4),FUN = paste0, collapse = ',')
+# temp = ds.quantileMean(x='F1$FUP_OBJ', type = 'split')
+# temp2 = as.data.frame(temp)[-c(1,7,8),]
+# temp3 = diff(as.matrix(temp2))
+# temp4 = round(rbind(temp2[1,], temp3), digits = 2)
+# temp5 = lapply(as.list(temp4),FUN = paste0, collapse = ',')
 
 
 time_buckets = list(
@@ -58,7 +58,8 @@ time_buckets = list(
   "WHI" =  c(4.96,2.93,3.95,1.85,0.68),
   "JPHC" = c(4,0.5,2.5),
   "ARIC" =  c(8.76,0.13,2.94,11.79,0.94),
-  "MESA" =  c(2,2,1),
+  #"MESA" =  c(2,2,1),
+  "MESA" =  c(4,2.56,2.44),
   "CARDIA" =  c(7,12,6,10),
   "PRHHP" =  c(5,5),
   "FMC" =  c(10.68,11.84,1.73,1.54,1.12),
