@@ -44,7 +44,7 @@ myvars = c(
   'MACROSOMIA_4500', 'PONDERAL_INDEX', 'PUBERTY', 'AGE', 'MATERNAL_BMI',
   'MATERNAL_OB', 'ETHNICITY', 'GDM', 'SEX', 'SMOKING', 'GESTATIONAL_AGE', 'PREECLAMPSIA',
   'BIRTHWEIGHT', 'MATERNAL_EDU', "ABDOMINAL_MRI", "GDM"
-
+  
 )
 
 # myvars = c(
@@ -84,7 +84,8 @@ ds.assign(toAssign="((10^4)*D$TOTAL_FAT_CON)/(D$HEIGHT*D$HEIGHT)", newobj = "BOD
 ds.assign(toAssign="D$ABDOMINAL_FAT/D$TOTAL_FAT_CON", newobj = "AB_TO_TOTAL", opals)
 ds.assign(toAssign="D$WC_CORRECT/D$TOTAL_FAT_CON", newobj = "WC_TO_TOTAL", opals)
 ds.assign(toAssign="D$ABDOMINAL_MRI/D$TOTAL_FAT_CON", newobj = "AB_TO_TOTAL_MRI", opals)
-ds.cbind(x=c("D", "BODY_FAT", "AB_TO_TOTAL", "WC_TO_TOTAL", "AB_TO_TOTAL_MRI"), newobj = "D", opals)
+ds.assign(toAssign="D$WC_CORRECT/D$HEIGHT", newobj = "WC_TO_HEIGHT", opals)
+ds.cbind(x=c("D", "BODY_FAT", "AB_TO_TOTAL", "WC_TO_TOTAL", "AB_TO_TOTAL_MRI", "WC_TO_HEIGHT"), newobj = "D", opals)
 
 
 # Set studynames and numstudies
@@ -144,10 +145,12 @@ no_preecl <- ds.length('D2$SEX', type = 'split')
 ## COMPLETE CASES
 
 
-#variables not to be used in complete cases according to analysis plan
-#none_cc_vars = c( 'ABDOMINAL_FAT' 'WC', 'WC_CORRECT')
-#none_cc_vars = c( 'ABDOMINAL_FAT')
-none_cc_vars = c("BODY_FAT", "AB_TO_TOTAL", "WC_TO_TOTAL")
+#variables not to be used in complete cases
+# this could be because they are missing for a lot of participants and
+# therefore only included in a sensitivity analysis
+# 
+none_cc_vars = c()
+#none_cc_vars = c("BODY_FAT", "AB_TO_TOTAL", "WC_TO_TOTAL", "AB_TO_TOTAL_MRI", "WC_TO_HEIGHT")
 
 
 for (i in c(1:num_studies)) {
@@ -299,7 +302,7 @@ for (i in c(1:num_studies)) {
 #| || |_   _____  | '_ \ 
 #|__   _| |_____| | (_) |
 #   |_|            \___/ 
-                         
+
 
 #4-6
 
@@ -351,7 +354,7 @@ rm(temp_opals)
 #   / /   _____  | (_) |
 #  / /   |_____|  \__, |
 # /_/               /_/ 
-  
+
 
 #7-9
 
@@ -403,7 +406,7 @@ rm(temp_opals)
 # | |  _  |  _|   |  \| |   | |_) |   \___ \   \ \ /\ / /  \___ \    | |     | | | | | |\/| | | |_) |   / _ \   | |_) | |  _|  
 # | |_| | | |___  | |\  |   |  _ <     ___) |   \ V  V /    ___) |   | |___  | |_| | | |  | | |  __/   / ___ \  |  _ <  | |___ 
 # \____| |_____| |_| \_|   |_| \_\   |____/     \_/\_/    |____/     \____|  \___/  |_|  |_| |_|     /_/   \_\ |_| \_\ |_____|
-  
+
 # special section to compare SWS and GEN R at different time points
 
 
@@ -487,18 +490,18 @@ for (q in 1:length(my_outcome)){
 #|  _  || || |
 #| | | || || |
 #\_| |_/|_||_|
-  
-  
+
+
 # The chosen studies and time points
 
 my_exposure = c('BIRTHWEIGHT', 'MACROSOMIA_4000', 'MACROSOMIA_4500', 'PONDERAL_INDEX')
 
-my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "HEIGHT")
-#my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE")
+#my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE", "HEIGHT")
+my_covariate =  c("AGE", "SEX", "MATERNAL_EDU", "SMOKING", "ETHNICITY", "GESTATIONAL_AGE")
 
 
-my_outcome = c('ABDOMINAL_FAT','WC_CORRECT')
-#my_outcome = c('BODY_FAT', 'WC_TO_TOTAL', 'AB_TO_TOTAL')
+#my_outcome = c('ABDOMINAL_FAT','WC_CORRECT')
+my_outcome = c('WC_TO_HEIGHT', 'BODY_FAT', 'WC_TO_TOTAL', 'AB_TO_TOTAL')
 
 
 ref_table =  'D10'
@@ -508,12 +511,14 @@ ref_table =  'D10'
 for (q in 1:length(my_outcome)){
   for (p in 1:length(my_exposure)){
     
+    Sys.sleep(300)
+    
     #only run on opals with the exposure and outcome
     my_vars_check = c(my_exposure[p], my_outcome[q])
     temp_opals = opal_creator(variables_to_filter = my_vars_check, filter_df = filter_csv, opals_to_filter = opals)
     
     # REPRO has this variable but too few people in each category
-
+    
     if (my_exposure[p] %in% c('MACROSOMIA_4500') && my_outcome[q] %in% c('WC_CORRECT', 'BODY_FAT', 'WC_TO_TOTAL')){
       studies_model1 = which( names(temp_opals) %in% c("REPRO") )
       if (length(studies_model1)!=0){
@@ -536,14 +541,14 @@ rm(temp_opals)
 #  | |  | '_ \ | __| / _ \| '__| / _` | / __|| __|| | / _ \ | '_ \ 
 # _| |_ | | | || |_ |  __/| |   | (_| || (__ | |_ | || (_) || | | |
 # \___/ |_| |_| \__| \___||_|    \__,_| \___| \__||_| \___/ |_| |_|
-                                                                  
+
 
 #    ____   ____    __  __ 
 #   / ___| |  _ \  |  \/  |
 #  | |  _  | | | | | |\/| |
 #  | |_| | | |_| | | |  | |
 #  \____| |____/  |_|  |_|
-  
+
 
 
 
@@ -639,7 +644,7 @@ rm(temp_opals)
 #|  _ \  | |\/| |  | | 
 #| |_) | | |  | |  | | 
 #|____/  |_|  |_| |___|
-  
+
 
 
 
