@@ -1,5 +1,6 @@
-# This file is used to create a dataframe for the fish exemplar
-# Author: Paul Scherer
+# This file is used to create a dataframe for the meat exemplar
+# Author: Paul Scherer, Tom Bishop, Chunxiao Li
+# 2021
 
 library(tibble) # for easier dataframes, and rather the saving to dta
 library(haven)
@@ -187,7 +188,7 @@ BMI01$BMI01 = as.numeric(as.character(BMI01$BMI01))
 # ETHICITY - modifier and confounder
 dfa = read.csv2(file = "v1/CSV/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
 RACEGRP = subset.data.frame(dfa, select = c(RACEGRP, ID_C))
-RACEGRP$RACEGRP = as.numeric(as.character(RACEGRP$RACEGRP))
+RACEGRP$RACEGRP = as.factor(as.character(RACEGRP$RACEGRP))
 
 # Education a bit weird have to or them
 dfa = read.csv2(file = "v1/CSV/derive13.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE, na.strings = (""))
@@ -483,6 +484,6 @@ colnames(aric)[1] <- "ID"
 
 aric_tibble = as_tibble(aric)
 # WAIST
-save(aric,file="~/aric_meat_2021_09_01.Rdata")
-write_dta(data = aric_tibble, path = "~/aric_meat_2021_09_01.dta")
+save(aric,file="~/aric_meat_2021_09_03.Rdata")
+write_dta(data = aric_tibble, path = "~/aric_meat_2021_09_03.dta")
 
