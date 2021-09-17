@@ -614,6 +614,6 @@ cardia = Reduce(function(...) merge(..., by="PID", all=TRUE), dataframes_list)
 colnames(cardia)[1] <- "ID"
 
 cardia_tibble = as_tibble(cardia)
-save(cardia,file="~/cardia/cardia_r_df_pattern.Rdata")
-write_dta(data = cardia_tibble, path = "~/cardia/cardia_pattern.dta")
+save(cardia,file="~/cardia/cardia_r_df_meat.Rdata")
+write_dta(data = cardia_tibble, path = "~/cardia/cardia_meat.dta")
 
