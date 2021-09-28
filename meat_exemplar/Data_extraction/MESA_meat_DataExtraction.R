@@ -64,7 +64,7 @@ diet_vars = c(
   'fgfish1c', 'fgvpotato1c', 'fgfriedpotato1c', 'fgppsalad1c', 'fgseedsnuts1c',
   'fgyogurt1c', 'fglfdairydessert1c', 'fgicecream1c', 'fgcottage1c', 'fglfmilk1c', 'fgwholemilk1c', 'fgcoffeecream1c', 'fghfcheese1c', 'fgcreamsoup1c',
   'fgeggs1c', 'fgwholegrain1c', 'fgwhitebread1c', 'fgsweetbread1c', 'fgwholegrain1c', 'fgtea1c', 'fgfatsoils1c', 'fgredmeat1c',
-  'svdmromatopasta1c', 'fghfprocmeat1c', 'fgpoultry1c', 'svdliver1c'
+  'fghfprocmeat1c', 'fgpoultry1c', 'svdliver1c'
 )
 
 
